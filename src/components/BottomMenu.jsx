@@ -28,6 +28,7 @@ import './BottomMenu.css';
 
 const BottomMenu = ({ onSubmenuToggle }) => {
   const [activeSubmenu, setActiveSubmenu] = useState(null);
+  const [activeFilter, setActiveFilter] = useState(null); // Add state for filter submenu
   const [layerToggles, setLayerToggles] = useState({
     temperature: false,
     clouds: false,
@@ -82,16 +83,23 @@ const BottomMenu = ({ onSubmenuToggle }) => {
   useEffect(() => {
     // Notify parent component about submenu state changes
     if (onSubmenuToggle) {
-      onSubmenuToggle(activeSubmenu !== null);
+      onSubmenuToggle(activeSubmenu !== null || activeFilter !== null);
     }
-  }, [activeSubmenu, onSubmenuToggle]);
+  }, [activeSubmenu, activeFilter, onSubmenuToggle]);
 
   const toggleSubmenu = (menuId) => {
+    // Close filter submenu when toggling main submenu
+    setActiveFilter(null);
     setActiveSubmenu(activeSubmenu === menuId ? null : menuId);
+  };
+
+  const toggleFilterSubmenu = (filterId) => {
+    setActiveFilter(activeFilter === filterId ? null : filterId);
   };
 
   const closeSubmenu = () => {
     setActiveSubmenu(null);
+    setActiveFilter(null);
   };
 
   const toggleLayer = (layerId) => {
@@ -154,7 +162,7 @@ const BottomMenu = ({ onSubmenuToggle }) => {
         
         {/* Layers Submenu */}
         {activeSubmenu === 'layers' && (
-          <div className="submenu-card">
+          <div className="submenu-card" style={{ zIndex: 1000 }}>
             <div className="submenu-header">
               <div className="submenu-title">Layers</div>
               <button className="close-button" onClick={closeSubmenu}>
@@ -199,7 +207,7 @@ const BottomMenu = ({ onSubmenuToggle }) => {
 
       {/* News Submenu */}
       {activeSubmenu === 'news' && (
-        <div className="submenu-card news-submenu">
+        <div className="submenu-card news-submenu" style={{ zIndex: 1200 }}>
           <div className="submenu-header">
             <div className="submenu-title">News Filters</div>
             <button className="close-button" onClick={closeSubmenu}>
@@ -220,17 +228,38 @@ const BottomMenu = ({ onSubmenuToggle }) => {
               </div>
             ))}
             
-            <div className="submenu-category">Regions</div>
-            {regionFilters.map(region => (
-              <div 
-                key={region.id} 
-                className={`submenu-item ${newsFilters[region.id] ? 'active' : ''}`}
-                onClick={() => toggleNewsFilter(region.id)}
-              >
-                <div className="submenu-item-label">{region.label}</div>
-                <div className={`submenu-item-toggle ${newsFilters[region.id] ? 'active' : ''}`}></div>
+            {/* Regions section with filter button */}
+            <div className="submenu-category">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span>Regions</span>
+                <button 
+                  className={`filter-button ${activeFilter === 'regions' ? 'active' : ''}`} 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleFilterSubmenu('regions');
+                  }}
+                  style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+                >
+                  <Filter size={16} />
+                </button>
               </div>
-            ))}
+            </div>
+            
+            {/* Region filter submenu */}
+            {activeFilter === 'regions' && (
+              <div className="region-filters">
+                {regionFilters.map(region => (
+                  <div 
+                    key={region.id} 
+                    className={`submenu-item ${newsFilters[region.id] ? 'active' : ''}`}
+                    onClick={() => toggleNewsFilter(region.id)}
+                  >
+                    <div className="submenu-item-label">{region.label}</div>
+                    <div className={`submenu-item-toggle ${newsFilters[region.id] ? 'active' : ''}`}></div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       )}
