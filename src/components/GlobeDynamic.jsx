@@ -3,7 +3,7 @@ import Globe from 'react-globe.gl';
 import * as THREE from 'three';
 import './GlobeDynamic.css';
 
-const GlobeDynamic = ({ newsEvents }) => {
+const GlobeDynamic = ({ newsEvents, navigateToCoordinates }) => {
   const globeEl = useRef();
   const [globeReady, setGlobeReady] = useState(false);
   const [cameraDistance, setCameraDistance] = useState(0);
@@ -11,6 +11,25 @@ const GlobeDynamic = ({ newsEvents }) => {
   const labelSize = 1;
 
   const [countries, setCountries] = useState({ features: []});
+
+  // Function to navigate to coordinates
+  const goToCoordinates = (lat, lng) => {
+    if (globeEl.current) {
+      // Animate to the target coordinates
+      globeEl.current.pointOfView({
+        lat: lat,
+        lng: lng,
+        altitude: 1.5 // Control how close the view gets
+      }, 1000); // 1000ms animation duration
+    }
+  };
+
+  // Handle navigation when navigateToCoordinates prop changes
+  useEffect(() => {
+    if (navigateToCoordinates && globeReady) {
+      goToCoordinates(navigateToCoordinates.lat, navigateToCoordinates.lng);
+    }
+  }, [navigateToCoordinates, globeReady]);
 
   useEffect(() => {
   // load data
@@ -35,11 +54,13 @@ const GlobeDynamic = ({ newsEvents }) => {
   useEffect(() => {
     if (globeReady && globeEl.current) {
       const scene = globeEl.current.scene();
+
+      
       
       // Create stars
       const starsGeometry = new THREE.BufferGeometry();
       const starsMaterial = new THREE.PointsMaterial({
-        size: 1,
+        size: 5,
         sizeAttenuation: true,
         vertexColors: true,
         transparent: true
@@ -72,13 +93,12 @@ const GlobeDynamic = ({ newsEvents }) => {
         colors[i * 3 + 1] = 1; // Green always 1
         colors[i * 3 + 2] = whiteness * 0.5 + 0.5; // Blue varies from 0.5 to 1
         
-        // Random size between 0.5 and 2.5
-        sizes[i] = 0.5 + Math.random() * 1000;
+
       }
       
       starsGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
       starsGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-      starsGeometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+      starsGeometry.setAttribute('size', new THREE.BufferAttribute(sizes, 5));
       
       const stars = new THREE.Points(starsGeometry, starsMaterial);
       scene.add(stars);
@@ -136,11 +156,11 @@ const GlobeDynamic = ({ newsEvents }) => {
       
       // Initial camera position
       globeEl.current.pointOfView({
-        lat: 30, 
-        lng: 10,
+        lat: 0, 
+        lng: 50,
         altitude: 2.5
       });
-      
+
       // Initialize camera distance
       const distance = globeEl.current.camera().position.length();
       setCameraDistance(distance);
@@ -204,9 +224,11 @@ const GlobeDynamic = ({ newsEvents }) => {
   return (
     <div className="globe-container">
       <Globe
+
         ref={globeEl}
         globeImageUrl="//cdn.jsdelivr.net/npm/three-globe/example/img/earth-dark.jpg"
-        
+
+
         hexPolygonsData={countries.features}
         hexPolygonResolution={3}
         hexPolygonMargin={0.3}

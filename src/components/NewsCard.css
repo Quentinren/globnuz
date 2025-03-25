@@ -2,15 +2,16 @@
 
 /* Main container */
 .news-card-container {
-    position: fixed;
-    top: 50%;
-    left: 75%;
-    transform: translate(-50%, -50%);
-    width: 100%;
-    max-width: 28rem; /* equivalent to max-w-md */
-    opacity: 80%;
-    z-index:3;
-  }
+  position: fixed;
+  top: 50%;
+  left: 70%; /* Move slightly to the left from 75% */
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 90%;
+  max-width: 55%; /* Change from 28rem to percentage-based for more flexibility */
+  opacity: 80%; /* Slightly less transparent */
+  z-index: 3;
+}
   
   .news-card {
     position: relative;
@@ -66,7 +67,7 @@
   /* Card Content */
   .news-card-content {
     padding: 1.5rem;
-    background: white;
+        background: white;
 
   }
   

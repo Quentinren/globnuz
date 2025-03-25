@@ -7,11 +7,14 @@ import LeftMenu from './components/LeftMenu'
 import NewsCard from './components/NewsCard'
 import GlobeDynamic from './components/GlobeDynamic';
 
-
-
 function App() {
+  // State to manage submenu opening
+  const [isSubmenuOpen, setIsSubmenuOpen] = useState(false);
+  
+  // New state to track selected coordinates for the globe
+  const [selectedCoordinates, setSelectedCoordinates] = useState(null);
 
-   // Sample news events data
+  // Sample news events data
   const newsEvents = [
     {
       "title": "Firefly Aerospace Achieves Historic Moon Landing",
@@ -70,27 +73,29 @@ function App() {
     }
   ];
   
+  // Function to handle navigation from NewsCard
+  const handleNavigateToArticle = (lat, lng) => {
+    setSelectedCoordinates({ lat, lng });
+  };
 
+  // Custom event handler for submenu state
+  const handleSubmenuToggle = (isOpen) => {
+    setIsSubmenuOpen(isOpen);
+  };
 
-
-
-    // Custom event handler for submenu state
-    const handleSubmenuToggle = (isOpen) => {
-      setIsSubmenuOpen(isOpen);
-    };
-
-  
   return (
-
-    <div className="app-container">
-        <Logo/>
-        <NewsCard newsEvents={newsEvents}/>
-        <GlobeDynamic newsEvents={newsEvents}/>
-        <LeftMenu onSubmenuToggle={handleSubmenuToggle} />
-
-        
-
-      </div>
+    <div className={`app-container ${isSubmenuOpen ? 'submenu-open' : ''}`}>
+      <Logo/>
+      <NewsCard 
+        newsEvents={newsEvents} 
+        onNavigateToArticle={handleNavigateToArticle}
+      />
+      <GlobeDynamic 
+        newsEvents={newsEvents}
+        navigateToCoordinates={selectedCoordinates} 
+      />
+      <LeftMenu onSubmenuToggle={handleSubmenuToggle} />
+    </div>
   );
 }
 

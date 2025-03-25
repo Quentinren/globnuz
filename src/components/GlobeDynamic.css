@@ -1,17 +1,26 @@
 .globe-container {
   position: absolute;
-  left: 0;
+  left: -25%;
   right: 0;
   top: 0;
   margin: 0;
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   overflow: hidden;
   touch-action: none; /* Prevents browser handling of touch gestures */
   /* Center the content horizontally */
   display: flex;
   justify-content: center;
   align-items: center;
+  transition: all 0.3s ease; /* Add smooth transitions */
+}
+
+/* For large screens, position the globe more to the left */
+@media (min-width: 1200px) {
+  .globe-container {
+    justify-content: flex-start;
+    width: 100%; /* Adjust the width to allow more space for news */
+  }
 }
 
 /* Style for labels */
