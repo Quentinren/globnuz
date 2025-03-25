@@ -19,10 +19,25 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates }) => {
       globeEl.current.pointOfView({
         lat: lat,
         lng: lng,
-        altitude: 1.5 // Control how close the view gets
+        altitude: 2 // Control how close the view gets
       }, 1000); // 1000ms animation duration
     }
   };
+
+
+  // Appearance of the Earth
+  const globeMaterial = new THREE.MeshPhongMaterial();
+  globeMaterial.color = new THREE.Color('#003366');
+  globeMaterial.background = new THREE.Color('#003366');
+  globeMaterial.emissiveIntensity = 10;
+  globeMaterial.showGraticules = true;
+  globeMaterial.showAtmosphere = true;
+  globeMaterial.atmosphereColor="rgba(65, 116, 197, 1)" ;// Light blue atmosphere
+
+
+
+
+
 
   // Handle navigation when navigateToCoordinates prop changes
   useEffect(() => {
@@ -55,8 +70,6 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates }) => {
     if (globeReady && globeEl.current) {
       const scene = globeEl.current.scene();
 
-      
-      
       // Create stars
       const starsGeometry = new THREE.BufferGeometry();
       const starsMaterial = new THREE.PointsMaterial({
@@ -76,7 +89,7 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates }) => {
         // Generate random spherical coordinates
         const theta = Math.random() * Math.PI * 2; // Angle around y-axis
         const phi = Math.acos((Math.random() * 2) - 1); // Angle from y-axis
-        const radius = 1000 + Math.random() * 500; // Distance from center
+        const radius = 1000 + Math.random() * 5000; // Distance from center
         
         // Convert to Cartesian coordinates
         const x = radius * Math.sin(phi) * Math.cos(theta);
@@ -93,12 +106,14 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates }) => {
         colors[i * 3 + 1] = 1; // Green always 1
         colors[i * 3 + 2] = whiteness * 0.5 + 0.5; // Blue varies from 0.5 to 1
         
+        sizes[i] = 3 + Math.random() * 15;
 
       }
       
       starsGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
       starsGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-      starsGeometry.setAttribute('size', new THREE.BufferAttribute(sizes, 5));
+      starsGeometry.setAttribute('size', new THREE.BufferAttribute(sizes, 3));
+
       
       const stars = new THREE.Points(starsGeometry, starsMaterial);
       scene.add(stars);
@@ -156,60 +171,25 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates }) => {
       
       // Initial camera position
       globeEl.current.pointOfView({
-        lat: 0, 
-        lng: 50,
+        lat: 50, 
+        lng: 10,
         altitude: 2.5
       });
 
       // Initialize camera distance
       const distance = globeEl.current.camera().position.length();
       setCameraDistance(distance);
-      updateZoomLevel(distance);
+
 
       // Add listener for camera changes
       globeEl.current.controls().addEventListener('move', () => {
         const newDistance = globeEl.current.camera().position.length();
         setCameraDistance(newDistance);
-        updateZoomLevel(newDistance);
+
       });
     }
   }, [globeReady]);
 
-  // Function to determine zoom level based on camera distance
-  const updateZoomLevel = (distance) => {
-    // These thresholds can be adjusted as needed
-    if (distance < 100) {
-      if(zoomLevel !== 4) setZoomLevel(4); // Very zoomed in
-    } else if (distance < 350) {
-      if(zoomLevel !== 3) setZoomLevel(3); // Medium zoom
-    } 
-    else if (distance < 700) {
-      if(zoomLevel !== 2) setZoomLevel(2); // Medium zoom
-    } else {
-      if(zoomLevel !== 1) setZoomLevel(1); // Far view
-    }
-  };
-
-  // Calculate label size based on zoom level
-  const getLabelSize = (d) => {
-    const baseSize = 1;
-    
-    switch (zoomLevel) {
-      case 4: 
-        return baseSize * 0.2; // Smaller when very zoomed in (many visible labels)
-      case 3: 
-        return baseSize * 0.4; // Smaller when zoomed in (many visible labels)
-      case 2:
-        return baseSize * 0.7; // Larger at medium zoom
-      default:
-        return baseSize; // Default size for far zoom
-    }
-  };
-  
-  // Determine label color
-  const getLabelColor = (d) => {
-      return 'rgba(255, 255, 255, 1)'; // White for other places
-  };
 
   // Formatter pour rendre les données d'actualités compatibles avec le format attendu par Globe
   const formattedNewsEvents = newsEvents.map(event => ({
@@ -226,8 +206,7 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates }) => {
       <Globe
 
         ref={globeEl}
-        globeImageUrl="//cdn.jsdelivr.net/npm/three-globe/example/img/earth-dark.jpg"
-
+        globeMaterial={globeMaterial}
 
         hexPolygonsData={countries.features}
         hexPolygonResolution={3}
@@ -235,7 +214,7 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates }) => {
         hexPolygonUseDots={true}
         hexPolygonColor={() => {
           // Générer un nombre aléatoire entre 128 (50% de blanc) et 255 (100% de blanc)
-          const intensity = Math.floor(20 + Math.random() * 150);
+          const intensity = Math.floor(128 + Math.random() * 126);
           // Convertir en hexadécimal et créer une couleur avec la même valeur pour R, G et B
           const hex = intensity.toString(16).padStart(2, '0');
           return `#${hex}${hex}${hex}`;
@@ -247,7 +226,6 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates }) => {
         
         // Points for news events
         pointsData={formattedNewsEvents}
-
         pointRadius={0.2}
         pointColor="point => 'rgba(255, 0, 0, 1)'"
         pointAltitude={0.01}
@@ -256,7 +234,7 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates }) => {
         // Radial lines from center to news events
         ringsData={formattedNewsEvents}
         ringColor={() => 'rgba(255, 0, 0, 0.7)'}
-        ringMaxRadius={4}
+        ringMaxRadius={3}
         
         
         // Custom three.js rendering for lines
@@ -294,15 +272,11 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates }) => {
         labelLat="lat"
         labelLng="lng"
         labelText="title"
-        labelSize={1}
+        labelSize={0.8}
         labelDotRadius={0.5}
-        labelColor={() => 'rgb(180, 196, 235)'}
+        labelColor={() => 'white'}
         labelResolution={2}
         labelAltitude={0.02}
-        
-        showGraticules={true}
-        showAtmosphere={true}
-        atmosphereColor="rgba(65, 116, 197, 0.3)" // Light blue atmosphere
         
         onGlobeReady={() => setGlobeReady(true)}
       />

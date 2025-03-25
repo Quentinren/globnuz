@@ -1,182 +1,196 @@
 /* newscard.css */
 
-/* Main container */
-.news-card-container {
+/* Main container - sidebar style */
+.news-sidebar-container {
   position: fixed;
-  top: 50%;
-  left: 70%; /* Move slightly to the left from 75% */
-  transform: translate(-50%, -50%);
-  width: 100%;
-  height: 90%;
-  max-width: 55%; /* Change from 28rem to percentage-based for more flexibility */
-  opacity: 80%; /* Slightly less transparent */
-  z-index: 3;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  width: 55vw; /* Default width for desktop */
+
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  overflow-y: auto;
+  transition: transform 0.3s ease;
 }
-  
-  .news-card {
-    position: relative;
-    overflow: hidden;
-    border-radius: 0.75rem;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+
+/* Toggle button for sidebar visibility */
+.news-sidebar-toggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  z-index: 101;
+  cursor: pointer;
+  border: none;
+}
+
+/* When sidebar is hidden */
+.news-sidebar-container.hidden {
+  transform: translateX(100%);
+}
+
+/* News Events List */
+.news-events-list {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Individual News Card */
+.news-event-card {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+  background-color: white;
+  opacity:0.8;
+}
+
+.news-event-card:hover {
+  transform: translateY(-3px);
+}
+
+/* Card Header */
+.news-card-header {
+  padding: 15px;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.news-card-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 5px;
+  color: black;
+}
+
+.news-card-source {
+  display: flex;
+  align-items: center;
+  font-size: 0.875rem;
+  color: #555;
+}
+
+.news-card-newspaper {
+  font-weight: 500;
+}
+
+.news-card-separator {
+  margin: 0 5px;
+}
+
+/* Card Image */
+.news-card-image-container {
+  height: 160px;
+  background-color: #f3f4f6;
+  position: relative;
+}
+
+.news-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Card Content */
+.news-card-content {
+  padding: 15px;
+  background: white;
+}
+
+.news-card-description {
+  color: #333;
+  margin-bottom: 15px;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+/* Meta Information */
+.news-card-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.875rem;
+  color: #555;
+}
+
+.news-card-meta-item {
+  display: flex;
+  align-items: center;
+}
+
+.news-card-meta-icon {
+  margin-right: 8px;
+  color: #555;
+}
+
+.news-card-link {
+  display: flex;
+  align-items: center;
+  color: #2563eb;
+  margin-top: 8px;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.news-card-link:hover {
+  color: #1e40af;
+}
+
+/* Theme color indicators */
+.news-event-card.theme-0 {
+  border-top: 4px solid #3b82f6;
+}
+
+.news-event-card.theme-1 {
+  border-top: 4px solid #10b981;
+}
+
+.news-event-card.theme-2 {
+  border-top: 4px solid #f97316;
+}
+
+.news-event-card.theme-3 {
+  border-top: 4px solid #f59e0b;
+}
+
+.news-event-card.theme-4 {
+  border-top: 4px solid #10b981;
+}
+
+/* Mobile responsive styles */
+@media (max-width: 768px) {
+  .news-sidebar-container {
+    width: 100%; /* Full width on mobile */
+    height: 100vh;
   }
   
-  /* Card Header */
+  .news-sidebar-toggle {
+    top: 10px;
+    right: 10px;
+  }
+  
   .news-card-header {
-    background: white;
-    height:2%;
-    padding: 1.5rem;
-    color: black;
-    border-bottom: 1px solid #eaeaea;
+    padding: 12px;
   }
   
   .news-card-title {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin-bottom: 0.25rem;
-    color: black;
+    font-size: 1.1rem;
   }
   
-  .news-card-source {
-    display: flex;
-    align-items: center;
-    font-size: 0.875rem;
-    color: black;
-  }
-  
-  .news-card-newspaper {
-    font-weight: 500;
-  }
-  
-  .news-card-separator {
-    margin: 0 0.5rem;
-  }
-  
-  /* Card Image */
-  .news-card-image-container {
-    height: 12rem;
-    background-color: #f3f4f6;
-    position: relative;
-  }
-  
-  .news-card-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  
-  /* Card Content */
   .news-card-content {
-    padding: 1.5rem;
-        background: white;
-
+    padding: 12px;
   }
   
-  .news-card-description {
-    color: black;
-    margin-bottom: 1rem;
+  .news-card-image-container {
+    height: 140px;
   }
-  
-  /* Meta Information */
-  .news-card-meta {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    font-size: 0.875rem;
-    color: black;
-  }
-  
-  .news-card-meta-item {
-    display: flex;
-    align-items: center;
-  }
-  
-  .news-card-meta-icon {
-    margin-right: 0.5rem;
-    color: #333;
-  }
-  
-  .news-card-link {
-    display: flex;
-    align-items: center;
-    color: #2563eb;
-    margin-top: 0.5rem;
-    text-decoration: none;
-    transition: color 0.3s ease;
-  }
-  
-  .news-card-link:hover {
-    color: #1e40af;
-  }
-  
-  /* Navigation Buttons */
-  .news-card-nav-button {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background-color: rgba(255, 255, 255, 0.8);
-    border-radius: 9999px;
-    padding: 0.5rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-    border: none;
-    cursor: pointer;
-    z-index: 10;
-  }
-  
-  .news-card-nav-button:hover {
-    background-color: rgba(255, 255, 255, 1);
-  }
-  
-  .news-card-nav-button svg {
-    color: #333;
-  }
-  
-  .news-card-prev {
-    left: 0.5rem;
-  }
-  
-  .news-card-next {
-    right: 0.5rem;
-  }
-  
-  /* Pagination Indicators */
-  .news-card-pagination {
-    position: absolute;
-    bottom: 0.75rem;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 0.25rem;
-  }
-  
-  .news-card-pagination-dot {
-    width: 0.5rem;
-    height: 0.5rem;
-    border-radius: 9999px;
-    background-color: #d1d5db;
-  }
-  
-  .news-card-pagination-dot.active {
-    background-color: #2563eb;
-  }
-  
-  /* For different gradient backgrounds, we'll use solid colors instead */
-  .news-card-theme-0 {
-    border-top: 4px solid #3b82f6;
-  }
-  
-  .news-card-theme-1 {
-    border-top: 4px solid #10b981;
-  }
-  
-  .news-card-theme-2 {
-    border-top: 4px solid #f97316;
-  }
-  
-  .news-card-theme-3 {
-    border-top: 4px solid #f59e0b;
-  }
-  
-  .news-card-theme-4 {
-    border-top: 4px solid #10b981;
-  }
+}

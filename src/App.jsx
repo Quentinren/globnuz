@@ -22,7 +22,7 @@ function App() {
       "author": "Space News Reporter",
       "newspaper": "Space Daily",
       "image": "https://example.com/images/firefly-moon-landing.jpg",
-      "externalLink": "https://picsum.photos/200/300",
+      "externalLink": "https://picsum.photos/800/800",
       "date": "March 2, 2025",
       "lat": 0.6741,
       "lng": 23.4729
@@ -33,7 +33,7 @@ function App() {
       "author": "Political Correspondent",
       "newspaper": "Global Politics",
       "image": "https://example.com/images/trump-zelenskyy-meeting.jpg",
-      "externalLink": "https://picsum.photos/300/400",
+      "externalLink": "https://picsum.photos/900/900",
       "date": "March 3, 2025",
       "lat": 38.8977,
       "lng": -77.0365
@@ -44,7 +44,7 @@ function App() {
       "author": "Science Journalist",
       "newspaper": "BioTech Times",
       "image": "https://example.com/images/woolly-mice.jpg",
-      "externalLink": "https://picsum.photos/400/500",
+      "externalLink": "https://picsum.photos/800/200",
       "date": "March 4, 2025",
       "lat": 42.3601,
       "lng": -71.0589
@@ -55,7 +55,7 @@ function App() {
       "author": "International Affairs Analyst",
       "newspaper": "World News",
       "image": "https://example.com/images/sudan-icj-case.jpg",
-      "externalLink": "https://picsum.photos/500/600",
+      "externalLink": "https://picsum.photos/500/800",
       "date": "March 5, 2025",
       "lat": 52.0800,
       "lng": 4.3245
@@ -66,7 +66,7 @@ function App() {
       "author": "Middle East Correspondent",
       "newspaper": "Daily News",
       "image": "https://example.com/images/syrian-crackdown.jpg",
-      "externalLink": "https://picsum.photos/300/00",
+      "externalLink": "https://picsum.photos/300/800",
       "date": "March 8, 2025",
       "lat": 35.0000,
       "lng": 38.0000

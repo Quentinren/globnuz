@@ -1,10 +1,10 @@
 .globe-container {
   position: absolute;
-  left: -25%;
   right: 0;
   top: 0;
+  left:-25%;
   margin: 0;
-  width: 100vw;
+  width: 150vw;
   height: 100vh;
   overflow: hidden;
   touch-action: none; /* Prevents browser handling of touch gestures */

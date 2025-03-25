@@ -14,7 +14,7 @@
   
 .left-menu {
   width: 40px;
-  background-color: rgba(72, 99, 166, 0.502);
+  background-color: rgba(255, 255, 255, 0.154);
   height: 100vh;
   display: flex;
   flex-direction: column;
@@ -38,7 +38,7 @@
   align-items: center;
   width: 100%;
   margin: 5px;
-  color: #b8b8b8;
+  color: #ffffff;
   cursor: pointer;
   transition: all 0.3s ease;
   position: relative;
@@ -78,7 +78,7 @@
   
 .sub-menu {
   width: 200px;
-  background-color: rgba(72, 99, 166, 0.402);
+  background-color: rgba(185, 200, 237, 0.3);
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
   margin-top: 20px;
   /* Animation plus douce */
