@@ -12,6 +12,54 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates }) => {
 
   const [countries, setCountries] = useState({ features: []});
 
+  // Define discrete zoom levels instead of continuous calculations
+  const [zoomCategory, setZoomCategory] = useState('medium'); // 'far', 'medium', 'close'
+  
+  // Update zoom category based on camera distance - only when significant changes occur
+  useEffect(() => {
+    // Only update zoom category when crossing thresholds
+    if (cameraDistance > 600 && zoomCategory !== 'far') {
+      setZoomCategory('far');
+    } else if (cameraDistance <= 600 && cameraDistance > 300 && zoomCategory !== 'medium') {
+      setZoomCategory('medium');
+    } else if (cameraDistance <= 300 && zoomCategory !== 'close') {
+      setZoomCategory('close');
+    }
+  }, [cameraDistance, zoomCategory]);
+  
+  // Calculate dynamic label size based on discrete zoom levels
+  const getDynamicLabelSize = (baseSize = 1, isCountry = false, isOcean = false, isSmallOcean = false) => {
+    // Use predefined sizes based on zoom category
+    if (isCountry) {
+      switch(zoomCategory) {
+        case 'far': return 0; // Hide when far
+        case 'medium': return baseSize * 0.6;
+        case 'close': return baseSize * 1.2;
+        default: return baseSize;
+      }
+    } 
+    else if (isOcean) {
+      // Small oceans get smaller labels
+      const sizeMultiplier = isSmallOcean ? 0.6 : 1;
+      
+      switch(zoomCategory) {
+        case 'far': return baseSize * 1.5 * sizeMultiplier;
+        case 'medium': return baseSize * 1.0 * sizeMultiplier;
+        case 'close': return baseSize * 0.5 * sizeMultiplier;
+        default: return baseSize * sizeMultiplier;
+      }
+    } 
+    else {
+      // News events
+      switch(zoomCategory) {
+        case 'far': return baseSize * 0.5;
+        case 'medium': return baseSize * 0.8;
+        case 'close': return baseSize * 1.2;
+        default: return baseSize;
+      }
+    }
+  };
+
   // Function to navigate to coordinates
   const goToCoordinates = (lat, lng) => {
     if (globeEl.current) {
@@ -24,7 +72,6 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates }) => {
     }
   };
 
-
   // Appearance of the Earth
   const globeMaterial = new THREE.MeshPhongMaterial();
   globeMaterial.color = new THREE.Color('#003366');
@@ -34,11 +81,6 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates }) => {
   globeMaterial.showAtmosphere = true;
   globeMaterial.atmosphereColor="rgba(65, 116, 197, 1)" ;// Light blue atmosphere
 
-
-
-
-
-
   // Handle navigation when navigateToCoordinates prop changes
   useEffect(() => {
     if (navigateToCoordinates && globeReady) {
@@ -47,22 +89,22 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates }) => {
   }, [navigateToCoordinates, globeReady]);
 
   useEffect(() => {
-  // load data
-  fetch('https://raw.githubusercontent.com/vasturiano/react-globe.gl/master/example/datasets/ne_110m_admin_0_countries.geojson')
-    .then(res => {
-      if (!res.ok) {
-        throw new Error(`Failed to fetch: ${res.status} ${res.statusText}`);
-      }
-      return res.json();
-    })
-    .then(data => {
-      console.log("GeoJSON data loaded:", data);
-      console.log("Number of features:", data.features.length);
-      setCountries(data);
-    })
-    .catch(error => {
-      console.error("Error loading GeoJSON:", error);
-    });
+    // load data
+    fetch('https://raw.githubusercontent.com/vasturiano/react-globe.gl/master/example/datasets/ne_110m_admin_0_countries.geojson')
+      .then(res => {
+        if (!res.ok) {
+          throw new Error(`Failed to fetch: ${res.status} ${res.statusText}`);
+        }
+        return res.json();
+      })
+      .then(data => {
+        console.log("GeoJSON data loaded:", data);
+        console.log("Number of features:", data.features.length);
+        setCountries(data);
+      })
+      .catch(error => {
+        console.error("Error loading GeoJSON:", error);
+      });
   }, []);
 
   // Create starfield background
@@ -107,13 +149,11 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates }) => {
         colors[i * 3 + 2] = whiteness * 0.5 + 0.5; // Blue varies from 0.5 to 1
         
         sizes[i] = 3 + Math.random() * 15;
-
       }
       
       starsGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
       starsGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
       starsGeometry.setAttribute('size', new THREE.BufferAttribute(sizes, 3));
-
       
       const stars = new THREE.Points(starsGeometry, starsMaterial);
       scene.add(stars);
@@ -145,9 +185,59 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates }) => {
     { properties: { name: "South Atlantic", latitude: -30, longitude: -15, isOcean: true } },
     { properties: { name: "North Pacific", latitude: 30, longitude: 180, isOcean: true } },
     { properties: { name: "South Pacific", latitude: -30, longitude: -150, isOcean: true } },
-    { properties: { name: "Caribbean Sea", latitude: 17, longitude: -73, isOcean: true } },
-    { properties: { name: "Mediterranean Sea", latitude: 35, longitude: 18, isOcean: true } }
+    { properties: { name: "Caribbean Sea", latitude: 17, longitude: -73, isOcean: true, smallOcean: true } },
+    { properties: { name: "Mediterranean Sea", latitude: 35, longitude: 18, isOcean: true, smallOcean: true } }
   ];
+
+  // Format ocean data for the globe
+  const formattedOceans = oceans.map(ocean => ({
+    lat: ocean.properties.latitude,
+    lng: ocean.properties.longitude,
+    name: ocean.properties.name,
+    size: getDynamicLabelSize(1.2, false, true, ocean.properties.smallOcean),
+    color: 'rgba(100, 200, 255, 0.8)',
+    isOcean: true,
+    smallOcean: ocean.properties.smallOcean
+  }));
+
+  // Format country data for labels
+  const countryLabels = countries.features
+    .filter(country => country.properties && country.properties.ADMIN)
+    .map(country => {
+      // Calculate centroid (simplified)
+      let lat = 0, lng = 0, count = 0;
+      
+      // For Polygon geometry
+      if (country.geometry.type === 'Polygon' && country.geometry.coordinates[0]) {
+        country.geometry.coordinates[0].forEach(coord => {
+          lng += coord[0];
+          lat += coord[1];
+          count++;
+        });
+      } 
+      // For MultiPolygon geometry
+      else if (country.geometry.type === 'MultiPolygon' && country.geometry.coordinates[0]) {
+        country.geometry.coordinates[0][0].forEach(coord => {
+          lng += coord[0];
+          lat += coord[1];
+          count++;
+        });
+      }
+      
+      if (count > 0) {
+        lat /= count;
+        lng /= count;
+      }
+      
+      return {
+        lat: lat,
+        lng: lng,
+        name: country.properties.ADMIN,
+        size: getDynamicLabelSize(0.8, true, false),
+        color: 'rgba(255, 255, 255, 0.8)',
+        isCountry: true
+      };
+    });
 
   // Continent data with coordinates
   const continents = [
@@ -168,6 +258,7 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates }) => {
       globeEl.current.controls().enableZoom = true;
       globeEl.current.controls().enableRotate = true;
       globeEl.current.controls().autoRotateSpeed = 0.07;
+      globeEl.current.controls().zoomSpeed = 0.8; // Slightly slower zoom for better performance
       
       // Initial camera position
       globeEl.current.pointOfView({
@@ -179,32 +270,40 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates }) => {
       // Initialize camera distance
       const distance = globeEl.current.camera().position.length();
       setCameraDistance(distance);
+      
+      // Throttle camera change events to improve performance
+      let lastUpdate = 0;
+      const updateInterval = 200; // ms between updates
 
-
-      // Add listener for camera changes
-      globeEl.current.controls().addEventListener('move', () => {
-        const newDistance = globeEl.current.camera().position.length();
-        setCameraDistance(newDistance);
-
+      // Add throttled listener for camera changes
+      globeEl.current.controls().addEventListener('scroll', () => {
+        const now = Date.now();
+        if (now - lastUpdate > updateInterval) {
+          const newDistance = globeEl.current.camera().position.length();
+          setCameraDistance(newDistance);
+          lastUpdate = now;
+        }
       });
     }
   }, [globeReady]);
-
 
   // Formatter pour rendre les données d'actualités compatibles avec le format attendu par Globe
   const formattedNewsEvents = newsEvents.map(event => ({
     lat: event.lat,
     lng: event.lng,
-    size: 0.8,
+    size: getDynamicLabelSize(0.8),
     color: 'red',
     title: event.title,
-    location: event.newspaper
+    location: event.newspaper,
+    isNews: true
   }));
+
+  // Combine all label data
+  const allLabels = [...formattedNewsEvents, ...formattedOceans, ...countryLabels];
 
   return (
     <div className="globe-container">
       <Globe
-
         ref={globeEl}
         globeMaterial={globeMaterial}
 
@@ -212,9 +311,8 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates }) => {
         polygonResolution={3}
         polygonMargin={0.02}
         polygonUseDots={true}
-        polygonAltitude={0.007}
-        polygonSideColor={'#808080'}
-        //polygonAltitude={1}
+        polygonAltitude={0.0063}
+        polygonSideColor={() => '#505050'}
         polygonCapColor={() => {
           // Générer un nombre aléatoire entre 128 (50% de blanc) et 255 (100% de blanc)
           const intensity = Math.floor(128 + Math.random() * 126);
@@ -238,7 +336,6 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates }) => {
         ringsData={formattedNewsEvents}
         ringColor={() => 'rgba(255, 0, 0, 0.7)'}
         ringMaxRadius={3}
-        
         
         // Custom three.js rendering for lines
         customLayerData={formattedNewsEvents}
@@ -270,16 +367,20 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates }) => {
           // Mettre à jour si nécessaire
         }}
         
-        // Labels for locations
-        labelsData={formattedNewsEvents}
+        // Labels for locations (all combined)
+        labelsData={allLabels}
         labelLat="lat"
         labelLng="lng"
-        labelText="title"
-        labelSize={0.5}
+        labelText={d => d.isCountry ? d.name : (d.isOcean ? d.name : d.title)}
+        labelSize={d => d.isCountry ? getDynamicLabelSize(0.8, true, false) : 
+                       (d.isOcean ? getDynamicLabelSize(1.2, false, true, d.smallOcean) : 
+                                   getDynamicLabelSize(0.8))}
         labelDotRadius={0.5}
-        labelColor={() => 'white'}
+        labelColor={d => d.isOcean ? 'rgba(100, 200, 255, 0.8)' : 
+                        (d.isCountry ? 'rgba(10, 10, 19, 0.9)' : 'white')}
         labelResolution={2}
-        labelAltitude={0.02}
+        labelAltitude={d => d.isOcean ? 0.03 : (d.isCountry ? 0.01 : 0.02)}
+        labelIncludeDot={d => !d.isOcean && !d.isCountry}
         
         onGlobeReady={() => setGlobeReady(true)}
       />
