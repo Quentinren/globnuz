@@ -173,21 +173,46 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates }) => {
     }
   }, [globeReady]);
 
-  // Ocean data with coordinates
   const oceans = [
+    // 🌊 Major Oceans
     { properties: { name: "Atlantic Ocean", latitude: 0, longitude: -30, isOcean: true } },
     { properties: { name: "Pacific Ocean", latitude: 0, longitude: -170, isOcean: true } },
     { properties: { name: "Indian Ocean", latitude: -20, longitude: 80, isOcean: true } },
     { properties: { name: "Southern Ocean", latitude: -60, longitude: 0, isOcean: true } },
     { properties: { name: "Arctic Ocean", latitude: 85, longitude: 0, isOcean: true } },
-    // Additional ocean regions
-    { properties: { name: "North Atlantic", latitude: 40, longitude: -40, isOcean: true } },
-    { properties: { name: "South Atlantic", latitude: -30, longitude: -15, isOcean: true } },
-    { properties: { name: "North Pacific", latitude: 30, longitude: 180, isOcean: true } },
-    { properties: { name: "South Pacific", latitude: -30, longitude: -150, isOcean: true } },
+  
+    // 🌊 Ocean Regions
+    { properties: { name: "North Atlantic Ocean", latitude: 40, longitude: -40, isOcean: true } },
+    { properties: { name: "South Atlantic Ocean", latitude: -30, longitude: -15, isOcean: true } },
+    { properties: { name: "North Pacific Ocean", latitude: 30, longitude: 180, isOcean: true } },
+    { properties: { name: "South Pacific Ocean", latitude: -30, longitude: -150, isOcean: true } },
+  
+    // 🌊 Major Seas
     { properties: { name: "Caribbean Sea", latitude: 17, longitude: -73, isOcean: true, smallOcean: true } },
-    { properties: { name: "Mediterranean Sea", latitude: 35, longitude: 18, isOcean: true, smallOcean: true } }
+    { properties: { name: "Mediterranean Sea", latitude: 35, longitude: 18, isOcean: true, smallOcean: true } },
+    { properties: { name: "Baltic Sea", latitude: 56, longitude: 20, isOcean: true, smallOcean: true } },
+    { properties: { name: "Black Sea", latitude: 44, longitude: 35, isOcean: true, smallOcean: true } },
+    { properties: { name: "Red Sea", latitude: 20, longitude: 38, isOcean: true, smallOcean: true } },
+    { properties: { name: "Arabian Sea", latitude: 15, longitude: 65, isOcean: true, smallOcean: true } },
+    { properties: { name: "South China Sea", latitude: 10, longitude: 115, isOcean: true, smallOcean: true } },
+    { properties: { name: "Bering Sea", latitude: 58, longitude: -175, isOcean: true, smallOcean: true } },
+  
+    // 🌊 Small but Important Seas
+    { properties: { name: "Bay of Bengal", latitude: 12, longitude: 90, isOcean: true, smallOcean: true } },
+    { properties: { name: "Gulf of Mexico", latitude: 25, longitude: -90, isOcean: true, smallOcean: true } },
+    { properties: { name: "Andaman Sea", latitude: 10, longitude: 95, isOcean: true, smallOcean: true } },
+    { properties: { name: "East China Sea", latitude: 27, longitude: 125, isOcean: true, smallOcean: true } },
+    { properties: { name: "Yellow Sea", latitude: 37, longitude: 123, isOcean: true, smallOcean: true } },
+    { properties: { name: "Caspian Sea", latitude: 41, longitude: 51, isOcean: true, smallOcean: true } },
+    { properties: { name: "Aegean Sea", latitude: 38, longitude: 25, isOcean: true, smallOcean: true } },
+    { properties: { name: "Adriatic Sea", latitude: 42, longitude: 15, isOcean: true, smallOcean: true } },
+    { properties: { name: "Coral Sea", latitude: -18, longitude: 155, isOcean: true, smallOcean: true } },
+    { properties: { name: "Tasman Sea", latitude: -40, longitude: 160, isOcean: true, smallOcean: true } },
+    { properties: { name: "Labrador Sea", latitude: 55, longitude: -55, isOcean: true, smallOcean: true } },
+    { properties: { name: "Norwegian Sea", latitude: 68, longitude: 5, isOcean: true, smallOcean: true } },
+    { properties: { name: "Barents Sea", latitude: 75, longitude: 45, isOcean: true, smallOcean: true } }
   ];
+  
 
   // Format ocean data for the globe
   const formattedOceans = oceans.map(ocean => ({
@@ -257,7 +282,7 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates }) => {
       globeEl.current.controls().autoRotate = true;
       globeEl.current.controls().enableZoom = true;
       globeEl.current.controls().enableRotate = true;
-      globeEl.current.controls().autoRotateSpeed = 0.07;
+      globeEl.current.controls().autoRotateSpeed = 0.08;
       globeEl.current.controls().zoomSpeed = 0.8; // Slightly slower zoom for better performance
       
       // Initial camera position
@@ -293,6 +318,7 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates }) => {
     lng: event.lng,
     size: getDynamicLabelSize(0.8),
     color: 'red',
+    isNews: true,
     title: event.title,
     location: event.newspaper,
     isNews: true
@@ -327,15 +353,18 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates }) => {
         
         // Points for news events
         pointsData={formattedNewsEvents}
-        pointRadius={0.2}
-        pointColor="point => 'rgba(255, 0, 0, 1)'"
-        pointAltitude={0.01}
+        pointRadius={0.08}
+        pointColor="point => 'rgba(230, 30, 10, 1)'"
+        pointAltitude={0.001}
         pointsMerge={false}
         
         // Radial lines from center to news events
         ringsData={formattedNewsEvents}
+        ringPropagationSpeed={0.2}
+        ringRepeatPeriod={500}
         ringColor={() => 'rgba(255, 0, 0, 0.7)'}
-        ringMaxRadius={3}
+        ringMaxRadius={1}
+        ringAltitude={0.01}
         
         // Custom three.js rendering for lines
         customLayerData={formattedNewsEvents}
@@ -372,12 +401,13 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates }) => {
         labelLat="lat"
         labelLng="lng"
         labelText={d => d.isCountry ? d.name : (d.isOcean ? d.name : d.title)}
-        labelSize={d => d.isCountry ? getDynamicLabelSize(0.8, true, false) : 
+        labelSize={d => d.isCountry ? getDynamicLabelSize(0.7, true, false) : 
                        (d.isOcean ? getDynamicLabelSize(1.2, false, true, d.smallOcean) : 
-                                   getDynamicLabelSize(0.8))}
+                                   getDynamicLabelSize(0.4))}
         labelDotRadius={0.5}
         labelColor={d => d.isOcean ? 'rgba(100, 200, 255, 0.8)' : 
-                        (d.isCountry ? 'rgba(10, 10, 19, 0.9)' : 'white')}
+                        (d.isCountry ? 'rgba(30, 30, 30, 0.9)' : 
+                        (d.isNews ? 'rgba(240, 30, 30, 0.9)' : 'white'))}
         labelResolution={2}
         labelAltitude={d => d.isOcean ? 0.03 : (d.isCountry ? 0.01 : 0.02)}
         labelIncludeDot={d => !d.isOcean && !d.isCountry}
