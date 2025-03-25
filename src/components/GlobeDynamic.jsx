@@ -190,12 +190,21 @@ const GlobeDynamic = ({ newsEvents }) => {
   const getLabelColor = (d) => {
       return 'rgba(255, 255, 255, 1)'; // White for other places
   };
-  
+
+  // Formatter pour rendre les données d'actualités compatibles avec le format attendu par Globe
+  const formattedNewsEvents = newsEvents.map(event => ({
+    lat: event.lat,
+    lng: event.lng,
+    size: 0.8,
+    color: 'red',
+    title: event.title,
+    location: event.newspaper
+  }));
+
   return (
     <div className="globe-container">
       <Globe
         ref={globeEl}
-
         globeImageUrl="//cdn.jsdelivr.net/npm/three-globe/example/img/earth-dark.jpg"
         
         hexPolygonsData={countries.features}
@@ -214,25 +223,61 @@ const GlobeDynamic = ({ newsEvents }) => {
           <div>Population: <i>{d.POP_EST}</i></div>
         </div>}
         
-        /*
-        labelsData={[continents]}
-        labelLat={d => d.properties.latitude}
-        labelLng={d => d.properties.longitude}
-        labelText={d => d.properties.name}
-        labelSize={d => {
-          // Consistent sizing calculation for all label types
-          const base = getLabelSize(d);
-          return base;
+        // Points for news events
+        pointsData={formattedNewsEvents}
+        pointLabel={d => `<div class="globe-label">${d.title}<br/>${d.location}</div>`}
+        pointRadius={0.2}
+        pointColor="point => 'rgba(255, 0, 0, 1)'"
+        pointAltitude={0.01}
+        pointsMerge={false}
+        
+        // Radial lines from center to news events
+        ringsData={formattedNewsEvents}
+        ringColor={() => 'rgba(255, 0, 0, 0.7)'}
+        ringMaxRadius={4}
+        
+        
+        // Custom three.js rendering for lines
+        customLayerData={formattedNewsEvents}
+        customThreeObject={d => {
+          // Créer une ligne qui va du centre à la surface du globe (et légèrement au-delà)
+          const startVec = new THREE.Vector3(0, 0, 0); // Centre du globe
+          
+          // Calculer le point sur la surface du globe
+          const lat = d.lat * Math.PI / 180;
+          const lng = d.lng * Math.PI / 180;
+          const r = 1.05; // Rayon légèrement supérieur à 1 pour dépasser
+          
+          const endVec = new THREE.Vector3(
+            r * Math.cos(lat) * Math.sin(lng),
+            r * Math.sin(lat),
+            r * Math.cos(lat) * Math.cos(lng)
+          );
+          
+          // Créer la géométrie pour la ligne
+          const geometry = new THREE.BufferGeometry().setFromPoints([startVec, endVec]);
+          
+          // Matériau rouge pour la ligne
+          const material = new THREE.LineBasicMaterial({ color: 'red', linewidth: 2 });
+          
+          // Créer la ligne
+          return new THREE.Line(geometry, material);
         }}
-        labelAltitude={d => {
-          // Ensure consistent altitude for each label type
-          if (d.properties.isOcean) return 0.01;
-          if (d.properties.isContinent) return 0.05;
-          return 0.005;
+        customThreeObjectUpdate={(obj, d) => {
+          // Mettre à jour si nécessaire
         }}
-        labelColor={getLabelColor}
+        
+        // Labels for locations
+        labelsData={formattedNewsEvents}
+        labelLat="lat"
+        labelLng="lng"
+        labelText="title"
+        labelSize={1}
+        labelDotRadius={0.5}
+        labelColor={() => '	rgb(127, 0, 255)'}
         labelResolution={2}
-        */
+        labelAltitude={0.02}
+        
         showGraticules={true}
         showAtmosphere={true}
         atmosphereColor="rgba(65, 116, 197, 0.3)" // Light blue atmosphere
