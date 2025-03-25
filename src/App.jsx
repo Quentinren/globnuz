@@ -1,4 +1,3 @@
-// App.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 import { fetchCountriesData, fetchPlacesData } from './services/globeDataService';
@@ -86,10 +85,10 @@ function App() {
 
   return (
     <div className={`app-container ${isSubmenuOpen ? 'submenu-open' : ''}`}>
-       {/* Gradient overlay from transparent to black (right half of screen) */}
-       <div className="gradient-overlay"></div>
+      {/* Gradient overlay from transparent to black (right half of screen) */}
+      <div className="gradient-overlay"></div>
+      
       <Logo/>
-
       <NewsCard 
         newsEvents={newsEvents} 
         onNavigateToArticle={handleNavigateToArticle}
@@ -98,7 +97,7 @@ function App() {
         newsEvents={newsEvents}
         navigateToCoordinates={selectedCoordinates} 
       />
-        <BottomMenu onSubmenuToggle={handleSubmenuToggle} />
+      <BottomMenu onSubmenuToggle={handleSubmenuToggle} />
     </div>
   );
 }

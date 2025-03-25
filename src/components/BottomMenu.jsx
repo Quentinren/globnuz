@@ -1,5 +1,5 @@
 // BottomMenu.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Layers, 
   Newspaper, 
@@ -26,7 +26,7 @@ import {
 } from 'lucide-react';
 import './BottomMenu.css';
 
-const BottomMenu = () => {
+const BottomMenu = ({ onSubmenuToggle }) => {
   const [activeSubmenu, setActiveSubmenu] = useState(null);
   const [layerToggles, setLayerToggles] = useState({
     temperature: false,
@@ -78,6 +78,13 @@ const BottomMenu = () => {
     { id: 'europe', label: 'Europe' },
     { id: 'oceania', label: 'Oceania' }
   ];
+
+  useEffect(() => {
+    // Notify parent component about submenu state changes
+    if (onSubmenuToggle) {
+      onSubmenuToggle(activeSubmenu !== null);
+    }
+  }, [activeSubmenu, onSubmenuToggle]);
 
   const toggleSubmenu = (menuId) => {
     setActiveSubmenu(activeSubmenu === menuId ? null : menuId);
@@ -170,7 +177,14 @@ const BottomMenu = () => {
           </div>
         )}
 
-
+        {/* Display current active layers */}
+        {activeLayers.length > 0 && (
+          <div className="current-display">
+            Showing: {activeLayers.map(layer => 
+              layer.charAt(0).toUpperCase() + layer.slice(1)
+            ).join(', ')}
+          </div>
+        )}
       </div>
 
       {/* Zoom Controls */}
