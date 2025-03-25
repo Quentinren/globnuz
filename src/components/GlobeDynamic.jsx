@@ -213,7 +213,7 @@ const GlobeDynamic = ({ newsEvents }) => {
         hexPolygonUseDots={true}
         hexPolygonColor={() => {
           // Générer un nombre aléatoire entre 128 (50% de blanc) et 255 (100% de blanc)
-          const intensity = Math.floor(128 + Math.random() * 128);
+          const intensity = Math.floor(20 + Math.random() * 150);
           // Convertir en hexadécimal et créer une couleur avec la même valeur pour R, G et B
           const hex = intensity.toString(16).padStart(2, '0');
           return `#${hex}${hex}${hex}`;
@@ -225,7 +225,7 @@ const GlobeDynamic = ({ newsEvents }) => {
         
         // Points for news events
         pointsData={formattedNewsEvents}
-        pointLabel={d => `<div class="globe-label">${d.title}<br/>${d.location}</div>`}
+
         pointRadius={0.2}
         pointColor="point => 'rgba(255, 0, 0, 1)'"
         pointAltitude={0.01}
@@ -274,7 +274,7 @@ const GlobeDynamic = ({ newsEvents }) => {
         labelText="title"
         labelSize={1}
         labelDotRadius={0.5}
-        labelColor={() => '	rgb(127, 0, 255)'}
+        labelColor={() => 'rgb(180, 196, 235)'}
         labelResolution={2}
         labelAltitude={0.02}
         

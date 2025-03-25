@@ -14,61 +14,62 @@ function App() {
    // Sample news events data
   const newsEvents = [
     {
-      title: "Climate Summit Reaches Historic Agreement",
-      description: "World leaders agreed on ambitious targets to reduce carbon emissions by 50% by 2030.",
-      author: "Jane Smith",
-      newspaper: "Global News",
-      image: "https://example.com/images/climate-summit.jpg",
-      externalLink: "https://example.com/news/climate-summit",
-      date: "March 22, 2025",
-      lat: 48.8566,
-      lng: 2.3522 // Paris
+      "title": "Firefly Aerospace Achieves Historic Moon Landing",
+      "description": "Firefly Aerospace becomes the first commercial company to successfully land on the Moon without technical issues.",
+      "author": "Space News Reporter",
+      "newspaper": "Space Daily",
+      "image": "https://example.com/images/firefly-moon-landing.jpg",
+      "externalLink": "https://picsum.photos/200/300",
+      "date": "March 2, 2025",
+      "lat": 0.6741,
+      "lng": 23.4729
     },
     {
-      title: "New Marine Sanctuary Established",
-      description: "The world's largest marine protected area has been designated in the Pacific Ocean.",
-      author: "John Doe",
-      newspaper: "Ocean Times",
-      image: "https://example.com/images/marine-sanctuary.jpg",
-      externalLink: "https://example.com/news/marine-sanctuary",
-      date: "March 15, 2025",
-      lat: -8.5,
-      lng: -124.5 // Pacific Ocean
+      "title": "Trump Administration Pauses Military Aid to Ukraine",
+      "description": "The U.S. pauses military aid to Ukraine following a meeting between President Trump and President Zelenskyy.",
+      "author": "Political Correspondent",
+      "newspaper": "Global Politics",
+      "image": "https://example.com/images/trump-zelenskyy-meeting.jpg",
+      "externalLink": "https://picsum.photos/300/400",
+      "date": "March 3, 2025",
+      "lat": 38.8977,
+      "lng": -77.0365
     },
     {
-      title: "Tech Conference Showcases AI Innovations",
-      description: "Leading technology companies revealed breakthrough AI systems that can solve complex problems.",
-      author: "Robert Chen",
-      newspaper: "Tech Daily",
-      image: "https://example.com/images/tech-conference.jpg",
-      externalLink: "https://example.com/news/tech-conference",
-      date: "March 20, 2025",
-      lat: 37.7749,
-      lng: -122.4194 // San Francisco
+      "title": "Colossal Biosciences Creates Woolly Mice",
+      "description": "Scientists create genetically modified mice with woolly mammoth traits as part of de-extinction efforts.",
+      "author": "Science Journalist",
+      "newspaper": "BioTech Times",
+      "image": "https://example.com/images/woolly-mice.jpg",
+      "externalLink": "https://picsum.photos/400/500",
+      "date": "March 4, 2025",
+      "lat": 42.3601,
+      "lng": -71.0589
     },
     {
-      title: "Archaeological Discovery in Egypt",
-      description: "Archaeologists have uncovered a previously unknown tomb with remarkable artifacts.",
-      author: "Sarah Johnson",
-      newspaper: "History Today",
-      image: "https://example.com/images/egypt-discovery.jpg",
-      externalLink: "https://example.com/news/egypt-discovery",
-      date: "March 18, 2025",
-      lat: 25.6872,
-      lng: 32.6396 // Luxor
+      "title": "Sudan Files Genocide Case Against UAE",
+      "description": "Sudan files a case against the UAE at the International Court of Justice, alleging complicity in genocide.",
+      "author": "International Affairs Analyst",
+      "newspaper": "World News",
+      "image": "https://example.com/images/sudan-icj-case.jpg",
+      "externalLink": "https://picsum.photos/500/600",
+      "date": "March 5, 2025",
+      "lat": 52.0800,
+      "lng": 4.3245
     },
     {
-      title: "Amazon Rainforest Conservation Initiative",
-      description: "New program launched to protect 1 million hectares of rainforest from deforestation.",
-      author: "Carlos Mendes",
-      newspaper: "Environment Journal",
-      image: "https://example.com/images/amazon-conservation.jpg",
-      externalLink: "https://example.com/news/amazon-conservation",
-      date: "March 21, 2025",
-      lat: -3.4653,
-      lng: -62.2159 // Amazon Rainforest
+      "title": "Over 1,000 Killed in Syrian Crackdown",
+      "description": "Syrian government forces kill over 1,000 people in a crackdown in the Alawite region.",
+      "author": "Middle East Correspondent",
+      "newspaper": "Daily News",
+      "image": "https://example.com/images/syrian-crackdown.jpg",
+      "externalLink": "https://picsum.photos/300/00",
+      "date": "March 8, 2025",
+      "lat": 35.0000,
+      "lng": 38.0000
     }
   ];
+  
 
 
 
@@ -83,7 +84,7 @@ function App() {
 
     <div className="app-container">
         <Logo/>
-        <NewsCard/>
+        <NewsCard newsEvents={newsEvents}/>
         <GlobeDynamic newsEvents={newsEvents}/>
         <LeftMenu onSubmenuToggle={handleSubmenuToggle} />
 
