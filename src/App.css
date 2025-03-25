@@ -1,0 +1,62 @@
+/* App.css - Avec marges ajustées */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, 
+    Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  background-color: #000;
+  color: white;
+  overflow-x: hidden;
+}
+
+.app-container {
+  min-width: 100vw;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  /* Ajout de marge à gauche quand le menu est fermé */
+  padding-left: 100px;
+  /* Animation plus douce */
+  transition: padding-left 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+h1 {
+  margin-top: 70px; /* Increased to make room for logo */
+  margin-bottom: 20px;
+  color: #4fc3f7;
+  text-shadow: 0 0 10px rgba(79, 195, 247, 0.5);
+}
+
+.globe-container {
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(79, 195, 247, 0.3);
+  max-width: 100%;
+}
+
+/* Style adjustments when sub-menu is open */
+.app-container.submenu-open {
+  padding-left: 310px; /* Ajusté pour le nouveau design */
+}
+
+/* Make the globe responsive */
+@media (max-width: 768px) {
+  .app-container {
+    padding-left: 80px;
+  }
+  
+  .app-container.submenu-open {
+    padding-left: 250px;
+  }
+  
+  .globe-container {
+    width: 100%;
+    height: auto;
+  }
+  
+  h1 {
+    font-size: 1.5rem;
+  }
+}
