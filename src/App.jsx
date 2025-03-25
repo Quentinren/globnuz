@@ -86,7 +86,7 @@ function App() {
   return (
     <div className={`app-container ${isSubmenuOpen ? 'submenu-open' : ''}`}>
       {/* Gradient overlay from transparent to black (right half of screen) */}
-      <div className="gradient-overlay"></div>
+
       
       <Logo/>
       <NewsCard 
@@ -98,6 +98,7 @@ function App() {
         navigateToCoordinates={selectedCoordinates} 
       />
       <BottomMenu onSubmenuToggle={handleSubmenuToggle} />
+      <div className="gradient-overlay"></div>
     </div>
   );
 }

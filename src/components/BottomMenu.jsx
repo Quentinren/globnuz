@@ -177,14 +177,6 @@ const BottomMenu = ({ onSubmenuToggle }) => {
           </div>
         )}
 
-        {/* Display current active layers */}
-        {activeLayers.length > 0 && (
-          <div className="current-display">
-            Showing: {activeLayers.map(layer => 
-              layer.charAt(0).toUpperCase() + layer.slice(1)
-            ).join(', ')}
-          </div>
-        )}
       </div>
 
       {/* Zoom Controls */}
