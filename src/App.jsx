@@ -4,6 +4,7 @@ import './App.css';
 import { fetchCountriesData, fetchPlacesData } from './services/globeDataService';
 import Logo from './components/Logo'
 import LeftMenu from './components/LeftMenu'
+import BottomMenu from './components/BottomMenu'
 import NewsCard from './components/NewsCard'
 import GlobeDynamic from './components/GlobeDynamic';
 
@@ -85,7 +86,10 @@ function App() {
 
   return (
     <div className={`app-container ${isSubmenuOpen ? 'submenu-open' : ''}`}>
+       {/* Gradient overlay from transparent to black (right half of screen) */}
+       <div className="gradient-overlay"></div>
       <Logo/>
+
       <NewsCard 
         newsEvents={newsEvents} 
         onNavigateToArticle={handleNavigateToArticle}
@@ -94,7 +98,7 @@ function App() {
         newsEvents={newsEvents}
         navigateToCoordinates={selectedCoordinates} 
       />
-      <LeftMenu onSubmenuToggle={handleSubmenuToggle} />
+        <BottomMenu onSubmenuToggle={handleSubmenuToggle} />
     </div>
   );
 }
