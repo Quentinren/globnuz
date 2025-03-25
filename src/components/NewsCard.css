@@ -30,6 +30,7 @@
   z-index: 101;
   cursor: pointer;
   border: none;
+  opacity:0;
 }
 
 /* When sidebar is hidden */

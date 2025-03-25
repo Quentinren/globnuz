@@ -2,9 +2,9 @@
   position: absolute;
   right: 0;
   top: 0;
-  left:-25%;
+  left:-25vw;
   margin: 0;
-  width: 150vw;
+  
   height: 100vh;
   overflow: hidden;
   touch-action: none; /* Prevents browser handling of touch gestures */
@@ -19,7 +19,6 @@
 @media (min-width: 1200px) {
   .globe-container {
     justify-content: flex-start;
-    width: 100%; /* Adjust the width to allow more space for news */
   }
 }
 
@@ -67,12 +66,3 @@ canvas {
   -ms-interpolation-mode: nearest-neighbor;
 }
 
-/* Make sure the globe is centered on all devices */
-.globe-container canvas {
-  max-width: 100%;
-  object-fit: contain;
-  /* Ensure the globe stays centered */
-  position: relative;
-  left: auto;
-  right: auto;
-}

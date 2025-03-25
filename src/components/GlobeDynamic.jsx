@@ -208,18 +208,21 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates }) => {
         ref={globeEl}
         globeMaterial={globeMaterial}
 
-        hexPolygonsData={countries.features}
-        hexPolygonResolution={3}
-        hexPolygonMargin={0.3}
-        hexPolygonUseDots={true}
-        hexPolygonColor={() => {
+        polygonsData={countries.features}
+        polygonResolution={3}
+        polygonMargin={0.02}
+        polygonUseDots={true}
+        polygonAltitude={0.007}
+        polygonSideColor={'#808080'}
+        //polygonAltitude={1}
+        polygonCapColor={() => {
           // Générer un nombre aléatoire entre 128 (50% de blanc) et 255 (100% de blanc)
           const intensity = Math.floor(128 + Math.random() * 126);
           // Convertir en hexadécimal et créer une couleur avec la même valeur pour R, G et B
           const hex = intensity.toString(16).padStart(2, '0');
           return `#${hex}${hex}${hex}`;
         }}
-        hexPolygonLabel={({ properties: d }) => <div>
+        polygonLabel={({ properties: d }) => <div>
           <div><b>{d.ADMIN} ({d.ISO_A2})</b></div>
           <div>Population: <i>{d.POP_EST}</i></div>
         </div>}
@@ -272,7 +275,7 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates }) => {
         labelLat="lat"
         labelLng="lng"
         labelText="title"
-        labelSize={0.8}
+        labelSize={0.5}
         labelDotRadius={0.5}
         labelColor={() => 'white'}
         labelResolution={2}

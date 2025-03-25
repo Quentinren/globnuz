@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ExternalLink, Calendar, MapPin, Menu, X } from 'lucide-react';
+import { Globe, Calendar, MapPin, Menu, X } from 'lucide-react';
 import './NewsCard.css';
 
 const NewsCard = ({ newsEvents, onNavigateToArticle }) => {
@@ -92,8 +92,8 @@ const NewsCard = ({ newsEvents, onNavigateToArticle }) => {
                     onClick={(e) => handleReadArticle(e, event.lat, event.lng)}
                     className="news-card-link"
                   >
-                    <ExternalLink size={16} className="news-card-meta-icon" /> 
-                    <span>Read full article</span>
+                    <Globe size={16} className="news-card-meta-icon" /> 
+                    <span>Globe location</span>
                   </a>
                 </div>
               </div>
