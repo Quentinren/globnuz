@@ -245,3 +245,32 @@
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     z-index: 999;
   }
+
+  .region-submenu {
+    position: absolute;
+    left: 105%;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1300;
+  }
+  
+  .filter-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    border-radius: 4px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--icon-color, #666);
+  }
+  
+  .filter-button:hover {
+    background-color: var(--button-hover, #f0f0f0);
+  }
+  
+  .filter-button.active {
+    color: var(--active-color, #0088ff);
+    background-color: var(--active-bg, #e6f3ff);
+  }

@@ -26,6 +26,38 @@ import {
 } from 'lucide-react';
 import './BottomMenu.css';
 
+// Add this CSS to your BottomMenu.css file if these styles don't exist
+/*
+.region-submenu {
+  position: absolute;
+  left: 105%;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1300;
+}
+
+.filter-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--icon-color, #666);
+}
+
+.filter-button:hover {
+  background-color: var(--button-hover, #f0f0f0);
+}
+
+.filter-button.active {
+  color: var(--active-color, #0088ff);
+  background-color: var(--active-bg, #e6f3ff);
+}
+*/
+
 const BottomMenu = ({ onSubmenuToggle }) => {
   const [activeSubmenu, setActiveSubmenu] = useState(null);
   const [activeFilter, setActiveFilter] = useState(null); // Add state for filter submenu
@@ -160,9 +192,16 @@ const BottomMenu = ({ onSubmenuToggle }) => {
           </div>
         </div>
         
-        {/* Layers Submenu */}
+        {/* Layers Submenu - with explicit positioning */}
         {activeSubmenu === 'layers' && (
-          <div className="submenu-card" style={{ zIndex: 1000 }}>
+          <div className="submenu-card" style={{ 
+            zIndex: 1000,
+            position: 'absolute',
+            bottom: '70px', /* Position above the bottom menu */
+            left: '50%',
+            transform: 'translateX(-50%)', /* Center horizontally */
+            width: '240px'
+          }}>
             <div className="submenu-header">
               <div className="submenu-title">Layers</div>
               <button className="close-button" onClick={closeSubmenu}>
@@ -184,8 +223,80 @@ const BottomMenu = ({ onSubmenuToggle }) => {
             </div>
           </div>
         )}
+        
+        {/* Bookmarks Submenu - also with consistent positioning */}
+        {activeSubmenu === 'bookmarks' && (
+          <div className="submenu-card" style={{ 
+            zIndex: 1000,
+            position: 'absolute',
+            bottom: '70px', /* Position above the bottom menu */
+            left: '50%',
+            transform: 'translateX(-50%)', /* Center horizontally */
+            width: '240px'
+          }}>
+            <div className="submenu-header">
+              <div className="submenu-title">Bookmarks</div>
+              <button className="close-button" onClick={closeSubmenu}>
+                <X size={20} />
+              </button>
+            </div>
+            <div className="submenu-content">
+              <div className="empty-state">
+                <div style={{ textAlign: 'center', padding: '20px' }}>
+                  <Bookmark size={32} style={{ marginBottom: '10px', opacity: 0.5 }} />
+                  <div>No saved locations</div>
+                  <div style={{ fontSize: '0.8em', opacity: 0.7, marginTop: '5px' }}>
+                    Bookmarked locations will appear here
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
       </div>
+      
+      {/* Map Submenu - positioned like the Layers submenu */}
+      {activeSubmenu === 'map' && (
+        <div className="submenu-card" style={{ 
+          zIndex: 1000,
+          position: 'absolute',
+          bottom: '70px', /* Position above the bottom menu */
+          left: '50%',
+          transform: 'translateX(-50%)', /* Center horizontally */
+          width: '240px'
+        }}>
+          <div className="submenu-header">
+            <div className="submenu-title">Map Options</div>
+            <button className="close-button" onClick={closeSubmenu}>
+              <X size={20} />
+            </button>
+          </div>
+          <div className="submenu-content">
+            <div 
+              className="submenu-item"
+              onClick={() => console.log('Satellite view selected')}
+            >
+              <div className="submenu-item-icon"><Satellite size={20} /></div>
+              <div className="submenu-item-label">Satellite</div>
+            </div>
+            <div 
+              className="submenu-item"
+              onClick={() => console.log('Street view selected')}
+            >
+              <div className="submenu-item-icon"><Map size={20} /></div>
+              <div className="submenu-item-label">Street</div>
+            </div>
+            <div 
+              className="submenu-item"
+              onClick={() => console.log('3D view selected')}
+            >
+              <div className="submenu-item-icon"><Globe size={20} /></div>
+              <div className="submenu-item-label">3D</div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Zoom Controls */}
       <div className="zoom-controls">
@@ -245,19 +356,37 @@ const BottomMenu = ({ onSubmenuToggle }) => {
               </div>
             </div>
             
-            {/* Region filter submenu */}
+            {/* Region filter submenu - now displayed as a proper nested submenu */}
             {activeFilter === 'regions' && (
-              <div className="region-filters">
-                {regionFilters.map(region => (
-                  <div 
-                    key={region.id} 
-                    className={`submenu-item ${newsFilters[region.id] ? 'active' : ''}`}
-                    onClick={() => toggleNewsFilter(region.id)}
-                  >
-                    <div className="submenu-item-label">{region.label}</div>
-                    <div className={`submenu-item-toggle ${newsFilters[region.id] ? 'active' : ''}`}></div>
-                  </div>
-                ))}
+              <div className="submenu-card region-submenu" style={{ 
+                position: 'absolute',
+                left: '105%', 
+                top: '50%',
+                transform: 'translateY(-50%)',
+                width: '200px',
+                backgroundColor: 'var(--submenu-bg, #ffffff)',
+                borderRadius: '8px',
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+                zIndex: 1300
+              }}>
+                <div className="submenu-header">
+                  <div className="submenu-title">Regions</div>
+                  <button className="close-button" onClick={() => setActiveFilter(null)}>
+                    <X size={16} />
+                  </button>
+                </div>
+                <div className="submenu-content">
+                  {regionFilters.map(region => (
+                    <div 
+                      key={region.id} 
+                      className={`submenu-item ${newsFilters[region.id] ? 'active' : ''}`}
+                      onClick={() => toggleNewsFilter(region.id)}
+                    >
+                      <div className="submenu-item-label">{region.label}</div>
+                      <div className={`submenu-item-toggle ${newsFilters[region.id] ? 'active' : ''}`}></div>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
           </div>
