@@ -298,18 +298,127 @@
       left: 50%;
     }
     
-    .submenu-card {
+/* Map Options submenu positioning fix */
+
+/* Add this to your BottomMenu.css file */
+
+/* Make all submenus use absolute positioning with consistent rules */
+.submenu-card {
+  position: absolute !important;
+  z-index: 1000;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Default positioning for regular submenus */
+.bottom-menu-container .submenu-card:not(.news-submenu):not(.region-submenu) {
+  bottom: 70px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: 240px;
+}
+
+/* News submenu specific positioning */
+.news-submenu {
+  position: absolute !important;
+  right: 70px !important;
+  bottom: 20px !important;
+  left: auto !important;
+  transform: none !important;
+  z-index: 1200;
+}
+
+/* Map Options submenu specific positioning */
+.map-submenu {
+  position: absolute !important;
+  bottom: 70px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: 240px;
+}
+
+/* Region submenu keeps its existing positioning */
+.region-submenu {
+  position: absolute !important;
+  right: -210px !important;
+  top: 50% !important;
+  left: auto !important;
+  transform: translateY(-50%) !important;
+  width: 200px;
+  z-index: 1300;
+}
+
+
+/* Make all submenus use absolute positioning with consistent rules */
+.submenu-card {
+    position: absolute !important;
+    z-index: 1000;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  
+  /* Default positioning for regular submenus */
+  .bottom-menu-container .submenu-card:not(.news-submenu):not(.region-submenu) {
+    bottom: 70px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 240px;
+  }
+  
+  /* News submenu specific positioning */
+  .news-submenu {
+    position: absolute !important;
+    right: 70px !important;
+    bottom: 20px !important;
+    left: auto !important;
+    transform: none !important;
+    z-index: 1200;
+  }
+  
+  /* Map Options submenu specific positioning */
+  .map-submenu {
+    position: absolute !important;
+    bottom: 70px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 240px;
+  }
+  
+  /* Region submenu keeps its existing positioning */
+  .region-submenu {
+    position: absolute !important;
+    right: -210px !important;
+    top: 50% !important;
+    left: auto !important;
+    transform: translateY(-50%) !important;
+    width: 200px;
+    z-index: 1300;
+  }
+  
+  /* Ensure all submenus are visible */
+  .submenu-card {
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .bottom-menu-container .submenu-card:not(.news-submenu):not(.region-submenu) {
+      width: 220px;
+    }
+    
+    .map-submenu {
       width: 220px;
     }
   }
   
   @media (max-width: 480px) {
-    .submenu-card {
+    .bottom-menu-container .submenu-card:not(.news-submenu):not(.region-submenu) {
       width: 200px;
     }
     
-    .menu-item {
-      width: 36px;
-      height: 36px;
+    .map-submenu {
+      width: 200px;
     }
+  }
   }
