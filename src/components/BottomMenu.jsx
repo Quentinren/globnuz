@@ -1,14 +1,12 @@
-// BottomMenu.jsx - Fixed version
+// BottomMenu.jsx - Complete version with consistent submenu positioning
 import React, { useState, useEffect } from 'react';
 import { 
   Layers, 
-  Newspaper, 
   Thermometer, 
   Cloud, 
   Wind, 
   ActivitySquare, 
   Globe,
-  Lightbulb,
   X,
   Satellite,
   Plus,
@@ -18,7 +16,6 @@ import {
   Filter,
   Calendar,
   Building,
-  Users,
   HeartPulse,
   TestTube,
   MoreHorizontal,
@@ -187,16 +184,9 @@ const BottomMenu = ({ onSubmenuToggle, onGetUserLocation }) => {
           </div>
         </div>
         
-        {/* Layers Submenu - with fixed positioning */}
+        {/* Layers Submenu */}
         {activeSubmenu === 'layers' && (
-          <div className="submenu-card" style={{ 
-            zIndex: 1000,
-            position: 'absolute',
-            bottom: '70px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            width: '240px'
-          }}>
+          <div className="submenu-card">
             <div className="submenu-header">
               <div className="submenu-title">Layers</div>
               <button className="close-button" onClick={closeSubmenu}>
@@ -219,16 +209,9 @@ const BottomMenu = ({ onSubmenuToggle, onGetUserLocation }) => {
           </div>
         )}
         
-        {/* Bookmarks Submenu - also with consistent positioning */}
+        {/* Bookmarks Submenu */}
         {activeSubmenu === 'bookmarks' && (
-          <div className="submenu-card" style={{ 
-            zIndex: 1000,
-            position: 'absolute',
-            bottom: '70px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            width: '240px'
-          }}>
+          <div className="submenu-card">
             <div className="submenu-header">
               <div className="submenu-title">Bookmarks</div>
               <button className="close-button" onClick={closeSubmenu}>
@@ -248,19 +231,11 @@ const BottomMenu = ({ onSubmenuToggle, onGetUserLocation }) => {
             </div>
           </div>
         )}
-
       </div>
       
-      {/* Map Submenu - positioned like the Layers submenu */}
+      {/* Map Submenu - Using consistent class-based positioning */}
       {activeSubmenu === 'map' && (
-        <div className="submenu-card" style={{ 
-          zIndex: 1000,
-          position: 'absolute',
-          bottom: '70px',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          width: '240px'
-        }}>
+        <div className="submenu-card">
           <div className="submenu-header">
             <div className="submenu-title">Map Options</div>
             <button className="close-button" onClick={closeSubmenu}>
@@ -303,7 +278,7 @@ const BottomMenu = ({ onSubmenuToggle, onGetUserLocation }) => {
         </div>
       </div>
 
-      {/* Filter Button - Replaced News Button with Filter Icon */}
+      {/* Filter Button */}
       <div 
         className={`filter-button ${activeSubmenu === 'news' ? 'active' : ''}`}
         onClick={() => toggleSubmenu('news')}
@@ -311,16 +286,9 @@ const BottomMenu = ({ onSubmenuToggle, onGetUserLocation }) => {
         <Filter size={24} />
       </div>
 
-      {/* News Submenu - Fixed positioning to prevent it from disappearing */}
+      {/* News Submenu */}
       {activeSubmenu === 'news' && (
-        <div className="submenu-card news-submenu" style={{ 
-          position: 'fixed',
-          right: '70px',
-          bottom: '20px',
-          zIndex: 1200,
-          transform: 'none',
-          width: '240px'
-        }}>
+        <div className="submenu-card news-submenu">
           <div className="submenu-header">
             <div className="submenu-title">News Filters</div>
             <button className="close-button" onClick={closeSubmenu}>
@@ -354,19 +322,9 @@ const BottomMenu = ({ onSubmenuToggle, onGetUserLocation }) => {
               </div>
             </div>
             
-            {/* Region filter submenu - repositioned to stay visible */}
+            {/* Region filter submenu */}
             {activeFilter === 'regions' && (
-              <div className="submenu-card region-submenu" style={{ 
-                position: 'absolute',
-                right: '-210px',  /* Place it to the right of the parent menu */
-                top: '50%',
-                transform: 'translateY(-50%)',
-                width: '200px',
-                backgroundColor: 'white',
-                borderRadius: '8px',
-                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-                zIndex: 1300
-              }}>
+              <div className="submenu-card region-submenu">
                 <div className="submenu-header">
                   <div className="submenu-title">Regions</div>
                   <button className="close-button" onClick={() => setActiveFilter(null)}>

@@ -39,26 +39,29 @@
   
   /* Card-style submenu */
   .submenu-card {
-    position: absolute;
-    bottom: 60px;
+    position: fixed;
+    bottom: 70px;
+    left: 50%;
+    transform: translateX(-50%);
     background-color: white;
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    width: 300px;
+    width: 240px;
     max-height: 400px;
     overflow-y: auto;
     padding: 0;
     animation: fadeIn 0.3s ease forwards;
+    z-index: 1000;
   }
   
   @keyframes fadeIn {
     from {
       opacity: 0;
-      transform: translateY(10px);
+      transform: translateY(10px) translateX(-50%);
     }
     to {
       opacity: 1;
-      transform: translateY(0);
+      transform: translateY(0) translateX(-50%);
     }
   }
   
@@ -224,12 +227,14 @@
     color: #4fc3f7;
   }
   
-  /* Submenu positioning */
+  /* News submenu special positioning */
   .news-submenu {
-    right: 20px;
-    left: auto;
-    bottom: 80px;
-    top: auto;
+    position: fixed !important;
+    right: 70px !important;
+    bottom: 20px !important;
+    left: auto !important;
+    transform: none !important;
+    z-index: 1200;
   }
   
   /* Current selected display info */
@@ -246,11 +251,14 @@
     z-index: 999;
   }
 
+  /* Region submenu positioning */
   .region-submenu {
     position: absolute;
-    left: 105%;
-    top: 50%;
-    transform: translateY(-50%);
+    right: -210px !important;
+    top: 50% !important;
+    left: auto !important;
+    transform: translateY(-50%) !important;
+    width: 200px;
     z-index: 1300;
   }
   
@@ -277,9 +285,31 @@
     background-color: var(--active-bg, #e6f3ff);
   }
   
-  /* Style for the regions submenu to ensure it stays in view */
-  .region-submenu {
-    right: calc(100% + 10px) !important;
-    left: auto !important;
-    transform: translateY(-50%) !important;
+  /* Empty state styling */
+  .empty-state {
+    text-align: center;
+    padding: 20px;
+    color: #777;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .bottom-menu-container {
+      left: 50%;
+    }
+    
+    .submenu-card {
+      width: 220px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .submenu-card {
+      width: 200px;
+    }
+    
+    .menu-item {
+      width: 36px;
+      height: 36px;
+    }
   }
