@@ -115,7 +115,7 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates }) => {
       // Create stars
       const starsGeometry = new THREE.BufferGeometry();
       const starsMaterial = new THREE.PointsMaterial({
-        size: 5,
+        size: 8,
         sizeAttenuation: true,
         vertexColors: true,
         transparent: true
@@ -148,12 +148,11 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates }) => {
         colors[i * 3 + 1] = 1; // Green always 1
         colors[i * 3 + 2] = whiteness * 0.5 + 0.5; // Blue varies from 0.5 to 1
         
-        sizes[i] = 3 + Math.random() * 15;
       }
       
       starsGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
       starsGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-      starsGeometry.setAttribute('size', new THREE.BufferAttribute(sizes, 3));
+
       
       const stars = new THREE.Points(starsGeometry, starsMaterial);
       scene.add(stars);
@@ -332,6 +331,21 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates }) => {
       <Globe
         ref={globeEl}
         globeMaterial={globeMaterial}
+    
+        // Increase light intensity
+        ambientLightColor="white"
+        ambientLightIntensity={15} // Increased from 10
+
+        // Increase directional light intensity
+        directionalLightColor="white"
+        directionalLightIntensity={100} // Increased from 2.5
+
+        // Add a second directional light from another angle for more even lighting
+        directionalLightPosition={{ x: 10, y: 10, z: 0 }}
+
+        // Add graticules (longitude and latitude lines)
+        showGraticules = {true}
+  
 
         polygonsData={countries.features}
         polygonResolution={3}
@@ -341,7 +355,7 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates }) => {
         polygonSideColor={() => '#505050'}
         polygonCapColor={() => {
           // Générer un nombre aléatoire entre 128 (50% de blanc) et 255 (100% de blanc)
-          const intensity = Math.floor(128 + Math.random() * 126);
+          const intensity = Math.floor(140 + Math.random() * 115);
           // Convertir en hexadécimal et créer une couleur avec la même valeur pour R, G et B
           const hex = intensity.toString(16).padStart(2, '0');
           return `#${hex}${hex}${hex}`;
