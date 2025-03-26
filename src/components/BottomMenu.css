@@ -2,7 +2,7 @@
 .bottom-menu-container {
     position: fixed;
     bottom: 20px;
-    left: 50%;
+    left: 25%;
     transform: translateX(-50%);
     display: flex;
     justify-content: center;
