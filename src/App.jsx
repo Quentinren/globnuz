@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 import { fetchCountriesData, fetchPlacesData } from './services/globeDataService';
 import Logo from './components/Logo'
-import LeftMenu from './components/LeftMenu'
 import BottomMenu from './components/BottomMenu'
 import NewsCard from './components/NewsCard'
 import GlobeDynamic from './components/GlobeDynamic';

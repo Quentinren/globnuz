@@ -1,0 +1,196 @@
+/* InfiniteNewsScroll.css */
+
+/* Main container - sidebar style */
+.news-sidebar-container {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    width: 50%; /* Exactly 50% of the screen width */
+    background-color: rgba(255, 255, 255, 0.5); /* White with 50% opacity */
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+    overflow-y: auto;
+    transition: transform 0.3s ease;
+    /* Scrollbar styling for webkit browsers */
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+    &::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.1);
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: rgba(0, 0, 0, 0.2);
+      border-radius: 3px;
+    }
+  }
+  
+  /* Toggle button for sidebar visibility */
+  .news-sidebar-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    z-index: 101;
+    cursor: pointer;
+    border: none;
+  }
+  
+  /* When sidebar is hidden */
+  .news-sidebar-container.hidden {
+    transform: translateX(100%);
+  }
+  
+  /* News Events List */
+  .news-events-list {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  /* Individual News Card */
+  .news-event-card {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    background-color: white;
+    border-left: 5px solid transparent;
+  }
+  
+  .news-event-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.12);
+  }
+  
+  /* Card Header */
+  .news-card-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid #eaeaea;
+  }
+  
+  .news-card-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #222;
+    line-height: 1.3;
+  }
+  
+  .news-card-source {
+    display: flex;
+    align-items: center;
+    font-size: 0.875rem;
+    color: #666;
+  }
+  
+  .news-card-newspaper {
+    font-weight: 600;
+    color: #444;
+  }
+  
+  .news-card-separator {
+    margin: 0 8px;
+    color: #999;
+  }
+  
+  /* Card Image */
+  .news-card-image-container {
+    height: 180px;
+    background-color: #f3f4f6;
+    position: relative;
+  }
+  
+  .news-card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+  
+  .news-event-card:hover .news-card-image {
+    transform: scale(1.05);
+  }
+  
+  /* Card Content */
+  .news-card-content {
+    padding: 16px 20px 20px;
+    background: white;
+  }
+  
+  .news-card-description {
+    color: #333;
+    margin-bottom: 16px;
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+  
+  /* Meta Information */
+  .news-card-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 0.875rem;
+    color: #666;
+  }
+  
+  .news-card-meta-item {
+    display: flex;
+    align-items: center;
+  }
+  
+  .news-card-meta-icon {
+    margin-right: 10px;
+    color: #555;
+  }
+  
+  .news-card-link {
+    display: flex;
+    align-items: center;
+    color: #2563eb;
+    margin-top: 10px;
+    text-decoration: none;
+    padding: 8px 0;
+    transition: all 0.3s ease;
+    font-weight: 500;
+  }
+  
+  .news-card-link:hover {
+    color: #1e40af;
+  }
+  
+  /* Theme color indicators */
+  .news-event-card.theme-0 {
+    border-left-color: #3b82f6; /* Blue */
+  }
+  
+  .news-event-card.theme-1 {
+    border-left-color: #10b981; /* Green */
+  }
+  
+  .news-event-card.theme-2 {
+    border-left-color: #f97316; /* Orange */
+  }
+  
+  .news-event-card.theme-3 {
+    border-left-color: #8b5cf6; /* Purple */
+  }
+  
+  .news-event-card.theme-4 {
+    border-left-color: #ef4444; /* Red */
+  }
+  
+  /* Loader element for infinite scroll */
+  .loader-element {
+    padding: 20px;
+    text-align: center;
+    min-height: 60;
+  }

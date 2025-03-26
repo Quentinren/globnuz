@@ -37,8 +37,8 @@
 /* Mobile-specific styles */
 @media (max-width: 768px) {
   .globe-container {
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
     /* Better mobile performance through hardware acceleration */
     transform: translateZ(0);
     -webkit-transform: translateZ(0);

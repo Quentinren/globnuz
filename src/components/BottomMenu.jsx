@@ -335,7 +335,6 @@ const BottomMenu = ({ onSubmenuToggle }) => {
               >
                 <div className="submenu-item-icon">{category.icon}</div>
                 <div className="submenu-item-label">{category.label}</div>
-                <div className={`submenu-item-toggle ${newsFilters[category.id] ? 'active' : ''}`}></div>
               </div>
             ))}
             
