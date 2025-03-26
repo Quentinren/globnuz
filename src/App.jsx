@@ -3,9 +3,8 @@ import './App.css';
 import { fetchCountriesData, fetchPlacesData } from './services/globeDataService';
 import Logo from './components/Logo'
 import BottomMenu from './components/BottomMenu'
-import NewsCard from './components/NewsCard'
 import GlobeDynamic from './components/GlobeDynamic';
-import InfiniteNewsScroll from './components/InfiniteNewsScroll';
+import CustomNewsScroll from './components/CustomNewsScroll'; // Import our new component
 
 function App() {
   // State to manage submenu opening
@@ -73,7 +72,7 @@ function App() {
     }
   ];
   
-  // Function to handle navigation from NewsCard or InfiniteNewsScroll
+  // Function to handle navigation from NewsCard or CustomNewsScroll
   const handleNavigateToArticle = (lat, lng) => {
     setSelectedCoordinates({ lat, lng });
   };
@@ -88,14 +87,8 @@ function App() {
       {/* Logo */}
       <Logo/>
       
-      {/* News Components */}
-      <NewsCard 
-        newsEvents={newsEvents} 
-        onNavigateToArticle={handleNavigateToArticle}
-      />
-      
-      {/* New InfiniteNewsScroll Component */}
-      <InfiniteNewsScroll
+      {/* Our new CustomNewsScroll component */}
+      <CustomNewsScroll 
         newsEvents={newsEvents}
         onNavigateToArticle={handleNavigateToArticle}
       />

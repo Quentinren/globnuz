@@ -1,17 +1,17 @@
-// InfiniteNewsScroll.jsx
+// CustomNewsScroll.jsx
 import React, { useState, useEffect, useRef } from 'react';
-import { Calendar, MapPin, Globe, ChevronDown, X } from 'lucide-react';
-import './InfiniteNewsScroll.css';
+import { Calendar, MapPin, Globe, ChevronLeft, X } from 'lucide-react';
+import './CustomNewsScroll.css';
 
-const InfiniteNewsScroll = ({ newsEvents, onNavigateToArticle }) => {
+const CustomNewsScroll = ({ newsEvents, onNavigateToArticle }) => {
   const [visibleEvents, setVisibleEvents] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
   const observerRef = useRef(null);
   const loaderRef = useRef(null);
   
-  const ITEMS_PER_PAGE = 2;
+  const ITEMS_PER_PAGE = 3;
   
   // Initialize with first page of events
   useEffect(() => {
@@ -82,17 +82,13 @@ const InfiniteNewsScroll = ({ newsEvents, onNavigateToArticle }) => {
   };
 
   return (
-    <div className={`infinite-news-container ${isOpen ? 'open' : 'closed'}`}>
+    <div className={`custom-news-container ${isOpen ? 'open' : 'closed'}`}>
       <button className="news-toggle-button" onClick={toggleFeed}>
-        {isOpen ? <X size={20} /> : <ChevronDown size={20} />}
+        {isOpen ? <ChevronLeft size={20} /> : <ChevronLeft size={20} className="flipped" />}
         {!isOpen && <span>Latest News</span>}
       </button>
       
       <div className="news-feed-wrapper">
-        <div className="news-feed-header">
-          <h2>Breaking News</h2>
-        </div>
-        
         <div className="news-feed-content">
           {visibleEvents.map((event, index) => (
             <div key={index} className={`news-feed-item theme-${index % 5}`}>
@@ -159,4 +155,4 @@ const InfiniteNewsScroll = ({ newsEvents, onNavigateToArticle }) => {
   );
 };
 
-export default InfiniteNewsScroll;
+export default CustomNewsScroll;
