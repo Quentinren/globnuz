@@ -293,3 +293,27 @@
         width: 90%;
     }
 }
+
+/* Fix 2: Fix positioning for news submenu and prevent it from disappearing */
+.news-submenu {
+    position: absolute;
+    right: 70px !important; /* Force it to stay positioned relative to the filter button */
+    bottom: 20px !important;
+    left: auto !important;
+    transform: none !important;
+  }
+  
+  /* Fix 3: Properly position all submenus directly above their buttons */
+  .bottom-menu-container .submenu-card {
+    position: absolute;
+    bottom: 70px !important; /* Position above the bottom menu */
+    left: 50% !important; /* Center horizontally */
+    transform: translateX(-50%) !important; /* Center horizontally */
+    width: 240px;
+  }
+  
+  /* Make sure the submenus don't disappear */
+  .submenu-card {
+    opacity: 1 !important;
+    visibility: visible !important;
+  }

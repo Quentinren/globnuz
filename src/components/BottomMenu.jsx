@@ -1,4 +1,4 @@
-// BottomMenu.jsx
+// BottomMenu.jsx - Fixed version
 import React, { useState, useEffect } from 'react';
 import { 
   Layers, 
@@ -187,14 +187,14 @@ const BottomMenu = ({ onSubmenuToggle, onGetUserLocation }) => {
           </div>
         </div>
         
-        {/* Layers Submenu - with explicit positioning */}
+        {/* Layers Submenu - with fixed positioning */}
         {activeSubmenu === 'layers' && (
           <div className="submenu-card" style={{ 
             zIndex: 1000,
             position: 'absolute',
-            bottom: '70px', /* Position above the bottom menu */
+            bottom: '70px',
             left: '50%',
-            transform: 'translateX(-50%)', /* Center horizontally */
+            transform: 'translateX(-50%)',
             width: '240px'
           }}>
             <div className="submenu-header">
@@ -224,9 +224,9 @@ const BottomMenu = ({ onSubmenuToggle, onGetUserLocation }) => {
           <div className="submenu-card" style={{ 
             zIndex: 1000,
             position: 'absolute',
-            bottom: '70px', /* Position above the bottom menu */
+            bottom: '70px',
             left: '50%',
-            transform: 'translateX(-50%)', /* Center horizontally */
+            transform: 'translateX(-50%)',
             width: '240px'
           }}>
             <div className="submenu-header">
@@ -256,9 +256,9 @@ const BottomMenu = ({ onSubmenuToggle, onGetUserLocation }) => {
         <div className="submenu-card" style={{ 
           zIndex: 1000,
           position: 'absolute',
-          bottom: '70px', /* Position above the bottom menu */
+          bottom: '70px',
           left: '50%',
-          transform: 'translateX(-50%)', /* Center horizontally */
+          transform: 'translateX(-50%)',
           width: '240px'
         }}>
           <div className="submenu-header">
@@ -311,9 +311,16 @@ const BottomMenu = ({ onSubmenuToggle, onGetUserLocation }) => {
         <Filter size={24} />
       </div>
 
-      {/* News Submenu */}
+      {/* News Submenu - Fixed positioning to prevent it from disappearing */}
       {activeSubmenu === 'news' && (
-        <div className="submenu-card news-submenu" style={{ zIndex: 1200 }}>
+        <div className="submenu-card news-submenu" style={{ 
+          position: 'fixed',
+          right: '70px',
+          bottom: '20px',
+          zIndex: 1200,
+          transform: 'none',
+          width: '240px'
+        }}>
           <div className="submenu-header">
             <div className="submenu-title">News Filters</div>
             <button className="close-button" onClick={closeSubmenu}>
@@ -337,19 +344,25 @@ const BottomMenu = ({ onSubmenuToggle, onGetUserLocation }) => {
             <div className="submenu-category">
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span>Regions</span>
-
+                <button 
+                  className={`submenu-filter-button ${activeFilter === 'regions' ? 'active' : ''}`}
+                  onClick={() => toggleFilterSubmenu('regions')}
+                  aria-label="Filter regions"
+                >
+                  <Filter size={16} />
+                </button>
               </div>
             </div>
             
-            {/* Region filter submenu - now displayed as a proper nested submenu */}
+            {/* Region filter submenu - repositioned to stay visible */}
             {activeFilter === 'regions' && (
               <div className="submenu-card region-submenu" style={{ 
                 position: 'absolute',
-                left: '105%', 
+                right: '-210px',  /* Place it to the right of the parent menu */
                 top: '50%',
                 transform: 'translateY(-50%)',
                 width: '200px',
-                backgroundColor: 'var(--submenu-bg, #ffffff)',
+                backgroundColor: 'white',
                 borderRadius: '8px',
                 boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
                 zIndex: 1300

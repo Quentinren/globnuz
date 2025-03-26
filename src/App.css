@@ -25,18 +25,15 @@ body {
   transition: padding-left 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
-/* Gradient overlay from transparent to black, starting at 50% of screen width */
 .gradient-overlay {
   position: absolute;
   top: 0;
-  width: 50vw;
+  width: 100vw;
   right: 0;
   bottom: 0;
-  
   background: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) 50%);
-
   pointer-events: none; /* Allows clicking through the overlay */
-  z-index: 10; /* Above the globe but below UI elements */
+  z-index: 20; /* Above the news scroll (z-index: 500) */
 }
 
 h1 {

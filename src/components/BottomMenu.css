@@ -264,13 +264,22 @@
     border: none;
     cursor: pointer;
     color: var(--icon-color, #666);
+    transition: all 0.2s ease;
   }
   
   .submenu-filter-button:hover {
     background-color: var(--button-hover, #f0f0f0);
+    transform: translateX(2px);
   }
   
   .submenu-filter-button.active {
     color: var(--active-color, #0088ff);
     background-color: var(--active-bg, #e6f3ff);
+  }
+  
+  /* Style for the regions submenu to ensure it stays in view */
+  .region-submenu {
+    right: calc(100% + 10px) !important;
+    left: auto !important;
+    transform: translateY(-50%) !important;
   }

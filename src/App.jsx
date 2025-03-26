@@ -102,7 +102,7 @@ function App() {
       {/* Menus */}
       <BottomMenu onSubmenuToggle={handleSubmenuToggle} />
       
-      {/* Gradient overlay */}
+      {/* Gradient overlay - moved to end to ensure proper layering */}
       <div className="gradient-overlay"></div>
     </div>
   );
