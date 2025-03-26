@@ -5,6 +5,7 @@ import Logo from './components/Logo'
 import BottomMenu from './components/BottomMenu'
 import NewsCard from './components/NewsCard'
 import GlobeDynamic from './components/GlobeDynamic';
+import InfiniteNewsScroll from './components/InfiniteNewsScroll';
 
 function App() {
   // State to manage submenu opening
@@ -72,7 +73,7 @@ function App() {
     }
   ];
   
-  // Function to handle navigation from NewsCard
+  // Function to handle navigation from NewsCard or InfiniteNewsScroll
   const handleNavigateToArticle = (lat, lng) => {
     setSelectedCoordinates({ lat, lng });
   };
@@ -84,19 +85,31 @@ function App() {
 
   return (
     <div className={`app-container ${isSubmenuOpen ? 'submenu-open' : ''}`}>
-      {/* Gradient overlay from transparent to black (right half of screen) */}
-
-      
+      {/* Logo */}
       <Logo/>
+      
+      {/* News Components */}
       <NewsCard 
         newsEvents={newsEvents} 
         onNavigateToArticle={handleNavigateToArticle}
       />
+      
+      {/* New InfiniteNewsScroll Component */}
+      <InfiniteNewsScroll
+        newsEvents={newsEvents}
+        onNavigateToArticle={handleNavigateToArticle}
+      />
+      
+      {/* Globe */}
       <GlobeDynamic 
         newsEvents={newsEvents}
         navigateToCoordinates={selectedCoordinates} 
       />
+      
+      {/* Menus */}
       <BottomMenu onSubmenuToggle={handleSubmenuToggle} />
+      
+      {/* Gradient overlay */}
       <div className="gradient-overlay"></div>
     </div>
   );
