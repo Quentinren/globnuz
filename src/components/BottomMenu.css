@@ -199,16 +199,16 @@
     color: #4fc3f7;
   }
   
-  /* News button */
-  .news-button {
+  /* Filter button (previously news button) - now positioned at bottom right */
+  .filter-button {
     position: fixed;
     right: 20px;
-    top: 20px;
+    bottom: 20px;
     width: 50px;
     height: 50px;
     border-radius: 50%;
     background-color: white;
-    opacity:0.8;
+    opacity: 0.8;
     color: #555;
     display: flex;
     align-items: center;
@@ -219,7 +219,7 @@
     z-index: 1000;
   }
   
-  .news-button:hover {
+  .filter-button:hover {
     background-color: #f5f5f5;
     color: #4fc3f7;
   }
@@ -228,8 +228,8 @@
   .news-submenu {
     right: 20px;
     left: auto;
-    top: 80px;
-    bottom: auto;
+    bottom: 80px;
+    top: auto;
   }
   
   /* Current selected display info */
@@ -254,7 +254,7 @@
     z-index: 1300;
   }
   
-  .filter-button {
+  .submenu-filter-button {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -266,11 +266,11 @@
     color: var(--icon-color, #666);
   }
   
-  .filter-button:hover {
+  .submenu-filter-button:hover {
     background-color: var(--button-hover, #f0f0f0);
   }
   
-  .filter-button.active {
+  .submenu-filter-button.active {
     color: var(--active-color, #0088ff);
     background-color: var(--active-bg, #e6f3ff);
   }

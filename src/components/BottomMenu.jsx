@@ -22,45 +22,14 @@ import {
   HeartPulse,
   TestTube,
   MoreHorizontal,
-  Earth
+  Earth,
+  MapPin
 } from 'lucide-react';
 import './BottomMenu.css';
 
-// Add this CSS to your BottomMenu.css file if these styles don't exist
-/*
-.region-submenu {
-  position: absolute;
-  left: 105%;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 1300;
-}
-
-.filter-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 4px;
-  border-radius: 4px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--icon-color, #666);
-}
-
-.filter-button:hover {
-  background-color: var(--button-hover, #f0f0f0);
-}
-
-.filter-button.active {
-  color: var(--active-color, #0088ff);
-  background-color: var(--active-bg, #e6f3ff);
-}
-*/
-
-const BottomMenu = ({ onSubmenuToggle }) => {
+const BottomMenu = ({ onSubmenuToggle, onGetUserLocation }) => {
   const [activeSubmenu, setActiveSubmenu] = useState(null);
-  const [activeFilter, setActiveFilter] = useState(null); // Add state for filter submenu
+  const [activeFilter, setActiveFilter] = useState(null);
   const [layerToggles, setLayerToggles] = useState({
     temperature: false,
     clouds: false,
@@ -157,6 +126,26 @@ const BottomMenu = ({ onSubmenuToggle }) => {
     // This would be handled in your globe component
     console.log('Zoom out');
   };
+  
+  const handleGetUserLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          console.log('User location:', latitude, longitude);
+          if (onGetUserLocation) {
+            onGetUserLocation(latitude, longitude);
+          }
+        },
+        (error) => {
+          console.error('Error getting location:', error);
+          alert('Unable to retrieve your location. Please check your browser permissions.');
+        }
+      );
+    } else {
+      alert('Geolocation is not supported by this browser.');
+    }
+  };
 
   // Get currently active layers for display
   const getActiveLayers = () => {
@@ -189,6 +178,12 @@ const BottomMenu = ({ onSubmenuToggle }) => {
             onClick={() => toggleSubmenu('map')}
           >
             <Map size={24} />
+          </div>
+          <div 
+            className={`menu-item ${activeSubmenu === 'location' ? 'active' : ''}`}
+            onClick={handleGetUserLocation}
+          >
+            <MapPin size={24} />
           </div>
         </div>
         
@@ -308,12 +303,12 @@ const BottomMenu = ({ onSubmenuToggle }) => {
         </div>
       </div>
 
-      {/* News Button */}
+      {/* Filter Button - Replaced News Button with Filter Icon */}
       <div 
-        className={`news-button ${activeSubmenu === 'news' ? 'active' : ''}`}
+        className={`filter-button ${activeSubmenu === 'news' ? 'active' : ''}`}
         onClick={() => toggleSubmenu('news')}
       >
-        <Newspaper size={24} />
+        <Filter size={24} />
       </div>
 
       {/* News Submenu */}
@@ -342,16 +337,7 @@ const BottomMenu = ({ onSubmenuToggle }) => {
             <div className="submenu-category">
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span>Regions</span>
-                <button 
-                  className={`filter-button ${activeFilter === 'regions' ? 'active' : ''}`} 
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    toggleFilterSubmenu('regions');
-                  }}
-                  style={{ background: 'none', border: 'none', cursor: 'pointer' }}
-                >
-                  <Filter size={16} />
-                </button>
+
               </div>
             </div>
             
