@@ -233,9 +233,9 @@ const BottomMenu = ({ onSubmenuToggle, onGetUserLocation }) => {
         )}
       </div>
         
-    {/* Map Submenu - Using consistent class-based positioning */}
+    {/* Map Submenu - Fixed class for proper positioning */}
     {activeSubmenu === 'map' && (
-        <div className="submenu-card events-submenu">
+        <div className="submenu-card map-submenu">
           <div className="submenu-header">
             <div className="submenu-title">Map Options</div>
             <button className="close-button" onClick={closeSubmenu}>

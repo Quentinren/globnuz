@@ -330,20 +330,18 @@
 
 /* Map Options submenu specific positioning */
 .map-submenu {
-  position: absolute !important;
-  bottom: 70px !important;
-  left: 50% !important;
-  transform: translateX(-50%) !important;
-  width: 240px;
-}
+    position: absolute !important;
+    bottom: 70px !important;
+    bottom: 20px !important;
+    left: auto !important;
+    
+  }
 
 /* Region submenu keeps its existing positioning */
 .region-submenu {
   position: absolute !important;
-  right: -210px !important;
   top: 50% !important;
   left: auto !important;
-  transform: translateY(-50%) !important;
   width: 200px;
   z-index: 1300;
 }
