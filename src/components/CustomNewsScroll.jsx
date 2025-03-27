@@ -1,6 +1,7 @@
 // CustomNewsScroll.jsx
 import React, { useState, useEffect, useRef } from 'react';
-import { Calendar, MapPin, Globe, ChevronLeft, X } from 'lucide-react';
+import Stack from "@mui/material/Stack"
+import { Calendar, MapPin, Globe, ChevronLeft, Newspaper, User } from 'lucide-react';
 import './CustomNewsScroll.css';
 
 const CustomNewsScroll = ({ newsEvents, onNavigateToArticle }) => {
@@ -92,15 +93,6 @@ const CustomNewsScroll = ({ newsEvents, onNavigateToArticle }) => {
         <div className="news-feed-content">
           {visibleEvents.map((event, index) => (
             <div key={index} className={`news-feed-item theme-${index % 5}`}>
-              <div className="news-feed-item-header">
-                <h3 className="news-feed-item-title">{event.title}</h3>
-                <div className="news-feed-item-source">
-                  <span className="news-feed-item-newspaper">{event.newspaper}</span>
-                  <span className="news-feed-item-separator">•</span>
-                  <span>{event.author}</span>
-                </div>
-              </div>
-              
               <div className="news-feed-item-image-container">
                 <img 
                   src={event.image} 
@@ -109,22 +101,44 @@ const CustomNewsScroll = ({ newsEvents, onNavigateToArticle }) => {
                 />
               </div>
               
-              <div className="news-feed-item-content">
+              <div className="news-feed-item-content-wrapper">
+                <h3 className="news-feed-item-title">{event.title}</h3>
                 <p className="news-feed-item-description">{event.description}</p>
                 
                 <div className="news-feed-item-meta">
                   <div className="news-feed-item-meta-row">
-                    <Calendar size={16} className="news-feed-item-meta-icon" /> 
+                    <Newspaper size={14} className="news-feed-item-meta-icon" /> 
+                    <span className="news-feed-item-newspaper">{event.newspaper}</span>
+                  </div>
+                  
+                  <div className="news-feed-item-meta-row">
+                    <User size={14} className="news-feed-item-meta-icon" /> 
+                    <span className="news-feed-item-author">{event.author}</span>
+                  </div>
+                  
+                  <div className="news-feed-item-meta-row">
+                    <Calendar size={14} className="news-feed-item-meta-icon" /> 
                     <span>{event.date}</span>
                   </div>
+                  
                   <div className="news-feed-item-meta-row">
-                    <MapPin size={16} className="news-feed-item-meta-icon" /> 
-                    <span>Coordinates: {event.lat.toFixed(2)}, {event.lng.toFixed(2)}</span>
+                    <MapPin size={14} className="news-feed-item-meta-icon" /> 
+                    <span>{event.lat.toFixed(2)}, {event.lng.toFixed(2)}</span>
                   </div>
-                
-                    <Globe size={16} onClick={() => handleNavigateToArticle(event.lat, event.lng)}/> 
-  
                 </div>
+                <Stack direction="row" spacing={1} margin={1} sx={{ width: "100%", height: "40px" }}>
+                <button class="news-feed-item-locate-button"
+                  onClick={() => handleNavigateToArticle(event.lat, event.lng)}
+                >
+                  <Globe size={18} />
+                </button>
+                <button 
+                  onClick={() => window.open(event.externalLink, "_blank")}
+                >
+
+                  <Newspaper size={18} />
+                </button>
+                </Stack>
               </div>
             </div>
           ))}
