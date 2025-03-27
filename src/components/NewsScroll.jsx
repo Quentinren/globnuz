@@ -12,7 +12,7 @@ const CustomNewsScroll = ({ newsEvents, onNavigateToArticle }) => {
   const observerRef = useRef(null);
   const loaderRef = useRef(null);
   
-  const ITEMS_PER_PAGE = 3;
+  const ITEMS_PER_PAGE = 100;
   
   // Initialize with first page of events
   useEffect(() => {

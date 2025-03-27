@@ -4,7 +4,7 @@ import { fetchCountriesData, fetchPlacesData } from './services/globeDataService
 import Logo from './components/Logo'
 import BottomMenu from './components/BottomMenu'
 import GlobeDynamic from './components/GlobeDynamic';
-import CustomNewsScroll from './components/CustomNewsScroll'; // Import our new component
+import NewsScroll from './components/NewsScroll'; // Import our new component
 
 function App() {
   // State to manage submenu opening
@@ -113,10 +113,153 @@ function App() {
       "date": "Thu, 27 Mar 2025 11:17:45 GMT",
       "lat": 12.1348,
       "lng": 15.0557
+    },
+    {
+      "title": "Au procès Sarkozy-Kadhafi, le parquet requiert sept ans de prison et 300 000 euros d'amende contre l'ancien président",
+      "description": "Nicolas Sarkozy a dénoncé « l'outrance de la peine réclamée » par les procureurs, qui l'ont dépeint en « commanditaire » d'un pacte de corruption « inconcevable, inouï, indécent » noué avec l'ex-dictateur Mouammar Kadhafi.",
+      "author": "Le Monde",
+      "newspaper": "Le Monde",
+      "image": "https://img.lemde.fr/2025/03/27/348/0/4208/2104/644/322/60/0/51c3e89_ftp-import-images-1-boqg7ohsn7pg-2025-03-27t162408z-719012113-rc2rldaiyhgi-rtrmadp-3-france-politics-sarkozy-trial.JPG",
+      "externalLink": "https://www.lemonde.fr/societe/article/2025/03/27/proces-sarkozy-kadhafi-le-parquet-requiert-sept-ans-de-prison-et-300-000-euros-d-amende-contre-l-ex-president-de-la-republique_6586809_3224.html",
+      "date": "March 27, 2025",
+      "lat": 48.8566,
+      "lng": 2.3522
+    },
+    {
+      "title": "En direct, guerre en Ukraine : Volodymyr Zelensky appelle, depuis Paris, les Etats-Unis à « réagir » après de nouvelles attaques russes",
+      "description": "Le président ukrainien a dénoncé la « violation » d'un moratoire, assez flou, sur les attaques contre les cibles énergétiques.",
+      "author": "Le Monde",
+      "newspaper": "Le Monde",
+      "image": "https://img.lemde.fr/2025/03/27/468/0/5616/2808/644/322/60/0/e56429a_ftp-import-images-1-dmdjumc5fzzj-879347bd76da40d5a3f03268cbfa6249-0-35e8da7decf34f079d849f729438f14c.jpg",
+      "externalLink": "https://www.lemonde.fr/international/live/2025/03/27/en-direct-guerre-en-ukraine-volodymyr-zelensky-appelle-depuis-paris-les-etats-unis-a-reagir-apres-de-nouvelles-frappes-russes_6584822_3210.html",
+      "date": "March 27, 2025",
+      "lat": 48.8566,
+      "lng": 2.3522
+    },
+    {
+      "title": "Droits de douane américains sur les voitures étrangères : des réactions inquiètes et hostiles dans le monde entier après l'annonce de Trump",
+      "description": "Les pays européens envisagent une riposte commerciale alors que le Mexique promet « une réponse intégrale ». Les constructeurs automobiles, y compris américains, sont très pessimistes.",
+      "author": "Le Monde",
+      "newspaper": "Le Monde",
+      "image": "https://img.lemde.fr/2025/03/27/545/0/6540/3270/644/322/60/0/f5fa8df_ftp-import-images-1-9pqjrsmlwgvt-fe16271b85a042dea5ad87fd11f75849-0-e2a881edab094662a266133059444fe3.jpg",
+      "externalLink": "https://www.lemonde.fr/economie/article/2025/03/27/droits-de-douane-americains-sur-l-automobile-une-mesure-agressive-deplore-le-ministre-de-l-economie-francais_6586726_3234.html",
+      "date": "March 27, 2025",
+      "lat": 38.9072,
+      "lng": -77.0369
+    },
+    {
+      "title": "Un début de contestation contre le Hamas dans la bande de Gaza",
+      "description": "Des centaines de personnes ont manifesté pour demander l'arrêt de la guerre et le départ du Hamas. Israël, le Fatah et les pays arabes cherchent à maintenir le mouvement islamiste hors de l'équation de l'après-guerre à Gaza.",
+      "author": "Le Monde",
+      "newspaper": "Le Monde",
+      "image": "https://img.lemde.fr/2025/03/27/484/0/5808/2904/644/322/60/0/4829061_sirius-fs-upload-1-towcijv2yiwm-1743060999684-132935.jpg",
+      "externalLink": "https://www.lemonde.fr/international/article/2025/03/27/a-gaza-un-debut-de-contestation-contre-le-hamas_6586804_3210.html",
+      "date": "March 27, 2025",
+      "lat": 31.5017,
+      "lng": 34.4668
+    },
+    {
+      "title": "Pour les Britanniques, la guerre reste de l'histoire ancienne",
+      "description": "« Les Européens, la guerre et la paix » (4/7). Au Royaume-Uni, l'armée jouit du prestige acquis lors des deux guerres mondiales, mais elle s'inquiète d'une menace perçue comme lointaine par l'opinion.",
+      "author": "Le Monde",
+      "newspaper": "Le Monde",
+      "image": "https://img.lemde.fr/2025/03/26/339/0/4059/2029/644/322/60/0/b89dace_sirius-fs-upload-1-172pddonkssm-1742998274053-ap23316414301534.jpg",
+      "externalLink": "https://www.lemonde.fr/international/article/2025/03/27/pour-les-britanniques-la-guerre-demeure-de-l-histoire-ancienne_6586705_3210.html",
+      "date": "March 27, 2025",
+      "lat": 51.5074,
+      "lng": -0.1278
+    },
+    {
+      "title": "A Paris, grandes pelouses et moins de voitures place de la Concorde",
+      "description": "La paysagiste Anne-Sylvie Bruel et l'architecte du patrimoine Philippe Prost ont été désignés, jeudi 27 mars, pour réaménager la plus grande place parisienne. Les travaux sont estimés entre 36 et 38 millions d'euros.",
+      "author": "Le Monde",
+      "newspaper": "Le Monde",
+      "image": "https://img.lemde.fr/2025/03/27/236/0/2835/1417/644/322/60/0/0d9543f_sirius-fs-upload-1-vfw3x1na0hqx-1743092475017-concorde-vue-aerienne-projet-hd.jpg",
+      "externalLink": "https://www.lemonde.fr/economie/article/2025/03/27/a-paris-grandes-pelouses-et-moins-de-voitures-place-de-la-concorde_6586822_3234.html",
+      "date": "March 27, 2025",
+      "lat": 48.8662,
+      "lng": 2.3215
+    },
+    {
+      "title": "L'administration Trump va supprimer 10 000 postes au ministère de la santé des Etats-Unis",
+      "description": "Cette « restructuration majeure » concerne des agences supervisées par le ministère, notamment celles chargées de la réponse aux épidémies ou de l'approbation de nouveaux médicaments.",
+      "author": "Le Monde",
+      "newspaper": "Le Monde",
+      "image": "https://img.lemde.fr/2025/03/27/584/0/7040/3520/644/322/60/0/19a7eb4_ftp-import-images-1-fwbuge5h40tf-5437211-01-06.jpg",
+      "externalLink": "https://www.lemonde.fr/international/article/2025/03/27/le-ministere-de-la-sante-americain-annonce-10-000-suppressions-d-emplois_6586799_3210.html",
+      "date": "March 27, 2025",
+      "lat": 38.9072,
+      "lng": -77.0369
+    },
+    {
+      "title": "En direct, guerre à Gaza : l'ONU prévient que les réserves d'aide alimentaire seront épuisées d'ici à deux semaines",
+      "description": "Le Programme alimentaire mondial des Nations unies a prévenu que la faim menaçait de nouveau l'enclave depuis la reprise des bombardements et des opérations militaires israéliennes.",
+      "author": "Le Monde",
+      "newspaper": "Le Monde",
+      "image": "https://img.lemde.fr/2025/03/27/408/0/4898/2449/644/322/60/0/06ebdfc_ftp-import-images-1-mum90ggxuj7i-5436579-01-06.jpg",
+      "externalLink": "https://www.lemonde.fr/international/live/2025/03/27/en-direct-guerre-a-gaza-l-onu-previent-que-les-reserves-d-aide-alimentaire-seront-epuisees-d-ici-a-deux-semaines_6585700_3210.html",
+      "date": "March 27, 2025",
+      "lat": 31.5017,
+      "lng": 34.4668
+    },
+    {
+      "title": "Mort du petit Emile : la fin des gardes à vue des proches ne signifie pas l'abandon de la piste familiale, selon le procureur",
+      "description": "Les grands-parents, un oncle et une tante ont été relâchés sans poursuite. Les enquêteurs jugent désormais probable « l'intervention d'un tiers » et privilégient la piste criminelle.",
+      "author": "Le Monde",
+      "newspaper": "Le Monde",
+      "image": "https://img.lemde.fr/2025/03/27/885/0/6000/3000/644/322/60/0/5f15101_sirius-fs-upload-1-6r63f6gdevmn-1743062770212-127210.jpg",
+      "externalLink": "https://www.lemonde.fr/societe/article/2025/03/27/affaire-du-petit-emile-la-fin-des-gardes-a-vue-ne-signifie-pas-l-abandon-de-la-piste-intrafamiliale-selon-le-procureur_6586792_3224.html",
+      "date": "March 27, 2025",
+      "lat": 43.9367,
+      "lng": 6.1261
+    },
+    {
+      "title": "Procès Depardieu : le parquet requiert dix-huit mois de prison avec sursis contre l'acteur, jugé pour agressions sexuelles",
+      "description": "Le procureur a également demandé une amende de 20 000 euros, l'indemnisation des parties civiles, une obligation de soins psychologiques et l'inscription au fichier des auteurs d'infractions sexuelles",
+      "author": "Le Monde",
+      "newspaper": "Le Monde",
+      "image": "https://img.lemde.fr/2025/03/27/569/0/5176/2588/644/322/60/0/b34f0a8_ftp-import-images-1-qnj30os6bykq-2025-03-27t101508z-1067898863-rc2mldai149n-rtrmadp-3-people-depardieu-trial.JPG",
+      "externalLink": "https://www.lemonde.fr/societe/article/2025/03/27/proces-depardieu-le-parquet-requiert-dix-huit-mois-de-prison-avec-sursis-contre-l-acteur-juge-pour-agressions-sexuelles_6586793_3224.html",
+      "date": "March 27, 2025",
+      "lat": 48.8566,
+      "lng": 2.3522
+    },
+    {
+      "title": "Attaque au couteau à Amsterdam : au moins cinq personnes blessées, un suspect arrêté et « aucune information sur la cause ou le mobile »",
+      "description": "La police a précisé avoir mis en place un cordon de sécurité autour du lieu de l'incident, près de la place du Dam, dans le centre-ville, jeudi. L'état de santé des blessés n'a pas été communiqué dans l'immédiat.",
+      "author": "Le Monde",
+      "newspaper": "Le Monde",
+      "image": "https://img.lemde.fr/2025/03/27/691/0/8268/4134/644/322/60/0/b27ce34_ftp-import-images-1-s66gmrih3gi6-bc36d11a1c134fd89cf479990e81d0b7-0-e46fe5defe8d4ce88e0a3f31ea294baf.jpg",
+      "externalLink": "https://www.lemonde.fr/international/article/2025/03/27/a-amsterdam-au-moins-cinq-personnes-blessees-dans-une-attaque-au-couteau_6586816_3210.html",
+      "date": "March 27, 2025",
+      "lat": 52.3676,
+      "lng": 4.9041
+    },
+    {
+      "title": "Sénégal : le FMI confirme que Macky Sall a laissé 7 milliards de dollars de dettes cachées",
+      "description": "Le chef de la division Afrique du FMI, Edward Gemayel, pointe les « graves lacunes dans le contrôle budgétaire » de la précédente présidence du pays.",
+      "author": "Le Monde",
+      "newspaper": "Le Monde",
+      "image": "https://img.lemde.fr/2023/07/03/0/0/2160/1080/644/322/60/0/34bb142_5692562-01-06.jpg",
+      "externalLink": "https://www.lemonde.fr/afrique/article/2025/03/27/senegal-le-fmi-confirme-que-macky-sall-a-laisse-7-milliards-de-dollars-de-dettes-cachees_6586825_3212.html",
+      "date": "March 27, 2025",
+      "lat": 14.7167,
+      "lng": -17.4677
+    },
+    {
+      "title": "Le Soudan du Sud au bord de la guerre civile après le placement en résidence surveillée du vice-président Riek Machar",
+      "description": "Après l'intervention des forces du président Salva Kiir, mercredi, l'opposition a annoncé l'abrogation de l'accord de paix de 2018, faisant craindre une reprise du conflit qui avait fait rage durant cinq ans.",
+      "author": "Le Monde",
+      "newspaper": "Le Monde",
+      "image": "https://img.lemde.fr/2025/03/27/0/0/4000/2000/644/322/60/0/bb39de3_ftp-import-images-1-tt3xwmhbcmsk-5433065-01-06.jpg",
+      "externalLink": "https://www.lemonde.fr/afrique/article/2025/03/27/soudan-du-sud-le-placement-en-residence-surveillee-du-vice-president-riek-machar-precipite-le-pays-vers-la-guerre-civile_6586817_3212.html",
+      "date": "March 27, 2025",
+      "lat": 4.8594,
+      "lng": 31.5713
     }
   ];
   
-  // Function to handle navigation from NewsCard or CustomNewsScroll
+  // Function to handle navigation from NewsCard or NewsScroll
   const handleNavigateToArticle = (lat, lng) => {
     setSelectedCoordinates({ lat, lng });
   };
@@ -131,8 +274,8 @@ function App() {
       {/* Logo */}
       <Logo/>
       
-      {/* Our new CustomNewsScroll component */}
-      <CustomNewsScroll 
+      {/* Our new NewsScroll component */}
+      <NewsScroll 
         newsEvents={newsEvents}
         onNavigateToArticle={handleNavigateToArticle}
       />

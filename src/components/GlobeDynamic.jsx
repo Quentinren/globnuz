@@ -414,7 +414,7 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates }) => {
         labelsData={allLabels}
         labelLat="lat"
         labelLng="lng"
-        labelText={d => d.isCountry ? d.name : (d.isOcean ? d.name : d.title)}
+        labelText={d => d.isCountry ? d.name : (d.isOcean ? d.name : "")}
         labelSize={d => d.isCountry ? getDynamicLabelSize(0.7, true, false) : 
                        (d.isOcean ? getDynamicLabelSize(1.2, false, true, d.smallOcean) : 
                                    getDynamicLabelSize(0.4))}
