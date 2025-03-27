@@ -103,7 +103,7 @@ const CustomNewsScroll = ({ newsEvents, onNavigateToArticle }) => {
               
               <div className="news-feed-item-image-container">
                 <img 
-                  src={event.externalLink} 
+                  src={event.image} 
                   alt={event.title} 
                   className="news-feed-item-image"
                 />
@@ -121,13 +121,9 @@ const CustomNewsScroll = ({ newsEvents, onNavigateToArticle }) => {
                     <MapPin size={16} className="news-feed-item-meta-icon" /> 
                     <span>Coordinates: {event.lat.toFixed(2)}, {event.lng.toFixed(2)}</span>
                   </div>
-                  <button 
-                    onClick={() => handleNavigateToArticle(event.lat, event.lng)}
-                    className="news-feed-item-locate-button"
-                  >
-                    <Globe size={16} /> 
-                    <span>View on Globe</span>
-                  </button>
+                
+                    <Globe size={16} onClick={() => handleNavigateToArticle(event.lat, event.lng)}/> 
+  
                 </div>
               </div>
             </div>

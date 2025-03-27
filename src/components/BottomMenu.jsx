@@ -231,42 +231,44 @@ const BottomMenu = ({ onSubmenuToggle, onGetUserLocation }) => {
             </div>
           </div>
         )}
+
+                {/* Map Submenu - Now inside the bottom-menu-container */}
+                {activeSubmenu === 'map' && (
+          <div className="submenu-card">
+            <div className="submenu-header">
+              <div className="submenu-title">Map Options</div>
+              <button className="close-button" onClick={closeSubmenu}>
+                <X size={20} />
+              </button>
+            </div>
+            <div className="submenu-content">
+              <div 
+                className="submenu-item"
+                onClick={() => console.log('Satellite view selected')}
+              >
+                <div className="submenu-item-icon"><Satellite size={20} /></div>
+                <div className="submenu-item-label">Satellite</div>
+              </div>
+              <div 
+                className="submenu-item"
+                onClick={() => console.log('Street view selected')}
+              >
+                <div className="submenu-item-icon"><Map size={20} /></div>
+                <div className="submenu-item-label">Street</div>
+              </div>
+              <div 
+                className="submenu-item"
+                onClick={() => console.log('3D view selected')}
+              >
+                <div className="submenu-item-icon"><Globe size={20} /></div>
+                <div className="submenu-item-label">3D</div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
         
-    {/* Map Submenu - Fixed class for proper positioning */}
-    {activeSubmenu === 'map' && (
-        <div className="submenu-card map-submenu">
-          <div className="submenu-header">
-            <div className="submenu-title">Map Options</div>
-            <button className="close-button" onClick={closeSubmenu}>
-              <X size={20} />
-            </button>
-          </div>
-          <div className="submenu-content">
-            <div 
-              className="submenu-item"
-              onClick={() => console.log('Satellite view selected')}
-            >
-              <div className="submenu-item-icon"><Satellite size={20} /></div>
-              <div className="submenu-item-label">Satellite</div>
-            </div>
-            <div 
-              className="submenu-item"
-              onClick={() => console.log('Street view selected')}
-            >
-              <div className="submenu-item-icon"><Map size={20} /></div>
-              <div className="submenu-item-label">Street</div>
-            </div>
-            <div 
-              className="submenu-item"
-              onClick={() => console.log('3D view selected')}
-            >
-              <div className="submenu-item-icon"><Globe size={20} /></div>
-              <div className="submenu-item-label">3D</div>
-            </div>
-          </div>
-        </div>
-      )}
+
 
       {/* Zoom Controls */}
       <div className="zoom-controls">
