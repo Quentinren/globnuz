@@ -291,7 +291,7 @@ const BottomMenu = ({ onSubmenuToggle, onGetUserLocation }) => {
       {activeSubmenu === 'news' && (
         <div className="submenu-card news-submenu">
           <div className="submenu-header">
-            <div className="submenu-title">News Filters</div>
+            <div className="submenu-title submenu-title-filter">News Filters</div>
             <button className="close-button" onClick={closeSubmenu}>
               <X size={20} />
             </button>
@@ -305,7 +305,7 @@ const BottomMenu = ({ onSubmenuToggle, onGetUserLocation }) => {
                 onClick={() => toggleNewsFilter(category.id)}
               >
                 <div className="submenu-item-icon">{category.icon}</div>
-                <div className="submenu-item-label">{category.label}</div>
+                <div className="submenu-item-label  submenu-item-label-filter">{category.label}</div>
               </div>
             ))}
             

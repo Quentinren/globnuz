@@ -332,7 +332,7 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates, onLabelClick }) => {
     };
 
   // Combine all label data
-  const allLabels = [...formattedNewsEvents, ...formattedOceans, ...countryLabels];
+  const allLabels = [...formattedNewsEvents, ...formattedOceans, ...countryLabels, ...continents];
 
   return (
     <div className="globe-container">
@@ -433,7 +433,7 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates, onLabelClick }) => {
                         (d.isCountry ? 'rgba(30, 30, 30, 0.9)' : 
                         (d.isNews ? 'rgba(240, 30, 30, 0.9)' : 'white'))}
         labelResolution={2}
-        labelAltitude={d => d.isOcean ? 0.03 : (d.isCountry ? 0.01 : 0.02)}
+        labelAltitude={d => d.isOcean ? 0.03 : (d.isCountry ? 0.02 : 0.03)}
         labelIncludeDot={d => !d.isOcean && !d.isCountry}
         
         onGlobeReady={() => setGlobeReady(true)}

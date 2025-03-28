@@ -179,7 +179,7 @@ const NewsScroll = ({ newsEvents, onNavigateToArticle }) => {
                     </div>
                     <div className="news-feed-item-info-row">
                       <Calendar size={10} className="news-feed-item-info-icon" /> 
-                         {/* WARNING REMOVE YEAR ON DATE - FOR SHORT TERMS ONLY ? */}
+                         {/* WARNING REMOVE YEAR ON DATE - FOR SHORT TERMS ONLY ? GAIN PLACE */}
                       <span>{event.date.slice(0, -9).replace(/\d{4}/,"")}</span>
                     </div>
                     <div className="news-feed-item-info-row">

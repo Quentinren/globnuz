@@ -95,7 +95,8 @@
   margin-bottom: 20px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   transition: transform 0.6s ease, box-shadow 0.2s ease;
-  height: 40vh; /* Fixed height for consistent card size */
+  max-height: 40vh; /* Fixed height for consistent card size */
+  min-height: 25vh;
 }
 
 /* Small screens */
@@ -144,12 +145,12 @@
   flex: 0 0 40%; /* Fixed width */
   height: 100%;
   overflow: hidden;
-  border-radius: 12px 0 0 12px; /* Rounded on left side only */
+  border-radius: 12px 0px 12px 0px; /* Rounded on left side only */
 }
 
 @media(max-width: 1200px) {
   .news-feed-item-image-container {
-    height: 50%;
+    height: 70%;
     border-radius: 12px 0 12px 0px; 
   }
 }
@@ -267,12 +268,12 @@
 }
 
 /* Smaller buttons */
-.news-feed-item-buttons {
+.news-themeTagss {
   display: flex;
   gap: 6px;
 }
 
-.news-feed-item-button {
+.news-themeTags {
   width: 30px;
   height: 30px;
   padding: 0;
@@ -285,10 +286,11 @@
   transition: all 0.2s ease;
 }
 
-.news-feed-item-button:hover {
-  background-color: rgba(69, 69, 69, 0.224);
-  color: #cecece;
-  transform: scale(1.1);
+.news-feed-item-button {
+  margin:2px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 /* Info section */
