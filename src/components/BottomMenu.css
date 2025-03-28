@@ -12,13 +12,15 @@
   .bottom-menu {
     display: flex;
     align-items: center;
-    background-color: rgba(255, 255, 255, 0.9);
+    background-color: rgba(255, 255, 255, 0.1);
     border-radius: 24px;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
     padding: 4px;
     transition: all 0.3s ease;
   }
   
+
+
   .menu-item {
     display: flex;
     align-items: center;
@@ -26,15 +28,15 @@
     width: 40px;
     height: 40px;
     margin: 0 4px;
-    color: #555;
+    color: #6a6a6a;
     cursor: pointer;
     transition: all 0.3s ease;
     border-radius: 50%;
   }
   
-  .menu-item:hover, .menu-item.active {
-    background-color: rgba(79, 195, 247, 0.2);
-    color: #4fc3f7;
+  .menu-item:hover, .menu-item.active   {
+    background-color: rgba(255, 255, 255, 0.3);
+    color: #b9b9b9;
   }
   
   /* Card-style submenu */
@@ -43,7 +45,8 @@
     bottom: 70px;
     left: 50%;
     transform: translateX(-50%);
-    background-color: white;
+    background-color: rgba(255, 255, 255, 0.3);
+    color: #dedede;
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
     width: 240px;
@@ -76,14 +79,14 @@
   .submenu-title {
     font-size: 16px;
     font-weight: 600;
-    color: #333;
+    color: #dedede;
   }
   
   .close-button {
     background: none;
     border: none;
     cursor: pointer;
-    color: #777;
+    color: #0000;
     width: 32px;
     height: 32px;
     display: flex;
@@ -111,11 +114,11 @@
   }
   
   .submenu-item:hover {
-    background-color: #f5f5f5;
+    background-color: #e3f2fd80;
   }
   
   .submenu-item.active {
-    background-color: #e3f2fd;
+    background-color: #e3f2fd7c;
   }
   
   .submenu-item-icon {
@@ -125,7 +128,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #666;
+    color: #dedede;
   }
   
   .submenu-item-label {
@@ -198,21 +201,30 @@
   }
   
   .zoom-button:hover {
-    background-color: #f5f5f5;
-    color: #4fc3f7;
+    background-color: rgba(255, 255, 255, 0.3);
+    color: #b9b9b9;
+  
   }
   
   /* Filter button (previously news button) - now positioned at bottom right */
+    /*
+    background-color: rgba(255, 255, 255, 0.1);
+
+  :hover
+  background-color: rgba(255, 255, 255, 0.3);
+  color: #b9b9b9;
+
+*/
   .filter-button {
     position: fixed;
-    right: 20px;
-    bottom: 20px;
+    background-color: rgba(255, 255, 255, 0.6);
+    color: #6e6e6e;
+    right: 15px;
+    bottom: 15px;
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    background-color: white;
     opacity: 0.8;
-    color: #555;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -223,18 +235,20 @@
   }
   
   .filter-button:hover {
-    background-color: #f5f5f5;
-    color: #4fc3f7;
+    background-color: rgba(255, 255, 255, 0.7);
+    color: #b9b9b9;
+  
   }
   
   /* News submenu special positioning */
   .news-submenu {
     position: fixed !important;
-    right: 70px !important;
-    bottom: 20px !important;
+    left: 50px !important;
+    bottom: 50px !important;
     left: auto !important;
     transform: none !important;
     z-index: 1200;
+    background-color: rgba(255, 255, 255, 0.8);
   }
   
   /* Current selected display info */
@@ -276,13 +290,13 @@
   }
   
   .submenu-filter-button:hover {
-    background-color: var(--button-hover, #f0f0f0);
+    background-color: var(--button-hover, #414141);
     transform: translateX(2px);
   }
   
   .submenu-filter-button.active {
     color: var(--active-color, #0088ff);
-    background-color: var(--active-bg, #e6f3ff);
+    background-color: var(--active-bg, #e6f3ffbe);
   }
   
   /* Empty state styling */
@@ -295,7 +309,7 @@
   /* Responsive adjustments */
   @media (max-width: 768px) {
     .bottom-menu-container {
-      left: 50%;
+      visibility: hidden;
     }
     
 /* Map Options submenu positioning fix */
@@ -308,6 +322,8 @@
   z-index: 1000;
   visibility: visible !important;
   opacity: 1 !important;
+  color:white;
+  background-color: white;
 }
 
 /* Default positioning for regular submenus */

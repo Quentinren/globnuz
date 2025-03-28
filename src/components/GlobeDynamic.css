@@ -15,12 +15,7 @@
   transition: all 0.3s ease; /* Add smooth transitions */
 }
 
-/* For large screens, position the globe more to the left */
-@media (min-width: 1200px) {
-  .globe-container {
-    justify-content: flex-start;
-  }
-}
+
 
 /* Style for labels */
 .globe-label {

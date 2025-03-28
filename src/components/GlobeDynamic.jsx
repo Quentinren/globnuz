@@ -3,7 +3,7 @@ import Globe from 'react-globe.gl';
 import * as THREE from 'three';
 import './GlobeDynamic.css';
 
-const GlobeDynamic = ({ newsEvents, navigateToCoordinates }) => {
+const GlobeDynamic = ({ newsEvents, navigateToCoordinates, onLabelClick }) => {
   const globeEl = useRef();
   const [globeReady, setGlobeReady] = useState(false);
   const [cameraDistance, setCameraDistance] = useState(0);
@@ -98,8 +98,6 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates }) => {
         return res.json();
       })
       .then(data => {
-        console.log("GeoJSON data loaded:", data);
-        console.log("Number of features:", data.features.length);
         setCountries(data);
       })
       .catch(error => {
@@ -111,7 +109,8 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates }) => {
   useEffect(() => {
     if (globeReady && globeEl.current) {
       const scene = globeEl.current.scene();
-
+      
+      //
       // Create stars
       const starsGeometry = new THREE.BufferGeometry();
       const starsMaterial = new THREE.PointsMaterial({
@@ -283,7 +282,8 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates }) => {
       globeEl.current.controls().enableRotate = true;
       globeEl.current.controls().autoRotateSpeed = 0.08;
       globeEl.current.controls().zoomSpeed = 0.8; // Slightly slower zoom for better performance
-      
+      // Increase quality of rendered (not shaky)
+
       // Initial camera position
       globeEl.current.pointOfView({
         lat: 50, 
@@ -323,6 +323,14 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates }) => {
     isNews: true
   }));
 
+    // This function handles the click on the label dot
+    const handleLabelClick = (label) => {
+      // Call the parent component's callback with the title
+      if (onLabelClick && label.title) {
+        onLabelClick(label.title);
+      }
+    };
+
   // Combine all label data
   const allLabels = [...formattedNewsEvents, ...formattedOceans, ...countryLabels];
 
@@ -331,6 +339,7 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates }) => {
       <Globe
         ref={globeEl}
         globeMaterial={globeMaterial}
+        
     
         // Increase light intensity
         ambientLightColor="white"
@@ -351,7 +360,7 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates }) => {
         polygonResolution={3}
         polygonMargin={0.02}
         polygonUseDots={true}
-        polygonAltitude={0.0063}
+        polygonAltitude={0.014} //0.0063 good for distance middle
         polygonSideColor={() => '#505050'}
         polygonCapColor={() => {
           // Générer un nombre aléatoire entre 128 (50% de blanc) et 255 (100% de blanc)
@@ -419,6 +428,7 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates }) => {
                        (d.isOcean ? getDynamicLabelSize(1.2, false, true, d.smallOcean) : 
                                    getDynamicLabelSize(0.4))}
         labelDotRadius={0.5}
+        onLabelClick={handleLabelClick} // Add this handler
         labelColor={d => d.isOcean ? 'rgba(100, 200, 255, 0.8)' : 
                         (d.isCountry ? 'rgba(30, 30, 30, 0.9)' : 
                         (d.isNews ? 'rgba(240, 30, 30, 0.9)' : 'white'))}

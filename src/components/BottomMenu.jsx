@@ -116,12 +116,12 @@ const BottomMenu = ({ onSubmenuToggle, onGetUserLocation }) => {
 
   const handleZoomIn = () => {
     // This would be handled in your globe component
-    console.log('Zoom in');
+    News('Zoom in');
   };
 
   const handleZoomOut = () => {
     // This would be handled in your globe component
-    console.log('Zoom out');
+    News('Zoom out');
   };
   
   const handleGetUserLocation = () => {
@@ -129,7 +129,7 @@ const BottomMenu = ({ onSubmenuToggle, onGetUserLocation }) => {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
-          console.log('User location:', latitude, longitude);
+          News('User location:', latitude, longitude);
           if (onGetUserLocation) {
             onGetUserLocation(latitude, longitude);
           }
@@ -202,7 +202,6 @@ const BottomMenu = ({ onSubmenuToggle, onGetUserLocation }) => {
                 >
                   <div className="submenu-item-icon">{layer.icon}</div>
                   <div className="submenu-item-label">{layer.label}</div>
-                  <div className={`submenu-item-toggle ${layerToggles[layer.id] ? 'active' : ''}`}></div>
                 </div>
               ))}
             </div>
@@ -244,21 +243,21 @@ const BottomMenu = ({ onSubmenuToggle, onGetUserLocation }) => {
             <div className="submenu-content">
               <div 
                 className="submenu-item"
-                onClick={() => console.log('Satellite view selected')}
+                onClick={() => News('Satellite view selected')}
               >
                 <div className="submenu-item-icon"><Satellite size={20} /></div>
                 <div className="submenu-item-label">Satellite</div>
               </div>
               <div 
                 className="submenu-item"
-                onClick={() => console.log('Street view selected')}
+                onClick={() => News('Street view selected')}
               >
                 <div className="submenu-item-icon"><Map size={20} /></div>
                 <div className="submenu-item-label">Street</div>
               </div>
               <div 
                 className="submenu-item"
-                onClick={() => console.log('3D view selected')}
+                onClick={() => News('3D view selected')}
               >
                 <div className="submenu-item-icon"><Globe size={20} /></div>
                 <div className="submenu-item-label">3D</div>
@@ -270,7 +269,7 @@ const BottomMenu = ({ onSubmenuToggle, onGetUserLocation }) => {
         
 
 
-      {/* Zoom Controls */}
+      {/* Zoom Controls 
       <div className="zoom-controls">
         <div className="zoom-button" onClick={handleZoomIn}>
           <Plus size={24} />
@@ -278,11 +277,11 @@ const BottomMenu = ({ onSubmenuToggle, onGetUserLocation }) => {
         <div className="zoom-button" onClick={handleZoomOut}>
           <Minus size={24} />
         </div>
-      </div>
+      </div>*/}
 
       {/* Filter Button */}
       <div 
-        className={`filter-button ${activeSubmenu === 'news' ? 'active' : ''}`}
+        className={`menu-item filter-button ${activeSubmenu === 'news' ? 'active' : ''}`}
         onClick={() => toggleSubmenu('news')}
       >
         <Filter size={24} />

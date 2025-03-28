@@ -1,10 +1,11 @@
-// CustomNewsScroll.jsx
+// NewsScroll.jsx
 import React, { useState, useEffect, useRef } from 'react';
-import Stack from "@mui/material/Stack"
-import { Calendar, MapPin, Globe, ChevronLeft, Newspaper, User } from 'lucide-react';
-import './CustomNewsScroll.css';
+import Grid from '@mui/material/Grid';
+import Stack from "@mui/material/Stack";
+import { Calendar, MapPin, Globe, ChevronLeft, Newspaper, User, Tag } from 'lucide-react';
+import './NewsScroll.css';
 
-const CustomNewsScroll = ({ newsEvents, onNavigateToArticle }) => {
+const NewsScroll = ({ newsEvents, onNavigateToArticle }) => {
   const [visibleEvents, setVisibleEvents] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
@@ -13,6 +14,27 @@ const CustomNewsScroll = ({ newsEvents, onNavigateToArticle }) => {
   const loaderRef = useRef(null);
   
   const ITEMS_PER_PAGE = 100;
+  
+  // Helper function to get theme colors
+  const getThemeColor = (theme) => {
+    if (!theme) return '#34495e';
+    
+    const themeColors = {
+      environment: '#2ecc71', // Green
+      politics: '#3498db', // Blue
+      health: '#e74c3c', // Red
+      science: '#9b59b6', // Purple
+      technology: '#f39c12', // Orange
+      economy: '#1abc9c', // Teal
+      culture: '#d35400', // Dark Orange
+      sport: '#27ae60', // Dark Green
+      war: '#c0392b', // Dark Red
+      disaster: '#e67e22', // Light Orange
+      default: '#34495e' // Dark Blue
+    };
+    
+    return themeColors[theme.toLowerCase()] || themeColors.default;
+  };
   
   // Initialize with first page of events
   useEffect(() => {
@@ -82,6 +104,7 @@ const CustomNewsScroll = ({ newsEvents, onNavigateToArticle }) => {
     setIsOpen(!isOpen);
   };
 
+
   return (
     <div className={`custom-news-container ${isOpen ? 'open' : 'closed'}`}>
       <button className="news-toggle-button" onClick={toggleFeed}>
@@ -103,42 +126,69 @@ const CustomNewsScroll = ({ newsEvents, onNavigateToArticle }) => {
               
               <div className="news-feed-item-content-wrapper">
                 <h3 className="news-feed-item-title">{event.title}</h3>
+                <h4 className="news-feed-item-subtitle">{event.subtitle}</h4>
+                {/* Theme and subtheme chips */}
+                <div className="news-feed-item-chips">
+                  {event.theme && (
+                    <span 
+                      className="theme-chip" 
+                      style={{ backgroundColor: getThemeColor(event.theme) }}
+                    >
+                      <Tag size={10} className="chip-icon" />
+                      {event.theme}
+                    </span>
+                  )}
+                  {event.themeTags && event.themeTags.map((subtheme, i) => (
+                    <span key={i} className="subtheme-chip">
+                     
+                      {subtheme}
+                    </span>
+                  ))}
+                </div>
+                
                 <p className="news-feed-item-description">{event.description}</p>
                 
-                <div className="news-feed-item-meta">
-                  <div className="news-feed-item-meta-row">
-                    <Newspaper size={14} className="news-feed-item-meta-icon" /> 
-                    <span className="news-feed-item-newspaper">{event.newspaper}</span>
+                {/* Footer with buttons and info */}
+                <div className="news-feed-item-footer">
+                  <div className="news-feed-item-buttons">
+                    <button 
+                      className="news-feed-item-button"
+                      onClick={() => handleNavigateToArticle(event.lat, event.lng)}
+                      aria-label="Show on globe"
+                    >
+                      <Globe size={14} />
+                    </button>
+                    <button 
+                      className="news-feed-item-button"
+                      onClick={() => window.open(event.externalLink, "_blank")}
+                      aria-label="Open article"
+                    >
+                      <Newspaper size={14} />
+                    </button>
                   </div>
                   
-                  <div className="news-feed-item-meta-row">
-                    <User size={14} className="news-feed-item-meta-icon" /> 
-                    <span className="news-feed-item-author">{event.author}</span>
-                  </div>
-                  
-                  <div className="news-feed-item-meta-row">
-                    <Calendar size={14} className="news-feed-item-meta-icon" /> 
-                    <span>{event.date}</span>
-                  </div>
-                  
-                  <div className="news-feed-item-meta-row">
-                    <MapPin size={14} className="news-feed-item-meta-icon" /> 
-                    <span>{event.lat.toFixed(2)}, {event.lng.toFixed(2)}</span>
+                  <div className="news-feed-item-info">
+                    <Grid container>
+                    <div className="news-feed-item-info-row">
+                      <Newspaper size={10} className="news-feed-item-info-icon" /> 
+                      <span className="news-feed-item-newspaper">{event.newspaper}</span>
+                    </div>
+                    <div className="news-feed-item-info-row">
+                      <User size={10} className="news-feed-item-info-icon" /> 
+                      <span className="news-feed-item-author">{event.author}</span>
+                    </div>
+                    <div className="news-feed-item-info-row">
+                      <Calendar size={10} className="news-feed-item-info-icon" /> 
+                         {/* WARNING REMOVE YEAR ON DATE - FOR SHORT TERMS ONLY ? */}
+                      <span>{event.date.slice(0, -9).replace(/\d{4}/,"")}</span>
+                    </div>
+                    <div className="news-feed-item-info-row">
+                      <MapPin size={10} className="news-feed-item-info-icon" /> 
+                      <span>{event.location}</span>
+                    </div>
+                    </Grid>
                   </div>
                 </div>
-                <Stack direction="row" spacing={1} margin={1} sx={{ width: "100%", height: "40px" }}>
-                <button class="news-feed-item-locate-button"
-                  onClick={() => handleNavigateToArticle(event.lat, event.lng)}
-                >
-                  <Globe size={18} />
-                </button>
-                <button 
-                  onClick={() => window.open(event.externalLink, "_blank")}
-                >
-
-                  <Newspaper size={18} />
-                </button>
-                </Stack>
               </div>
             </div>
           ))}
@@ -165,4 +215,4 @@ const CustomNewsScroll = ({ newsEvents, onNavigateToArticle }) => {
   );
 };
 
-export default CustomNewsScroll;
+export default NewsScroll;

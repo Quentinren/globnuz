@@ -1,242 +1,376 @@
-/* CustomNewsScroll.css - Fixed version */
+/* NewsScroll.css - Fixed version */
 
 .custom-news-container {
-    position: fixed;
-    top: 0;
-    right: 5px; /* 5px padding from right edge */
-    width: 50%; /* 50% of screen width */
-    height: 100vh; /* Use viewport height */
-    transition: transform 0.3s ease-in-out;
-    z-index: 500;
-    display: flex;
-    flex-direction: column;
-    max-height: 100vh; /* Ensure it doesn't exceed viewport height */
-    overflow: hidden; /* Hide any overflow */
+  position: fixed;
+  top: 0;
+  right: 5px; /* 5px padding from right edge */
+  width: 55%; /* 50% of screen width */
+  height: 100vh; /* Use viewport height */
+  transition: transform 0.3s ease-in-out;
+  z-index: 500;
+  display: flex;
+  flex-direction: column;
+  max-height: 100vh; /* Ensure it doesn't exceed viewport height */
+  overflow: hidden; /* Hide any overflow */
 }
-  
+
+/* Small screens */
+@media (max-width: 768px) {
+  .custom-news-container {
+    width: 100vw;
+  }
+  }
+
 .custom-news-container.closed {
-    transform: translateX(calc(100%));
+  transform: translateX(calc(100%));
 }
-  
+
 .custom-news-container.open {
-    transform: translateX(0);
+  transform: translateX(0);
 }
-  
+
 .news-toggle-button {
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%) translateX(-100%);
-    width: 40px;
-    height: 80px;
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: color 0.2s ease;
-    padding: 0;
-    z-index: 501;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%) translateX(-100%);
+  width: 40px;
+  height: 80px;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  padding: 0;
+  z-index: 501;
 }
-  
+
 .news-toggle-button:hover {
-    color: #4fc3f7;
+  color: #4fc3f7;
 }
-  
+
 .news-toggle-button .flipped {
-    transform: rotate(180deg);
+  transform: rotate(180deg);
 }
-  
+
 .news-toggle-button span {
-    display: none; /* Hide the text in the toggle button */
+  display: none; /* Hide the text in the toggle button */
 }
-  
+
 .news-feed-wrapper {
-    flex: 1; /* Take remaining space */
-    overflow-y: auto; /* Only the wrapper should scroll */
-    height: 100%; /* Full height */
-    scrollbar-width: thin;
-    scrollbar-color: #0f252e rgba(255, 255, 255, 0.3);
+  flex: 1; /* Take remaining space */
+  overflow-y: auto; /* Only the wrapper should scroll */
+  height: 100%; /* Full height */
+  scrollbar-width: thin;
+  scrollbar-color: #0f252e rgba(255, 255, 255, 0.3);
 }
 
 .news-feed-header {
-    padding: 20px;
-    color: white;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    background-color: rgba(255, 255, 255, 0.8);
+  padding: 20px;
+  color: white;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  background-color: rgba(255, 255, 255, 0.8);
 }
-  
+
 .news-feed-header h2 {
-    margin: 0;
-    font-size: 24px;
-    font-weight: 600;
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
 }
-  
+
 .news-feed-content {
-    padding: 20px;
-    height: 100%;
-    overflow-y: auto; /* Allow content to scroll */
+  padding: 20px;
+  height: 100%;
+  overflow-y: auto; /* Allow content to scroll */
 }
-  /* Updated card layout with image on left */
+
 
 .news-feed-item {
-    display: flex;
-    background-color: rgba(255, 255, 255, 0.65);
-    border-radius: 12px;
-    color: white;
-    overflow: hidden;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    height: 30vh; /* Fixed height for consistent card size */
+  display: flex;
+  background-color: #bcd6ffe9;
+  border-radius: 12px;
+  color: white;
+  overflow: hidden;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.6s ease, box-shadow 0.2s ease;
+  height: 40vh; /* Fixed height for consistent card size */
+}
+
+/* Small screens */
+@media (max-width: 1200px) {
+  .news-feed-item {
+    height: 70vh;
   }
-  
-  .news-feed-item:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
   }
-  
-  /* Theme colors - applying to top border instead of left */
-  .news-feed-item.theme-0 {
-    border-top: 3px solid #3b82f6;
+/* Small screens */
+@media (max-width: 768px) {
+  .news-feed-item {
+    height: 80vh;
   }
-  
-  .news-feed-item.theme-1 {
-    border-top: 3px solid #10b981;
   }
-  
-  .news-feed-item.theme-2 {
-    border-top: 3px solid #f97316;
-  }
-  
-  .news-feed-item.theme-3 {
-    border-top: 3px solid #f59e0b;
-  }
-  
-  .news-feed-item.theme-4 {
-    border-top: 3px solid #ec4899;
-  }
-  
-  /* Image container on the left */
+
+
+
+.news-feed-item:hover {
+  transform: scale(1.01);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+/* Theme colors - applying to top border instead of left */
+.news-feed-item.theme-0 {
+  border-top: 3px solid #3b82f6;
+}
+
+.news-feed-item.theme-1 {
+  border-top: 3px solid #10b981;
+}
+
+.news-feed-item.theme-2 {
+  border-top: 3px solid #f97316;
+}
+
+.news-feed-item.theme-3 {
+  border-top: 3px solid #f59e0b;
+}
+
+.news-feed-item.theme-4 {
+  border-top: 3px solid #ec4899;
+}
+
+/* Image container on the left */
+.news-feed-item-image-container {
+  flex: 0 0 40%; /* Fixed width */
+  height: 100%;
+  overflow: hidden;
+  border-radius: 12px 0 0 12px; /* Rounded on left side only */
+}
+
+@media(max-width: 1200px) {
   .news-feed-item-image-container {
-    flex: 0 0 60%; /* Fixed width */
-    height: 100%;
-    overflow: hidden;
-    border-radius: 12px 0 0 12px; /* Rounded on left side only */
+    height: 50%;
+    border-radius: 12px 0 12px 0px; 
   }
-  
-  .news-feed-item-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.3s ease;
-  }
-  
-  .news-feed-item:hover .news-feed-item-image {
-    transform: scale(1.05);
-  }
-  
-  /* Content container on the right */
-  .news-feed-item-content-wrapper {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    padding: 12px 16px;
-    overflow: hidden;
-  }
-  
-  /* Title styling */
-  .news-feed-item-title {
-    margin: 0 0 8px 0;
-    color: #111;
-    font-size: 16px;
-    line-height: 1.3;
-    font-weight: 600;
-    /* Limit to 2 lines with ellipsis */
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  
-  /* Description styling */
-  .news-feed-item-description {
-    margin: 0 0 8px 0;
-    color: #333;
-    font-size: 14px;
-    line-height: 1.4;
-    /* Limit to 2 lines with ellipsis */
-    display: -webkit-box;
-    -webkit-line-clamp: 5;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  
-  /* Meta information grid */
-  .news-feed-item-meta {
-    margin-top: auto; /* Push to bottom of flex container */
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto auto;
-    gap: 6px;
-    font-size: 12px;
-    color: #666;
-  }
-  
-  .news-feed-item-meta-row {
-    display: flex;
-    align-items: center;
-  }
-  
-  .news-feed-item-meta-icon {
-    margin-right: 6px;
-    color: #555;
-    flex-shrink: 0;
-  }
-  
-  /* Source and author styling */
-  .news-feed-item-newspaper {
-    font-weight: 600;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  
-  .news-feed-item-author {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
+}
 
+.news-feed-item-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.news-feed-item:hover .news-feed-item-image {
+  transform: scale(1.01) 0.05s ease;
+}
+
+/* Content container on the right */
+.news-feed-item-content-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 12px 16px;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Title styling */
+.news-feed-item-title {
+  margin: 0 0 0 0;
+  color: #111;
+  font-size: 24px;
+  line-height: 1.3;
+  font-weight: 700;
+  /* Limit to 2 lines with ellipsis */
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Title styling */
+.news-feed-item-subtitle {
+  margin: 0 0 0 0;
+  margin-bottom:10px;
+  color: #333;
+  font-size: 20px;
+  line-height: 1.3;
+  font-weight: 400;
+  /* Limit to 2 lines with ellipsis */
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Description styling */
+.news-feed-item-description {
+  margin: 0 0 0 0;
+  color: #333;
+  font-size: 14px;
+  line-height: 1.4;
+  /* Limit to 5 lines with ellipsis */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: clip;
+  flex-grow: 1;
+}
+
+/* New styles for theme chips */
+.news-feed-item-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.theme-chip {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  border-radius: 11px;
+  padding: 0 8px;
+  font-size: 11px;
+  font-weight: 600;
+  color: white;
+  background-color: #4fc3f7;
+}
+
+.subtheme-chip {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  border-radius: 11px;
+  background-color: rgba(3, 3, 3, 0.082);
+  padding: 0 8px;
+  font-size: 9px;
+  font-weight: 600;
+  color: #3d3d3d;
+}
+
+.chip-icon {
+  margin-right: 4px;
+}
+
+/* Footer layout with buttons and info */
+.news-feed-item-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: auto;
+  padding-top: 4px;
   
+}
+
+/* Smaller buttons */
+.news-feed-item-buttons {
+  display: flex;
+  gap: 6px;
+}
+
+.news-feed-item-button {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border-radius: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(69, 69, 69, 0.139);
+  color: #555;
+  transition: all 0.2s ease;
+}
+
+.news-feed-item-button:hover {
+  background-color: rgba(69, 69, 69, 0.224);
+  color: #cecece;
+  transform: scale(1.1);
+}
+
+/* Info section */
+.news-feed-item-info {
+
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  font-size: 12px;
+  color: #666;
+}
+
+
+.news-feed-item-info-icon {
+  margin-right: 4px;
+  margin-left:10px;
+  color: #555;
+}
+
+.news-feed-item-newspaper, 
+.news-feed-item-author {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 140px;
+}
+
+/* Loading elements */
+.loader-container {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.news-feed-loader {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.news-feed-loader-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #525252;
+  border-radius: 50%;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+.news-feed-loader-dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.news-feed-loader-dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes pulse {
+  0%, 100% {
+      transform: scale(0.8);
+      opacity: 0.6;
+  }
+  50% {
+      transform: scale(1.2);
+      opacity: 1;
+  }
+}
+
+.load-more-button {
+  background-color: rgba(79, 195, 247, 0.2);
+  color: #ffffff;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.load-more-button:hover {
+  background-color: rgba(200, 237, 255, 0.3);
+}
+
 @media (max-width: 480px) {
-    .custom-news-container {
-        width: 90%;
-    }
-}
-
-/* Fix 2: Fix positioning for news submenu and prevent it from disappearing */
-.news-submenu {
-  position: absolute;
-  right: 70px !important; /* Force it to stay positioned relative to the filter button */
-  bottom: 20px !important;
-  left: auto !important;
-  transform: none !important;
-}
-
-/* Fix 3: Properly position all submenus directly above their buttons */
-.bottom-menu-container .submenu-card {
-  position: absolute;
-  bottom: 70px !important; /* Position above the bottom menu */
-  left: 50% !important; /* Center horizontally */
-  transform: translateX(-50%) !important; /* Center horizontally */
-  width: 240px;
-}
-
-/* Make sure the submenus don't disappear */
-.submenu-card {
-  opacity: 1 !important;
-  visibility: visible !important;
+  .custom-news-container {
+      width: 90%;
+  }
 }
