@@ -68,9 +68,7 @@ h1 {
   z-index: 300;
 }
 
-.left-menu-container {
-  z-index: 400;
-}
+
 
 /* InfiniteNewsScroll is set to z-index 500 in its CSS file */
 

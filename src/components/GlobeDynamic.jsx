@@ -387,7 +387,7 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates, onLabelClick }) => {
         ringRepeatPeriod={500}
         ringColor={() => 'rgba(255, 0, 0, 0.7)'}
         ringMaxRadius={1}
-        ringAltitude={0.01}
+        ringAltitude={0.017}
         
         // Custom three.js rendering for lines
         customLayerData={formattedNewsEvents}
