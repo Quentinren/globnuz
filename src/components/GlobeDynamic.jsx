@@ -312,7 +312,13 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates, onLabelClick }) => {
   }, [globeReady]);
 
   // Formatter pour rendre les données d'actualités compatibles avec le format attendu par Globe
-  const formattedNewsEvents = newsEvents.map(event => ({
+  const formattedNewsEvents = newsEvents
+    .filter(event => {
+      // Filter out items with invalid coordinates
+      return typeof event.lat === 'number' && !isNaN(event.lat) && 
+            typeof event.lng === 'number' && !isNaN(event.lng);
+    })
+    .map(event => ({
     lat: event.lat,
     lng: event.lng,
     size: getDynamicLabelSize(0.8),
@@ -392,6 +398,12 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates, onLabelClick }) => {
         // Custom three.js rendering for lines
         customLayerData={formattedNewsEvents}
         customThreeObject={d => {
+            // Validate coordinates first
+          if (!d || typeof d.lat !== 'number' || isNaN(d.lat) || 
+          typeof d.lng !== 'number' || isNaN(d.lng)) {
+        // Return null or a tiny invisible object if coordinates are invalid
+        return null;
+        }
           // Créer une ligne qui va du centre à la surface du globe (et légèrement au-delà)
           const startVec = new THREE.Vector3(0, 0, 0); // Centre du globe
           

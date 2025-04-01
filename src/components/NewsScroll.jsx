@@ -180,11 +180,18 @@ const NewsScroll = ({ newsEvents, onNavigateToArticle }) => {
                     <div className="news-feed-item-info-row">
                       <Calendar size={10} className="news-feed-item-info-icon" /> 
                          {/* WARNING REMOVE YEAR ON DATE - FOR SHORT TERMS ONLY ? GAIN PLACE */}
-                      <span>{event.publication_date.slice(0, -9).replace(/\d{4}/,"")}</span>
+                      <span>{event.publication_date.slice(0, -9).replace("T", " ")}  </span>
                     </div>
+
                     <div className="news-feed-item-info-row">
+                    <img
+                      src={`https://flagcdn.com/${event.country_id.toLowerCase()}.svg`}
+                      alt={`Flag of ${event.country_id}`}
+                      style={{ width: "16px", height: "12px" }} // Mini flag size
+                    />
                       <MapPin size={10} className="news-feed-item-info-icon" /> 
-                      <span>{event.location}</span>
+  
+                      <span> {event.location}</span>
                     </div>
                     </Grid>
                   </div>

@@ -268,12 +268,12 @@
 }
 
 /* Smaller buttons */
-.news-themeTagss {
+.news-theme_tags {
   display: flex;
   gap: 6px;
 }
 
-.news-themeTags {
+.news-theme_tags {
   width: 30px;
   height: 30px;
   padding: 0;

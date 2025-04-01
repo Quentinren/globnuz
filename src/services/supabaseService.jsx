@@ -32,7 +32,7 @@ export const fetchNewsFromSupabase = async () => {
     // Fetch news from Supabase table - adjust table name as needed
     const { data, error } = await supabase
       .from('news_articles')
-      .select('*')
+      .select('*, newspapers(*)')
       .order('publication_date', { ascending: false });
     
     if (error) {
@@ -51,12 +51,13 @@ export const fetchNewsFromSupabase = async () => {
       subtitle: item.subtitle,
       description: item.description,
       author: item.author,
-      newspaper: item.newspaper,
+      newspaper_id: item.newspaper_id,
       theme: item.theme,
-      themeTags: Array.isArray(item.themeTags) ? item.themeTags : (item.themeTags ? JSON.parse(item.themeTags) : []),
+      theme_tags: Array.isArray(item.theme_tags) ? item.theme_tags : (item.theme_tags ? JSON.parse(item.theme_tags) : []),
       image: item.image,
-      externalLink: item.externalLink,
+      external_link: item.external_link,
       publication_date: item.publication_date,
+      country_id: item.country_id,
       location: item.location,
       lat: parseFloat(item.lat),
       lng: parseFloat(item.lng)
@@ -78,9 +79,9 @@ export const createNewsEvent = async (newsItem) => {
     // Format theme tags if needed
     const formattedItem = {
       ...newsItem,
-      themeTags: Array.isArray(newsItem.themeTags) 
-        ? JSON.stringify(newsItem.themeTags) 
-        : newsItem.themeTags
+      theme_tags: Array.isArray(newsItem.theme_tags) 
+        ? JSON.stringify(newsItem.theme_tags) 
+        : newsItem.theme_tags
     };
     
     const { data, error } = await supabase
@@ -106,8 +107,8 @@ export const updateNewsEvent = async (id, updates) => {
   try {
     // Format theme tags if needed
     const formattedUpdates = {...updates};
-    if (updates.themeTags && Array.isArray(updates.themeTags)) {
-      formattedUpdates.themeTags = JSON.stringify(updates.themeTags);
+    if (updates.theme_tags && Array.isArray(updates.theme_tags)) {
+      formattedUpdates.theme_tags = JSON.stringify(updates.theme_tags);
     }
     
     const { data, error } = await supabase
@@ -180,7 +181,7 @@ export const searchNewsEvents = async (keyword) => {
     if (error) throw error;
     return data.map(item => ({
       ...item,
-      themeTags: Array.isArray(item.themeTags) ? item.themeTags : (item.themeTags ? JSON.parse(item.themeTags) : []),
+      theme_tags: Array.isArray(item.theme_tags) ? item.theme_tags : (item.theme_tags ? JSON.parse(item.theme_tags) : []),
       lat: parseFloat(item.lat),
       lng: parseFloat(item.lng)
     }));
@@ -206,7 +207,7 @@ export const getNewsByTheme = async (theme) => {
     if (error) throw error;
     return data.map(item => ({
       ...item,
-      themeTags: Array.isArray(item.themeTags) ? item.themeTags : (item.themeTags ? JSON.parse(item.themeTags) : []),
+      theme_tags: Array.isArray(item.theme_tags) ? item.theme_tags : (item.theme_tags ? JSON.parse(item.theme_tags) : []),
       lat: parseFloat(item.lat),
       lng: parseFloat(item.lng)
     }));
@@ -225,3 +226,45 @@ export default {
   searchNewsEvents,
   getNewsByTheme
 };
+
+
+
+/**
+ * Fetches news events from Supabase and formats them to match the application's data structure
+ * @returns {Promise<Array>} - Array of news events in the required format
+ */
+export const fetchCountriesFromSupabase = async () => {
+    try {
+      // Check if Supabase is properly configured
+      if (!supabaseUrl || !supabaseAnonKey) {
+        throw new Error('Supabase not configured. Check your environment variables.');
+      }
+      
+      // Fetch news from Supabase table - adjust table name as needed
+      const { data, error } = await supabase
+        .from('countries')
+        .select('*')
+        .order('country_id', { ascending: false });
+      
+      if (error) {
+        throw new Error(error.message);
+      }
+      
+      if (!data || data.length === 0) {
+        console.warn('No news data retrieved from Supabase');
+        return [];
+      }
+      
+      // Convert Supabase data to match the existing format
+      // This assumes your Supabase table has the same column structure
+      return data.map(item => ({
+        name: item.name,
+        country_id: item.country_id,
+        flag_image_url: item.flag_image_url,
+      }));
+      
+    } catch (error) {
+      console.error('Error fetching news from Supabase:', error);
+      throw error;
+    }
+  };
