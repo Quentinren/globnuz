@@ -153,14 +153,14 @@ const NewsScroll = ({ newsEvents, onNavigateToArticle }) => {
                   <div className="news-feed-item-buttons">
                     <button 
                       className="news-feed-item-button"
-                      onClick={() => handleNavigateToArticle(event.lat, event.lng)}
+                      onClick={() => handleNavigateToArticle(event.latitude, event.longitude)}
                       aria-label="Show on globe"
                     >
                       <Globe size={14} />
                     </button>
                     <button 
                       className="news-feed-item-button"
-                      onClick={() => window.open(event.externalLink, "_blank")}
+                      onClick={() => window.open(event.external_link, "_blank")}
                       aria-label="Open article"
                     >
                       <Newspaper size={14} />
