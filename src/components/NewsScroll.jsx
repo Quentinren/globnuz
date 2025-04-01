@@ -180,7 +180,7 @@ const NewsScroll = ({ newsEvents, onNavigateToArticle }) => {
                     <Grid container>
                     <div className="news-feed-item-info-row">
                       <Newspaper size={10} className="news-feed-item-info-icon" /> 
-                      <span className="news-feed-item-newspaper">{event.newspaper}</span>
+                      <span className="news-feed-item-newspaper">{event.newspaper ? event.newspaper.name : event.newspaper_id}</span>
                     </div>
                     <div className="news-feed-item-info-row">
                       <User size={10} className="news-feed-item-info-icon" /> 

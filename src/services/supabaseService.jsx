@@ -22,52 +22,61 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey);
  * Fetches news events from Supabase and formats them to match the application's data structure
  * @returns {Promise<Array>} - Array of news events in the required format
  */
+// Updated mapping in fetchNewsFromSupabase function
 export const fetchNewsFromSupabase = async () => {
-  try {
-    // Check if Supabase is properly configured
-    if (!supabaseUrl || !supabaseAnonKey) {
-      throw new Error('Supabase not configured. Check your environment variables.');
+    try {
+      // Check if Supabase is properly configured
+      if (!supabaseUrl || !supabaseAnonKey) {
+        throw new Error('Supabase not configured. Check your environment variables.');
+      }
+      
+      // Fetch news from Supabase table - adjust table name as needed
+      const { data, error } = await supabase
+        .from('news_articles')
+        .select('*, newspapers(*)')
+        .order('publication_date', { ascending: false });
+      
+      if (error) {
+        throw new Error(error.message);
+      }
+      
+      if (!data || data.length === 0) {
+        console.warn('No news data retrieved from Supabase');
+        return [];
+      }
+      
+      // Convert Supabase data to match the existing format
+      // Now including newspaper information
+      return data.map(item => ({
+        title: item.title,
+        subtitle: item.subtitle,
+        description: item.description,
+        author: item.author,
+        newspaper_id: item.newspaper_id,
+        // Include newspaper details
+        newspaper: item.newspapers ? {
+          id: item.newspapers.id,
+          name: item.newspapers.name,
+          description: item.newspapers.description,
+          country_id: item.newspapers.country_id,
+          // Include any other newspaper properties you need
+        } : null,
+        theme: item.theme,
+        theme_tags: Array.isArray(item.theme_tags) ? item.theme_tags : (item.theme_tags ? JSON.parse(item.theme_tags) : []),
+        image: item.image,
+        external_link: item.external_link,
+        publication_date: item.publication_date,
+        country_id: item.country_id,
+        location: item.location,
+        latitude: parseFloat(item.latitude || item.lat),
+        longitude: parseFloat(item.longitude || item.lng)
+      }));
+      
+    } catch (error) {
+      console.error('Error fetching news from Supabase:', error);
+      throw error;
     }
-    
-    // Fetch news from Supabase table - adjust table name as needed
-    const { data, error } = await supabase
-      .from('news_articles')
-      .select('*, newspapers(*)')
-      .order('publication_date', { ascending: false });
-    
-    if (error) {
-      throw new Error(error.message);
-    }
-    
-    if (!data || data.length === 0) {
-      console.warn('No news data retrieved from Supabase');
-      return [];
-    }
-    
-    // Convert Supabase data to match the existing format
-    // This assumes your Supabase table has the same column structure
-    return data.map(item => ({
-      title: item.title,
-      subtitle: item.subtitle,
-      description: item.description,
-      author: item.author,
-      newspaper_id: item.newspaper_id,
-      theme: item.theme,
-      theme_tags: Array.isArray(item.theme_tags) ? item.theme_tags : (item.theme_tags ? JSON.parse(item.theme_tags) : []),
-      image: item.image,
-      external_link: item.external_link,
-      publication_date: item.publication_date,
-      country_id: item.country_id,
-      location: item.location,
-      latitude: parseFloat(item.latitude),
-      longitude: parseFloat(item.longitude)
-    }));
-    
-  } catch (error) {
-    console.error('Error fetching news from Supabase:', error);
-    throw error;
-  }
-};
+  };
 
 /**
  * Creates a new news event in the Supabase database
@@ -85,7 +94,7 @@ export const createNewsEvent = async (newsItem) => {
     };
     
     const { data, error } = await supabase
-      .from('news_articles')
+      .from('news_articles')  
       .insert(formattedItem)
       .select();
       
