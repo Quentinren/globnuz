@@ -92,8 +92,17 @@ const NewsScroll = ({ newsEvents, onNavigateToArticle }) => {
     }, 500);
   };
   
-  // Handle navigation to the event on the globe
   const handleNavigateToArticle = (lat, lng) => {
+    // Log the coordinates for debugging
+    console.log('Navigation coordinates:', { lat, lng });
+    
+    // Check if coordinates are valid
+    if (lat === undefined || lng === undefined || isNaN(lat) || isNaN(lng)) {
+      console.error('Invalid coordinates for navigation:', { lat, lng });
+      return; // Don't proceed with invalid coordinates
+    }
+    
+    // Call the parent component's navigation function
     if (onNavigateToArticle) {
       onNavigateToArticle(lat, lng);
     }

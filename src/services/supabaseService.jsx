@@ -59,8 +59,8 @@ export const fetchNewsFromSupabase = async () => {
       publication_date: item.publication_date,
       country_id: item.country_id,
       location: item.location,
-      lat: parseFloat(item.lat),
-      lng: parseFloat(item.lng)
+      latitude: parseFloat(item.latitude),
+      longitude: parseFloat(item.longitude)
     }));
     
   } catch (error) {

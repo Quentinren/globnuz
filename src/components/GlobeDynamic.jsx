@@ -61,16 +61,36 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates, onLabelClick }) => {
   };
 
   // Function to navigate to coordinates
-  const goToCoordinates = (lat, lng) => {
-    if (globeEl.current) {
-      // Animate to the target coordinates
+// Enhanced goToCoordinates function with smoother transition
+const goToCoordinates = (lat, lng) => {
+  if (!globeEl.current) return;
+  console.log("latitude:", lat, "longitude:", lng);
+  // First get current position
+  const currentPov = globeEl.current.pointOfView();
+  
+  // If we're already zoomed in very close, zoom out a bit first
+  if (currentPov.altitude < 0.3) {
+    // First zoom out slightly
+    globeEl.current.pointOfView({
+      ...currentPov,
+      altitude: 1.0
+    }, 500, () => {
+      // Then navigate to new position
       globeEl.current.pointOfView({
         lat: lat,
         lng: lng,
-        altitude: 2 // Control how close the view gets
-      }, 1000); // 1000ms animation duration
-    }
-  };
+        altitude: 0.5
+      }, 1000);
+    });
+  } else {
+    // Navigate directly if we're not too zoomed in
+    globeEl.current.pointOfView({
+      lat: lat,
+      lng: lng,
+      altitude: 0.5
+    }, 1000);
+  }
+};
 
   // Appearance of the Earth
   const globeMaterial = new THREE.MeshPhongMaterial();
@@ -315,17 +335,17 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates, onLabelClick }) => {
   const formattedNewsEvents = newsEvents
     .filter(event => {
       // Filter out items with invalid coordinates
-      return typeof event.lat === 'number' && !isNaN(event.lat) && 
-            typeof event.lng === 'number' && !isNaN(event.lng);
+      return typeof event.latitude === 'number' && !isNaN(event.latitude) && 
+            typeof event.longitude === 'number' && !isNaN(event.longitude);
     })
     .map(event => ({
-    lat: event.lat,
-    lng: event.lng,
+    lat: event.latitude,
+    lng: event.longitude,
     size: getDynamicLabelSize(0.8),
     color: 'red',
     isNews: true,
     title: event.title,
-    location: event.newspaper,
+    location: event.location,
     isNews: true
   }));
 
@@ -349,7 +369,9 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates, onLabelClick }) => {
     
         // Increase light intensity
         ambientLightColor="white"
-        ambientLightIntensity={15} // Increased from 10
+        ambientLightIntensity={20} // Increased from 10
+
+
 
         // Increase directional light intensity
         directionalLightColor="white"
@@ -382,18 +404,17 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates, onLabelClick }) => {
         
         // Points for news events
         pointsData={formattedNewsEvents}
-        pointRadius={0.08}
         pointColor="point => 'rgba(230, 30, 10, 1)'"
-        pointAltitude={0.001}
+        pointAltitude={0.015}
         pointsMerge={false}
         
         // Radial lines from center to news events
         ringsData={formattedNewsEvents}
         ringPropagationSpeed={0.2}
-        ringRepeatPeriod={500}
+        ringRepeatPeriod={1000}
         ringColor={() => 'rgba(255, 0, 0, 0.7)'}
-        ringMaxRadius={1}
-        ringAltitude={0.017}
+        ringMaxRadius={0.7}
+        ringAltitude={0.015}
         
         // Custom three.js rendering for lines
         customLayerData={formattedNewsEvents}
@@ -439,13 +460,13 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates, onLabelClick }) => {
         labelSize={d => d.isCountry ? getDynamicLabelSize(0.7, true, false) : 
                        (d.isOcean ? getDynamicLabelSize(1.2, false, true, d.smallOcean) : 
                                    getDynamicLabelSize(0.4))}
-        labelDotRadius={0.5}
+        labelDotRadius={0.3}
         onLabelClick={handleLabelClick} // Add this handler
         labelColor={d => d.isOcean ? 'rgba(100, 200, 255, 0.8)' : 
                         (d.isCountry ? 'rgba(30, 30, 30, 0.9)' : 
                         (d.isNews ? 'rgba(240, 30, 30, 0.9)' : 'white'))}
         labelResolution={2}
-        labelAltitude={d => d.isOcean ? 0.03 : (d.isCountry ? 0.02 : 0.03)}
+        labelAltitude={d => d.isOcean ? 0.03 : (d.isCountry ? 0.02 : 0.015)}
         labelIncludeDot={d => !d.isOcean && !d.isCountry}
         
         onGlobeReady={() => setGlobeReady(true)}

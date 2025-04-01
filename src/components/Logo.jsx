@@ -8,7 +8,7 @@ const Logo = () => {
         position: 'absolute',
         top: 20,
         left: 40,
-        width: '60px',
+        width: '50px',
         zIndex: 1000
       }}
     >
