@@ -138,10 +138,10 @@ const NewsScroll = ({ newsEvents, onNavigateToArticle }) => {
                       {event.theme}
                     </span>
                   )}
-                  {event.themeTags && event.themeTags.map((subtheme, i) => (
+                  {event.theme_tags && event.theme_tags.map((theme_tag, i) => (
                     <span key={i} className="subtheme-chip">
                      
-                      {subtheme}
+                      {theme_tag}
                     </span>
                   ))}
                 </div>
@@ -180,7 +180,7 @@ const NewsScroll = ({ newsEvents, onNavigateToArticle }) => {
                     <div className="news-feed-item-info-row">
                       <Calendar size={10} className="news-feed-item-info-icon" /> 
                          {/* WARNING REMOVE YEAR ON DATE - FOR SHORT TERMS ONLY ? GAIN PLACE */}
-                      <span>{event.date.slice(0, -9).replace(/\d{4}/,"")}</span>
+                      <span>{event.publication_date.slice(0, -9).replace(/\d{4}/,"")}</span>
                     </div>
                     <div className="news-feed-item-info-row">
                       <MapPin size={10} className="news-feed-item-info-icon" /> 
