@@ -4,7 +4,7 @@ CREATE TABLE news_articles (
     subtitle TEXT,
     description TEXT NOT NULL,
     author TEXT,
-    newspaper TEXT NOT NULL,
+    newspaper_id INT NOT NULL,
     theme TEXT NOT NULL,
     theme_tags TEXT[],
     image TEXT,
@@ -13,9 +13,29 @@ CREATE TABLE news_articles (
     country_id CHAR(2) NOT NULL;
     location TEXT,
     language TEXT NOT NULL,
-    minimal_age INT,
+     minimal_age INT,
     latitude DOUBLE PRECISION,
     longitude DOUBLE PRECISION
+);
+
+ALTER TABLE news_articles
+ADD CONSTRAINT fk_newspaper_id FOREIGN KEY (newspaper_id)
+REFERENCES newspapers(id);
+
+ALTER TABLE news_articles
+ADD CONSTRAINT fk_country_id FOREIGN KEY (country_id)
+REFERENCES countries(id);
+
+CREATE TABLE news_articles_raw (
+    id SERIAL PRIMARY KEY,
+    title TEXT NOT NULL,
+    description TEXT NOT NULL,
+    newspaper_id INT NOT NULL,
+    image TEXT,
+    external_link TEXT NOT NULL UNIQUE,
+    publication_date TIMESTAMP WITH TIME ZONE NOT NULL,
+    ai_processed BOOLEAN DEFAULT FALSE,
+    ai_processed_date TIMESTAMP WITH TIME ZONE
 );
 
 CREATE TABLE theme_tags (
@@ -33,6 +53,7 @@ CREATE TABLE newspapers (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     country_id CHAR(2) NOT NULL,
+    image_url TEXT,
     description TEXT NOT NULL,
     rss_feed_url VARCHAR(500),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -41,7 +62,7 @@ CREATE TABLE newspapers (
 CREATE TABLE countries (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL UNIQUE,
-    flag_image_url TEXT,
+    image_url TEXT,
     capital VARCHAR(100),
     number_of_inhabitants BIGINT,
     superficie BIGINT,

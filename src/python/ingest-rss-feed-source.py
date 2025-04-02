@@ -114,9 +114,9 @@ class RSSProcessor:
 
             Try to guess location from title, create a subtitle from title if not exists and content or summary, description or other indices found. When do so, add latitude and longitude coordinates from what you find on the net. If title is in one part, try to slice it with big title in title JSON field, the other part in subtitle. Remove all escapes at the beginning and at the end, remove caracters like : or -
             If you find any article that seems like copyright alert, please remove it. Get me JSON like API result format.
-            Once you've done that, add a theme like geopolitic, economy, society, culture, science, health, environment. Then add theme_tags tags that fits the subject in minimal letters english : ia, nuclear fusion, ukraine war, conflict, drugs, medicins, etc. Add multiple tags if needed from 5 to 10. Guess the minimal age the readers should have to read the content and add the language of the title and description.
+            Once you've done that, add a theme in minimal letters singular english like geopolitic, economy, society, culture, science, health, environment. Then add theme_tags : ia, nuclear fusion, ukraine war, conflict, drugs, medicins, etc. Add multiple tags if needed from 5 to 10. Guess the minimal age the readers should have to read the content and add the language of the title and description.
 
-            And now the JSON I need you to process with all that steps :"""
+            And now the JSON I need you to process at least 5 articles with all that steps :"""
 
         url = "https://api.openai.com/v1/chat/completions"
 
@@ -175,7 +175,11 @@ class RSSProcessor:
             raise
         except Exception as e:
             logger.error(f"Error processing entry with ChatGPT: {str(e)}")
-            return []
+            raise
+            return {
+                "statusCode": 500,
+                "body": f"Error processing entry with ChatGPT: {str(e)}"
+            }
 
     def upload_to_supabase(self, data: List[Dict[str, Any]]) -> None:
         """Upload processed data to Supabase"""
@@ -199,12 +203,20 @@ class RSSProcessor:
         except urllib.error.HTTPError as e:
             error_response = e.read().decode()
             print("Supabase Error:", error_response)  
-            raise Exception(f"Supabase API Error {e.code}: {error_response}")  # 🚨 Stop execution      
+            raise Exception(f"Supabase API Error {e.code}: {error_response}")  # 🚨 Stop execution
+            return {
+                "statusCode": 500,
+                "body": f"Supabase API Error {e.code}: {error_response}"
+            }      
         except Exception as e:
             logger.error(f"Supabase URL: {self.supabase_url}")
             logger.error(f"Data being integrated: {json.dumps(data)[:500]}...")  # Log only first 500 chars
             logger.error(f"Error uploading to Supabase: {str(e)}")
             raise
+            return {
+                "statusCode": 500,
+                "body": f"Error uploading to Supabase: {str(e)}"
+            }
 
     def process(self) -> None:
         """Main processing method to fetch RSS and upload to Supabase"""
