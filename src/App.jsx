@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 import { fetchCountriesData, fetchPlacesData } from './services/globeDataService';
-import { fetchNewsFromSupabase, fetchCountriesFromSupabase } from './services/newsService'; // Import the new Supabase service
+import { fetchNewsFromSupabase, fetchCountriesFromSupabase } from './services/newsService'; // Import the Supabase service
 import Logo from './components/Logo'
 import BottomMenu from './components/BottomMenu'
 import GlobeDynamic from './components/GlobeDynamic';
@@ -18,6 +18,8 @@ function App() {
   
   // State to store news events data
   const [newsEvents, setNewsEvents] = useState([]);
+  // State to store filtered news events
+  const [filteredNewsEvents, setFilteredNewsEvents] = useState([]);
 
   // State to store news events data
   const [countries, setCountries] = useState([]);  
@@ -26,7 +28,24 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   
-  // Fetch news from Supabase on component mount
+  // State to store selected news filters
+  const [newsFilters, setNewsFilters] = useState({
+    // Categories
+    environment: false,
+    politics: false,
+    health: false,
+    science: false,
+    technology: false,
+    other: false,
+    // Regions
+    africa: false,
+    americas: false,
+    asia: false,
+    europe: false,
+    oceania: false
+  });
+  
+
   useEffect(() => {
     const fetchNews = async () => {
       setIsLoading(true);
@@ -35,15 +54,13 @@ function App() {
         const newsData = await fetchNewsFromSupabase();
         if (newsData.length === 0) {
           setError("No news data available. Using fallback data.");
-          // Fallback to sample data if API returns empty
-         
         } else {
           setNewsEvents(newsData);
+          setFilteredNewsEvents(newsData); // Initialize filtered news with all news
         }
       } catch (error) {
         console.error("Error fetching news from Supabase:", error);
         setError(`Failed to load news data: ${error.message}`);
-     
       } finally {
         setIsLoading(false);
       }
@@ -52,31 +69,35 @@ function App() {
     fetchNews();
   }, []);
   
-    // Fetch news from Supabase on component mount
-    useEffect(() => {
-      const fetchCountriesData = async () => {
-        try {
-          const countriesData = await fetchCountriesFromSupabase();
-          if (countriesData.length === 0) {
-            setError("No news data available. Using fallback data.");
-            // Fallback to sample data if API returns empty
-           
-          } else {
-            setCountries(countriesData);
-          }
-        } catch (error) {
-          console.error("Error fetching news from Supabase:", error);
-          setError(`Failed to load news data: ${error.message}`);
-        } 
-      };
-      fetchCountriesData();
-    }, []);
-
-  // Log the fetched or fallback news events
+  // Fetch countries from Supabase on component mount
   useEffect(() => {
-    console.log("events: ", newsEvents);
-    console.log("countries: ", countries);
-  }, [newsEvents]);
+    const fetchCountriesData = async () => {
+      try {
+        const countriesData = await fetchCountriesFromSupabase();
+        if (countriesData.length === 0) {
+          setError("No countries data available.");
+        } else {
+          setCountries(countriesData);
+        }
+      } catch (error) {
+        console.error("Error fetching countries from Supabase:", error);
+        setError(`Failed to load countries data: ${error.message}`);
+      } 
+    };
+    fetchCountriesData();
+  }, []);
+
+  // Helper function to check if any filter is active
+  const isAnyFilterActive = () => {
+    return Object.values(newsFilters).some(value => value === true);
+  };
+
+  // Log the fetched data
+  useEffect(() => {
+    console.log("All news events:", newsEvents);
+    console.log("Filtered news events:", filteredNewsEvents);
+    console.log("countries:", countries);
+  }, [newsEvents, filteredNewsEvents, countries]);
 
   // Handler for when a globe label is clicked
   const handleGlobeLabelClick = (title) => {
@@ -91,6 +112,11 @@ function App() {
   // Custom event handler for submenu state
   const handleSubmenuToggle = (isOpen) => {
     setIsSubmenuOpen(isOpen);
+  };
+
+  // Function to handle news filter changes from BottomMenu
+  const handleNewsFiltersChange = (filters) => {
+    setNewsFilters(filters);
   };
 
   return (
@@ -114,27 +140,31 @@ function App() {
       )}
       
       {/* Our NewsScroll component - only shown when data is loaded */}
-      {!isLoading && newsEvents.length > 0 && (
+      {!isLoading && filteredNewsEvents.length > 0 && (
         <NewsScroll 
-          newsEvents={newsEvents}
+          newsEvents={filteredNewsEvents}
           onNavigateToArticle={handleNavigateToArticle}
           activeTitle={activeNewsTitle}
         />
       )}
       
-      {/* Globe - only load with real data or dummy data */}
+      {/* Globe - only load with real data */}
       {!isLoading && (
         <GlobeDynamic 
-          newsEvents={newsEvents}
+          newsEvents={filteredNewsEvents}
           navigateToCoordinates={selectedCoordinates} 
           onLabelClick={handleGlobeLabelClick}
         />
       )}
       
       {/* Menus */}
-      <BottomMenu onSubmenuToggle={handleSubmenuToggle} />
+      <BottomMenu 
+        onSubmenuToggle={handleSubmenuToggle} 
+        onNewsFiltersChange={handleNewsFiltersChange}
+        newsFilters={newsFilters}
+      />
       
-      {/* Gradient overlay - moved to end to ensure proper layering */}
+      {/* Gradient overlay */}
       <div className="gradient-overlay"></div>
     </div>
   );

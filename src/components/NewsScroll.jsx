@@ -1,11 +1,11 @@
-// Alternative NewsScroll.jsx implementation with CSS classes for gradients
+// NewsScroll.jsx - Updated with filter support
 import React, { useState, useEffect, useRef } from 'react';
 import Grid from '@mui/material/Grid';
 import Stack from "@mui/material/Stack";
-import { Calendar, MapPin, Globe, ChevronLeft, Newspaper, User, Tag } from 'lucide-react';
+import { Calendar, MapPin, Globe, ChevronLeft, Newspaper, User, Tag, Filter, AlertCircle } from 'lucide-react';
 import './NewsScroll.css';
 
-const NewsScroll = ({ newsEvents, onNavigateToArticle }) => {
+const NewsScroll = ({ newsEvents, onNavigateToArticle, activeTitle }) => {
   const [visibleEvents, setVisibleEvents] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
@@ -29,7 +29,12 @@ const NewsScroll = ({ newsEvents, onNavigateToArticle }) => {
   useEffect(() => {
     if (newsEvents.length > 0) {
       setVisibleEvents(newsEvents.slice(0, ITEMS_PER_PAGE));
+    } else {
+      // Clear visible events if no events are passed
+      setVisibleEvents([]);
     }
+    // Reset page when newsEvents change
+    setPage(1);
   }, [newsEvents]);
   
   // Handle infinite scroll with Intersection Observer
@@ -108,11 +113,28 @@ const NewsScroll = ({ newsEvents, onNavigateToArticle }) => {
     return `gradient-${theme.toLowerCase()}`;
   };
 
-    // Helper to get the feed item class based on the theme
-    const getFeedItemClass = (theme) => {
-      if (!theme) return 'border-default';
-      return `border-${theme.toLowerCase()}`;
-    };
+  // Helper to get the feed item class based on the theme
+  const getFeedItemClass = (theme) => {
+    if (!theme) return 'border-default';
+    return `border-${theme.toLowerCase()}`;
+  };
+
+  // Highlight the active title if provided
+  useEffect(() => {
+    if (activeTitle) {
+      // Find the element with the active title and scroll to it
+      const activeElement = document.querySelector(`[data-title="${activeTitle}"]`);
+      if (activeElement) {
+        activeElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Add a highlight class
+        activeElement.classList.add('highlighted');
+        // Remove highlight after a delay
+        setTimeout(() => {
+          activeElement.classList.remove('highlighted');
+        }, 2000);
+      }
+    }
+  }, [activeTitle]);
 
   return (
     <div className={`custom-news-container ${isOpen ? 'open' : 'closed'}`}>
@@ -123,8 +145,25 @@ const NewsScroll = ({ newsEvents, onNavigateToArticle }) => {
       
       <div className="news-feed-wrapper">
         <div className="news-feed-content">
+          {/* No results message */}
+          {visibleEvents.length === 0 && !loading && (
+            <div className="no-results-message">
+              <AlertCircle size={48} style={{ marginBottom: '16px', opacity: 0.6 }} />
+              <h3>No matching news</h3>
+              <p>Try adjusting your filters or check back later for more news.</p>
+              <div className="filter-tip">
+                <Filter size={16} style={{ marginRight: '8px' }} />
+                <span>Use the filter button at the bottom right to change your search criteria.</span>
+              </div>
+            </div>
+          )}
+
           {visibleEvents.map((event, index) => (
-            <div key={index} className={`news-feed-item ${getFeedItemClass(event.theme)}`}>
+            <div 
+              key={index} 
+              className={`news-feed-item ${getFeedItemClass(event.theme)}`}
+              data-title={event.title}
+            >
               {event.image ? (
                 <div className="news-feed-item-image-container">
                   <img 
@@ -142,13 +181,16 @@ const NewsScroll = ({ newsEvents, onNavigateToArticle }) => {
               )}
               
               <div className="news-feed-item-content-wrapper">
-                <h3 className="news-feed-item-title">                    {event.country_id && (
-                      <img
-                        src={`https://flagcdn.com/${event.country_id.toLowerCase()}.svg`}
-                        alt={`Flag of ${event.country_id}`}
-                        style={{ width: "22px", height: "16px", marginRight:"6px" }}
-                      />
-                    )}{event.title}</h3>
+                <h3 className="news-feed-item-title">
+                  {event.country_id && (
+                    <img
+                      src={`https://flagcdn.com/${event.country_id.toLowerCase()}.svg`}
+                      alt={`Flag of ${event.country_id}`}
+                      style={{ width: "22px", height: "16px", marginRight:"6px" }}
+                    />
+                  )}
+                  {event.title}
+                </h3>
                 <h4 className="news-feed-item-subtitle">{event.subtitle}</h4>
                 {/* Theme and subtheme chips */}
                 <div className="news-feed-item-chips">
@@ -193,13 +235,16 @@ const NewsScroll = ({ newsEvents, onNavigateToArticle }) => {
                     <Grid container>
                     <div className="news-feed-item-info-row">
                       <Newspaper size={10} className="news-feed-item-info-icon" /> 
-                      <span className="news-feed-item-newspaper">                    {event.newspaper.country_id && (
-                      <img
-                        src={`https://flagcdn.com/${event.newspaper.country_id.toLowerCase()}.svg`}
-                        alt={`Flag of ${event.newspaper.country_id}`}
-                        style={{ width: "16px", height: "12px" , opacity: 0.5}}
-                      />
-                    )}{event.newspaper ? event.newspaper.name : event.newspaper_id}</span>
+                      <span className="news-feed-item-newspaper">
+                        {event.newspaper && event.newspaper.country_id && (
+                          <img
+                            src={`https://flagcdn.com/${event.newspaper.country_id.toLowerCase()}.svg`}
+                            alt={`Flag of ${event.newspaper.country_id}`}
+                            style={{ width: "16px", height: "12px", opacity: 0.5 }}
+                          />
+                        )}
+                        {event.newspaper ? event.newspaper.name : event.newspaper_id}
+                      </span>
                     </div>
                     <div className="news-feed-item-info-row">
                       <User size={10} className="news-feed-item-info-icon" /> 
@@ -207,11 +252,10 @@ const NewsScroll = ({ newsEvents, onNavigateToArticle }) => {
                     </div>
                     <div className="news-feed-item-info-row">
                       <Calendar size={10} className="news-feed-item-info-icon" /> 
-                      <span>{event.publication_date.slice(0, -9).replace("T", " ")}  </span>
+                      <span>{event.publication_date && event.publication_date.slice(0, -9).replace("T", " ")}  </span>
                     </div>
 
                     <div className="news-feed-item-info-row">
-
                       <MapPin size={10} className="news-feed-item-info-icon" /> 
                       <span> {event.location}</span>
                     </div>
