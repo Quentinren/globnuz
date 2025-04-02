@@ -142,7 +142,13 @@ const NewsScroll = ({ newsEvents, onNavigateToArticle }) => {
               )}
               
               <div className="news-feed-item-content-wrapper">
-                <h3 className="news-feed-item-title">{event.title}</h3>
+                <h3 className="news-feed-item-title">                    {event.country_id && (
+                      <img
+                        src={`https://flagcdn.com/${event.country_id.toLowerCase()}.svg`}
+                        alt={`Flag of ${event.country_id}`}
+                        style={{ width: "22px", height: "16px", marginRight:"6px" }}
+                      />
+                    )}{event.title}</h3>
                 <h4 className="news-feed-item-subtitle">{event.subtitle}</h4>
                 {/* Theme and subtheme chips */}
                 <div className="news-feed-item-chips">
@@ -187,7 +193,13 @@ const NewsScroll = ({ newsEvents, onNavigateToArticle }) => {
                     <Grid container>
                     <div className="news-feed-item-info-row">
                       <Newspaper size={10} className="news-feed-item-info-icon" /> 
-                      <span className="news-feed-item-newspaper">{event.newspaper ? event.newspaper.name : event.newspaper_id}</span>
+                      <span className="news-feed-item-newspaper">                    {event.newspaper.country_id && (
+                      <img
+                        src={`https://flagcdn.com/${event.newspaper.country_id.toLowerCase()}.svg`}
+                        alt={`Flag of ${event.newspaper.country_id}`}
+                        style={{ width: "16px", height: "12px" , opacity: 0.5}}
+                      />
+                    )}{event.newspaper ? event.newspaper.name : event.newspaper_id}</span>
                     </div>
                     <div className="news-feed-item-info-row">
                       <User size={10} className="news-feed-item-info-icon" /> 
@@ -199,13 +211,7 @@ const NewsScroll = ({ newsEvents, onNavigateToArticle }) => {
                     </div>
 
                     <div className="news-feed-item-info-row">
-                    {event.country_id && (
-                      <img
-                        src={`https://flagcdn.com/${event.country_id.toLowerCase()}.svg`}
-                        alt={`Flag of ${event.country_id}`}
-                        style={{ width: "16px", height: "12px" }}
-                      />
-                    )}
+
                       <MapPin size={10} className="news-feed-item-info-icon" /> 
                       <span> {event.location}</span>
                     </div>
