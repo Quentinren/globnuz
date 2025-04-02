@@ -5,6 +5,12 @@
     --environment-color: #2ecc71;
     --environment-gradient: linear-gradient(135deg, #2ecc71 0%, #1a5276 100%);
   
+    --politics-color: #3498db;
+    --politics-gradient: linear-gradient(135deg, #3498db 0%, #1a5276 100%);
+  
+    --geopolitics-color: #7fc0ec;
+    --geopolitics-gradient: linear-gradient(135deg, #7fc0ec 0%, #143143 100%);
+
     --politic-color: #3498db;
     --politic-gradient: linear-gradient(135deg, #3498db 0%, #1a5276 100%);
   
@@ -31,9 +37,15 @@
   
     --sport-color: #27ae60;
     --sport-gradient: linear-gradient(135deg, #27ae60 0%, #145a32 100%);
+    --sports-color: #27ae60;
+    --sports-gradient: linear-gradient(135deg, #27ae60 0%, #145a32 100%);    
   
     --war-color: #c0392b;
     --war-gradient: linear-gradient(135deg, #c0392b 0%, #641e16 100%);
+
+    --conflict-color: #c0392b;
+    --conflict-gradient: linear-gradient(135deg, #c0392b 0%, #641e16 100%);
+  
   
     --disaster-color: #e67e22;
     --disaster-gradient: linear-gradient(135deg, #e67e22 0%, #784212 100%);

@@ -32,10 +32,11 @@ export const fetchNewsFromSupabase = async () => {
       
       // Fetch news from Supabase table - adjust table name as needed
       const { data, error } = await supabase
-        .from('news_articles')
-        .select('*, newspapers(*)')
-        .order('publication_date', { ascending: false });
-      
+      .from('news_articles_translated')
+      .select('*, news_articles!inner(*, newspapers(*))')
+      .eq('language_translated', 'FR')
+      .order('publication_date', { foreignTable: 'news_articles', ascending: false });
+  
       if (error) {
         throw new Error(error.message);
       }
@@ -45,31 +46,31 @@ export const fetchNewsFromSupabase = async () => {
         return [];
       }
       
+      console.log(data)
       // Convert Supabase data to match the existing format
       // Now including newspaper information
       return data.map(item => ({
         title: item.title,
         subtitle: item.subtitle,
         description: item.description,
-        author: item.author,
-        newspaper_id: item.newspaper_id,
+        author: item.news_articles.author,
         // Include newspaper details
-        newspaper: item.newspapers ? {
-          id: item.newspapers.id,
-          name: item.newspapers.name,
-          description: item.newspapers.description,
-          country_id: item.newspapers.country_id,
+        newspaper: item.news_articles.newspapers ? {
+          id: item.news_articles.newspapers.id,
+          name: item.news_articles.newspapers.name,
+          description: item.news_articles.newspapers.description,
+          country_id: item.news_articles.newspapers.country_id,
           // Include any other newspaper properties you need
         } : null,
-        theme: item.theme,
-        theme_tags: Array.isArray(item.theme_tags) ? item.theme_tags : (item.theme_tags ? JSON.parse(item.theme_tags) : []),
-        image: item.image,
-        external_link: item.external_link,
-        publication_date: item.publication_date,
-        country_id: item.country_id,
+        theme: item.news_articles.theme,
+        theme_tags: Array.isArray(item.news_articles.theme_tags) ? item.news_articles.theme_tags : (item.news_articles.theme_tags ? JSON.parse(item.news_articles.theme_tags) : []),
+        image: item.news_articles.image,
+        external_link: item.news_articles.external_link,
+        publication_date: item.news_articles.publication_date,
+        country_id: item.news_articles.country_id,
         location: item.location,
-        latitude: parseFloat(item.latitude || item.lat),
-        longitude: parseFloat(item.longitude || item.lng)
+        latitude: parseFloat(item.news_articles.latitude),
+        longitude: parseFloat(item.news_articles.longitude )
       }));
       
     } catch (error) {
@@ -78,80 +79,6 @@ export const fetchNewsFromSupabase = async () => {
     }
   };
 
-/**
- * Creates a new news event in the Supabase database
- * @param {Object} newsItem - The news item to create
- * @returns {Promise<Object>} - The created news item
- */
-export const createNewsEvent = async (newsItem) => {
-  try {
-    // Format theme tags if needed
-    const formattedItem = {
-      ...newsItem,
-      theme_tags: Array.isArray(newsItem.theme_tags) 
-        ? JSON.stringify(newsItem.theme_tags) 
-        : newsItem.theme_tags
-    };
-    
-    const { data, error } = await supabase
-      .from('news_articles')  
-      .insert(formattedItem)
-      .select();
-      
-    if (error) throw error;
-    return data[0];
-  } catch (error) {
-    console.error('Error creating news event:', error);
-    throw error;
-  }
-};
-
-/**
- * Updates an existing news event in the Supabase database
- * @param {string} id - The ID of the news item to update
- * @param {Object} updates - The fields to update
- * @returns {Promise<Object>} - The updated news item
- */
-export const updateNewsEvent = async (id, updates) => {
-  try {
-    // Format theme tags if needed
-    const formattedUpdates = {...updates};
-    if (updates.theme_tags && Array.isArray(updates.theme_tags)) {
-      formattedUpdates.theme_tags = JSON.stringify(updates.theme_tags);
-    }
-    
-    const { data, error } = await supabase
-      .from('news_articles')
-      .update(formattedUpdates)
-      .eq('id', id)
-      .select();
-      
-    if (error) throw error;
-    return data[0];
-  } catch (error) {
-    console.error('Error updating news event:', error);
-    throw error;
-  }
-};
-
-/**
- * Deletes a news event from the Supabase database
- * @param {string} id - The ID of the news item to delete
- * @returns {Promise<void>}
- */
-export const deleteNewsEvent = async (id) => {
-  try {
-    const { error } = await supabase
-      .from('news_articles')
-      .delete()
-      .eq('id', id);
-      
-    if (error) throw error;
-  } catch (error) {
-    console.error('Error deleting news event:', error);
-    throw error;
-  }
-};
 
 /**
  * Fetches a single news event by ID
@@ -228,9 +155,6 @@ export const getNewsByTheme = async (theme) => {
 
 export default {
   fetchNewsFromSupabase,
-  createNewsEvent,
-  updateNewsEvent,
-  deleteNewsEvent,
   getNewsEventById,
   searchNewsEvents,
   getNewsByTheme
