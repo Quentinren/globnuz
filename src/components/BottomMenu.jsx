@@ -191,12 +191,6 @@ const BottomMenu = ({ onSubmenuToggle, onGetUserLocation, onNewsFiltersChange, n
             <Layers size={24} />
           </div>
           <div 
-            className={`menu-item ${activeSubmenu === 'bookmarks' ? 'active' : ''}`}
-            onClick={() => toggleSubmenu('bookmarks')}
-          >
-            <Bookmark size={24} />
-          </div>
-          <div 
             className={`menu-item ${activeSubmenu === 'map' ? 'active' : ''}`}
             onClick={() => toggleSubmenu('map')}
           >
@@ -293,38 +287,7 @@ const BottomMenu = ({ onSubmenuToggle, onGetUserLocation, onNewsFiltersChange, n
         )}
       </div>
         
-      {/* Filter Button - with indicator for active filters */}
-      <div 
-        className={`menu-item filter-button ${activeSubmenu === 'news' ? 'active' : ''} ${isAnyFilterActive() ? 'filter-active' : ''}`}
-        onClick={() => toggleSubmenu('news')}
-        style={{
-          position: 'relative'
-        }}
-      >
-        <Filter size={24} />
-        {/* Badge to show number of active filters */}
-        {getActiveFilterCount() > 0 && (
-          <div 
-            style={{
-              position: 'absolute',
-              top: '-5px',
-              right: '-5px',
-              background: '#ff4081',
-              color: 'white',
-              borderRadius: '50%',
-              width: '18px',
-              height: '18px',
-              fontSize: '11px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontWeight: 'bold'
-            }}
-          >
-            {getActiveFilterCount()}
-          </div>
-        )}
-      </div>
+      
 
       {/* News Submenu */}
       {activeSubmenu === 'news' && (

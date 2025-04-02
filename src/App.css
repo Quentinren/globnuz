@@ -1,4 +1,4 @@
-/* App.css - Fixed version with proper height constraints */
+/* App.css - Updated version with support for sliding filter panel */
 body {
   margin: 0;
   padding: 0;
@@ -18,10 +18,10 @@ body {
   flex-direction: column;
   align-items: center;
   padding: 0; /* Remove padding that might cause overflow */
-  padding-left: 100px;
+  padding-left: 0;
   position: relative; /* For proper positioning of absolute elements */
   overflow: hidden; /* Hide overflow to prevent scrollbars */
-  /* Animation plus douce */
+  /* Animation for smooth transitions */
   transition: padding-left 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
@@ -52,9 +52,9 @@ h1 {
   z-index: 5;
 }
 
-/* Style adjustments when sub-menu is open */
+/* Style adjustments when sub-menu or filter panel is open */
 .app-container.submenu-open {
-  padding-left: 310px; /* Ajusté pour le nouveau design */
+  padding-left: 280px; /* Adjusted for new filter panel width */
 }
 
 /* Proper z-index ordering for components */
@@ -68,18 +68,51 @@ h1 {
   z-index: 300;
 }
 
+/* Loading container styles */
+.loading-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 1000;
+}
 
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(79, 195, 247, 0.3);
+  border-top: 4px solid #4fc3f7;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
 
-/* InfiniteNewsScroll is set to z-index 500 in its CSS file */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error-message {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(255, 87, 87, 0.9);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 6px;
+  z-index: 1000;
+  max-width: 80%;
+  text-align: center;
+}
 
 /* Make the globe responsive */
 @media (max-width: 768px) {
-  .app-container {
-    padding-left: 80px;
-  }
-  
   .app-container.submenu-open {
-    padding-left: 250px;
+    padding-left: 280px;
   }
   
   .globe-container {
@@ -89,5 +122,12 @@ h1 {
   
   h1 {
     font-size: 1.5rem;
+  }
+}
+
+/* Mobile optimization */
+@media (max-width: 480px) {
+  .app-container.submenu-open {
+    padding-left: 250px;
   }
 }

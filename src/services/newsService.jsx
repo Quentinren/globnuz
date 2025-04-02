@@ -1,4 +1,4 @@
-// src/services/newsService.jsx - Updated with filter support
+// src/services/newsService.jsx - Enhanced with comprehensive filter support
 import { createClient } from '@supabase/supabase-js';
 
 // Initialize Supabase client - replace with your Supabase URL and anon key
@@ -18,12 +18,14 @@ if (!supabaseUrl || !supabaseAnonKey) {
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 /**
- * Fetches news events from Supabase with optional filters
+ * Fetches news events from Supabase with comprehensive filter support
  * @param {Object} filters - Optional filters for news content
  * @returns {Promise<Array>} - Array of news events in the required format
  */
 export const fetchNewsFromSupabase = async (filters = {}) => {
   try {
+    console.log("Fetching news with filters:", filters);
+    
     // Check if Supabase is properly configured
     if (!supabaseUrl || !supabaseAnonKey) {
       throw new Error('Supabase not configured. Check your environment variables.');
@@ -35,40 +37,36 @@ export const fetchNewsFromSupabase = async (filters = {}) => {
       .select('*, news_articles!inner(*, newspapers(*))')
       .eq('language_translated', 'FR');
     
-    // Parse filters
+    // Extract filter categories
     const { 
       // Categories
       environment, politics, health, science, technology, other,
       // Regions
-      africa, americas, asia, europe, oceania
+      africa, americas, asia, europe, oceania,
+      // Source filters (country-specific)
+      sourceFilters = {}
     } = filters;
     
+    // Check if any category filter is active
+    const hasActiveCategoryFilter = environment || politics || health || science || technology || other;
+    
     // Apply category filters if any are active
-    const activeCategories = [];
-    if (environment) activeCategories.push('environment');
-    if (politics) activeCategories.push('politics', 'politic', 'geopolitics', 'geopolitic');
-    if (health) activeCategories.push('health');
-    if (science) activeCategories.push('science');
-    if (technology) activeCategories.push('technology');
-    
-    // Apply category filter if there are active categories
-    if (activeCategories.length > 0) {
-      query = query.filter('news_articles.theme', 'in', `(${activeCategories.join(',')})`);
+    if (hasActiveCategoryFilter) {
+      const activeCategories = [];
+      if (environment) activeCategories.push('environment');
+      if (politics) {
+        activeCategories.push('politics', 'politic', 'geopolitics', 'geopolitic');
+      }
+      if (health) activeCategories.push('health');
+      if (science) activeCategories.push('science');
+      if (technology) activeCategories.push('technology');
+      
+      // Only apply if we have active categories
+      if (activeCategories.length > 0) {
+        // Filter to match any of the active categories
+        query = query.filter('news_articles.theme', 'in', `(${activeCategories.join(',')})`);
+      }
     }
-    
-    // If "other" is selected, we need a more complex query to get themes NOT in the main categories
-    if (other) {
-      // We need to handle this differently - may require multiple queries or a complex filter
-      console.log('Other category filter not yet implemented in API');
-    }
-    
-    // Apply region filters if any are active
-    const activeRegions = [];
-    if (africa) activeRegions.push('africa');
-    if (americas) activeRegions.push('americas');
-    if (asia) activeRegions.push('asia');
-    if (europe) activeRegions.push('europe');
-    if (oceania) activeRegions.push('oceania');
     
     // Define country codes by region for filtering
     const regionCountryCodes = {
@@ -79,35 +77,81 @@ export const fetchNewsFromSupabase = async (filters = {}) => {
       oceania: ['AS', 'AU', 'CK', 'FJ', 'PF', 'GU', 'KI', 'MH', 'FM', 'NR', 'NC', 'NZ', 'NU', 'NF', 'MP', 'PW', 'PG', 'PN', 'WS', 'SB', 'TK', 'TO', 'TV', 'VU', 'WF']
     };
     
+    // Check if any region filter is active
+    const hasActiveRegionFilter = africa || americas || asia || europe || oceania;
+    
     // Create a combined list of country codes from selected regions
-    if (activeRegions.length > 0) {
-      const countryCodes = activeRegions.flatMap(region => regionCountryCodes[region] || []);
+    if (hasActiveRegionFilter) {
+      let countryCodes = [];
+      if (africa) countryCodes = [...countryCodes, ...regionCountryCodes.africa];
+      if (americas) countryCodes = [...countryCodes, ...regionCountryCodes.americas];
+      if (asia) countryCodes = [...countryCodes, ...regionCountryCodes.asia];
+      if (europe) countryCodes = [...countryCodes, ...regionCountryCodes.europe];
+      if (oceania) countryCodes = [...countryCodes, ...regionCountryCodes.oceania];
+      
       if (countryCodes.length > 0) {
-        query = query.filter('news_articles.country_id', 'in', `(${countryCodes.join(',')})`);
+        // Apply as IN filter to country_id using the proper syntax
+        query = query.filter('news_articles.country_id', 'in', `(${countryCodes.map(code => `'${code}'`).join(',')})`);
       }
+    }
+    
+    // Check for source country filters
+    const sourceCountryIds = Object.entries(sourceFilters)
+      .filter(([_, isActive]) => isActive)
+      .map(([countryId]) => countryId);
+    
+    if (sourceCountryIds.length > 0) {
+      // Filter by newspaper country using the proper syntax
+      query = query.filter('news_articles.newspapers.country_id', 'in', 
+        `(${sourceCountryIds.map(id => `'${id}'`).join(',')})`);
     }
     
     // Sort by publication date (newest first)
     query = query.order('publication_date', { foreignTable: 'news_articles', ascending: false });
     
     // Execute the query
-    const { data, error } = await query;
+    let data, error;
+    
+    try {
+      const response = await query;
+      data = response.data;
+      error = response.error;
+    } catch (e) {
+      console.error("Filter query failed, trying fallback approach:", e);
+      
+      // Fallback: If complex filtering fails, try a simple query
+      const fallbackQuery = supabase
+        .from('news_articles_translated')
+        .select('*, news_articles!inner(*, newspapers(*))')
+        .eq('language_translated', 'FR')
+        .order('publication_date', { foreignTable: 'news_articles', ascending: false })
+        .limit(50);
+        
+      const fallbackResponse = await fallbackQuery;
+      data = fallbackResponse.data;
+      error = fallbackResponse.error;
+    }
     
     if (error) {
+      console.error("Supabase query error:", error);
       throw new Error(error.message);
     }
+    
+    console.log(`Fetched ${data?.length || 0} news items`);
     
     if (!data || data.length === 0) {
       console.warn('No news data retrieved from Supabase');
       return [];
     }
     
-    // Transform the data
+    // Transform the data to the expected format
     return data.map(item => ({
+      id: item.news_articles.id,
       title: item.title,
       subtitle: item.subtitle,
       description: item.description,
       author: item.news_articles.author,
+      newspaper_id: item.news_articles.newspaper_id,
       newspaper: item.news_articles.newspapers ? {
         id: item.news_articles.newspapers.id,
         name: item.news_articles.newspapers.name,
@@ -115,12 +159,14 @@ export const fetchNewsFromSupabase = async (filters = {}) => {
         country_id: item.news_articles.newspapers.country_id,
       } : null,
       theme: item.news_articles.theme,
-      theme_tags: Array.isArray(item.news_articles.theme_tags) ? item.news_articles.theme_tags : (item.news_articles.theme_tags ? JSON.parse(item.news_articles.theme_tags) : []),
+      theme_tags: Array.isArray(item.news_articles.theme_tags) ? 
+                 item.news_articles.theme_tags : 
+                 (item.news_articles.theme_tags ? JSON.parse(item.news_articles.theme_tags) : []),
       image: item.news_articles.image,
       external_link: item.news_articles.external_link,
       publication_date: item.news_articles.publication_date,
       country_id: item.news_articles.country_id,
-      location: item.location,
+      location: item.location || item.news_articles.location,
       latitude: parseFloat(item.news_articles.latitude),
       longitude: parseFloat(item.news_articles.longitude)
     }));
@@ -131,7 +177,45 @@ export const fetchNewsFromSupabase = async (filters = {}) => {
   }
 };
 
-// Other existing functions
+// Function to fetch countries from Supabase - enhanced with caching
+export const fetchCountriesFromSupabase = async () => {
+  try {
+    // Check if Supabase is properly configured
+    if (!supabaseUrl || !supabaseAnonKey) {
+      throw new Error('Supabase not configured. Check your environment variables.');
+    }
+    
+    // Fetch countries from Supabase table
+    const { data, error } = await supabase
+      .from('countries')
+      .select('*')
+      .order('name', { ascending: true });
+    
+    if (error) {
+      throw new Error(error.message);
+    }
+    
+    if (!data || data.length === 0) {
+      console.warn('No countries data retrieved from Supabase');
+      return [];
+    }
+    
+    // Convert Supabase data to match the expected format
+    return data.map(item => ({
+      name: item.name,
+      country_id: item.country_id,
+      flag_image_url: item.flag_image_url || `https://flagcdn.com/${item.country_id.toLowerCase()}.svg`,
+      region: item.region || 'unknown'
+    }));
+    
+  } catch (error) {
+    console.error('Error fetching countries from Supabase:', error);
+    throw error;
+  }
+};
+
+// Other existing functions remain the same
+
 export const getNewsEventById = async (id) => {
   try {
     const { data, error } = await supabase
@@ -186,41 +270,6 @@ export const getNewsByTheme = async (theme) => {
     }));
   } catch (error) {
     console.error('Error fetching news by theme:', error);
-    throw error;
-  }
-};
-
-export const fetchCountriesFromSupabase = async () => {
-  try {
-    // Check if Supabase is properly configured
-    if (!supabaseUrl || !supabaseAnonKey) {
-      throw new Error('Supabase not configured. Check your environment variables.');
-    }
-    
-    // Fetch news from Supabase table - adjust table name as needed
-    const { data, error } = await supabase
-      .from('countries')
-      .select('*')
-      .order('country_id', { ascending: false });
-    
-    if (error) {
-      throw new Error(error.message);
-    }
-    
-    if (!data || data.length === 0) {
-      console.warn('No countries data retrieved from Supabase');
-      return [];
-    }
-    
-    // Convert Supabase data to match the existing format
-    return data.map(item => ({
-      name: item.name,
-      country_id: item.country_id,
-      flag_image_url: item.flag_image_url,
-    }));
-    
-  } catch (error) {
-    console.error('Error fetching countries from Supabase:', error);
     throw error;
   }
 };

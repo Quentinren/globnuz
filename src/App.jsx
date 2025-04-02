@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 import { fetchCountriesData, fetchPlacesData } from './services/globeDataService';
-import { fetchNewsFromSupabase, fetchCountriesFromSupabase } from './services/newsService'; // Import the Supabase service
+import { fetchNewsFromSupabase, fetchCountriesFromSupabase } from './services/newsService';
 import Logo from './components/Logo'
 import BottomMenu from './components/BottomMenu'
 import GlobeDynamic from './components/GlobeDynamic';
-import NewsScroll from './components/NewsScroll'; // Import our new component
+import NewsScroll from './components/NewsScroll';
+import SlideFilterPanel from './components/SlideFilterPanel'; // Import our new component
 
 function App() {
   // State to manage submenu opening
@@ -20,6 +21,9 @@ function App() {
   const [newsEvents, setNewsEvents] = useState([]);
   // State to store filtered news events
   const [filteredNewsEvents, setFilteredNewsEvents] = useState([]);
+
+  // State for the filter panel
+  const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false);
 
   // State to store news events data
   const [countries, setCountries] = useState([]);  
@@ -42,32 +46,60 @@ function App() {
     americas: false,
     asia: false,
     europe: false,
-    oceania: false
+    oceania: false,
+    // Source filters
+    sourceFilters: {}
   });
   
-
+  // Fetch news when component mounts or filters change
   useEffect(() => {
+    let isMounted = true;
     const fetchNews = async () => {
+      if (!isMounted) return;
+      
       setIsLoading(true);
       setError(null);
+      
       try {
-        const newsData = await fetchNewsFromSupabase();
+        console.log("Fetching news with filters:", newsFilters);
+        // Pass filters to the fetchNewsFromSupabase function
+        const newsData = await fetchNewsFromSupabase(newsFilters);
+        
+        if (!isMounted) return;
+        
         if (newsData.length === 0) {
-          setError("No news data available. Using fallback data.");
+          setError("No news data available with current filters. Try adjusting your selection.");
+          // Keep the previous data visible but grayed out
+          setFilteredNewsEvents(prev => 
+            prev.map(item => ({ ...item, filtered: true }))
+          );
         } else {
           setNewsEvents(newsData);
-          setFilteredNewsEvents(newsData); // Initialize filtered news with all news
+          setFilteredNewsEvents(newsData);
+          // Clear any previous error
+          setError(null);
         }
       } catch (error) {
         console.error("Error fetching news from Supabase:", error);
-        setError(`Failed to load news data: ${error.message}`);
+        if (isMounted) {
+          setError(`Failed to load news data: ${error.message}`);
+          // Keep showing previous data
+          setFilteredNewsEvents(prev => prev);
+        }
       } finally {
-        setIsLoading(false);
+        if (isMounted) {
+          setIsLoading(false);
+        }
       }
     };
     
     fetchNews();
-  }, []);
+    
+    // Cleanup function to prevent state updates if component unmounts
+    return () => {
+      isMounted = false;
+    };
+  }, [newsFilters]); // Re-fetch when filters change
   
   // Fetch countries from Supabase on component mount
   useEffect(() => {
@@ -87,17 +119,13 @@ function App() {
     fetchCountriesData();
   }, []);
 
-  // Helper function to check if any filter is active
-  const isAnyFilterActive = () => {
-    return Object.values(newsFilters).some(value => value === true);
-  };
-
   // Log the fetched data
   useEffect(() => {
     console.log("All news events:", newsEvents);
     console.log("Filtered news events:", filteredNewsEvents);
     console.log("countries:", countries);
-  }, [newsEvents, filteredNewsEvents, countries]);
+    console.log("Current filters:", newsFilters);
+  }, [newsEvents, filteredNewsEvents, countries, newsFilters]);
 
   // Handler for when a globe label is clicked
   const handleGlobeLabelClick = (title) => {
@@ -114,15 +142,23 @@ function App() {
     setIsSubmenuOpen(isOpen);
   };
 
-  // Function to handle news filter changes from BottomMenu
+  // Function to handle news filter changes
   const handleNewsFiltersChange = (filters) => {
     setNewsFilters(filters);
+    
+    // This will trigger the useEffect to fetch news with updated filters
+    console.log("Filter update:", filters);
+  };
+
+  // Toggle filter panel
+  const toggleFilterPanel = (isOpen) => {
+    setIsFilterPanelOpen(isOpen);
   };
 
   return (
-    <div className={`app-container ${isSubmenuOpen ? 'submenu-open' : ''}`}>
+    <div className={`app-container ${isSubmenuOpen || isFilterPanelOpen ? 'submenu-open' : ''}`}>
       {/* Logo */}
-      <Logo/>
+      <Logo />
       
       {/* Error message */}
       {error && !isLoading && (
@@ -156,6 +192,15 @@ function App() {
           onLabelClick={handleGlobeLabelClick}
         />
       )}
+      
+      {/* Sliding Filter Panel */}
+      <SlideFilterPanel
+        onNewsFiltersChange={handleNewsFiltersChange}
+        newsFilters={newsFilters}
+        countries={countries}
+        isOpen={isFilterPanelOpen}
+        onToggle={toggleFilterPanel}
+      />
       
       {/* Menus */}
       <BottomMenu 
