@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 import { fetchCountriesData, fetchPlacesData } from './services/globeDataService';
-import { fetchNewsFromSupabase, fetchCountriesFromSupabase } from './services/supabaseService'; // Import the new Supabase service
+import { fetchNewsFromSupabase, fetchCountriesFromSupabase } from './services/newsService'; // Import the new Supabase service
 import Logo from './components/Logo'
 import BottomMenu from './components/BottomMenu'
 import GlobeDynamic from './components/GlobeDynamic';

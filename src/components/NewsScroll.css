@@ -1,4 +1,5 @@
 /* NewsScroll.css - Fixed version */
+@import url('./css/news-themes.css');
 
 .custom-news-container {
   position: fixed;
@@ -114,26 +115,7 @@
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
 }
 
-/* Theme colors - applying to top border instead of left */
-.news-feed-item.theme-0 {
-  border-top: 3px solid #3b82f6;
-}
 
-.news-feed-item.theme-1 {
-  border-top: 3px solid #10b981;
-}
-
-.news-feed-item.theme-2 {
-  border-top: 3px solid #f97316;
-}
-
-.news-feed-item.theme-3 {
-  border-top: 3px solid #f59e0b;
-}
-
-.news-feed-item.theme-4 {
-  border-top: 3px solid #ec4899;
-}
 
 /* Image container on the left */
 .news-feed-item-image-container {
@@ -375,4 +357,135 @@
   .custom-news-container {
       width: 90%;
   }
+}
+
+/* Add these styles to your NewsScroll.css file */
+
+/* Gradient fallback for missing images */
+.gradient-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  border-radius: 12px 0px 12px 0px;
+  padding: 10px;
+  color: white;
+  font-weight: bold;
+  font-size: 1.5rem;
+  text-align: center;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  transition: all 0.3s ease;
+}
+
+.gradient-icon {
+  margin-bottom: 8px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+/* Theme gradient variations */
+/* Theme colors - applying to top border instead of left */
+.news-feed-item{
+  border-top: 3px solid;
+}
+
+
+/* Apply the gradients and border colors dynamically */
+/* Loop through themes */
+.gradient-crime {
+  background-image: var(--crime-gradient);
+}
+.news-feed-item.border-crime {
+  border-color: var(--crime-color);
+}
+
+.gradient-environment {
+  background-image: var(--environment-gradient);
+}
+.news-feed-item.border-environment {
+  border-color: var(--environment-color);
+}
+
+.gradient-politic {
+  background-image: var(--politic-gradient);
+}
+.news-feed-item.border-politic {
+  border-color: var(--politic-color);
+}
+
+.gradient-geopolitic {
+  background-image: var(--geopolitic-gradient);
+}
+.news-feed-item.border-geopolitic {
+  border-color: var(--geopolitic-color);
+}
+
+.gradient-health {
+  background-image: var(--health-gradient);
+}
+.news-feed-item.border-health {
+  border-color: var(--health-color);
+}
+
+.gradient-science {
+  background-image: var(--science-gradient);
+}
+.news-feed-item.border-science {
+  border-color: var(--science-color);
+}
+
+.gradient-society {
+  background-image: var(--society-gradient);
+}
+.news-feed-item.border-society {
+  border-color: var(--society-color);
+}
+
+.gradient-technology {
+  background-image: var(--technology-gradient);
+}
+.news-feed-item.border-technology {
+  border-color: var(--technology-color);
+}
+
+.gradient-economy {
+  background-image: var(--economy-gradient);
+}
+.news-feed-item.border-economy {
+  border-color: var(--economy-color);
+}
+
+.gradient-culture {
+  background-image: var(--culture-gradient);
+}
+.news-feed-item.border-culture {
+  border-color: var(--culture-color);
+}
+
+.gradient-sport {
+  background-image: var(--sport-gradient);
+}
+.news-feed-item.border-sport {
+  border-color: var(--sport-color);
+}
+
+.gradient-war {
+  background-image: var(--war-gradient);
+}
+.news-feed-item.border-war {
+  border-color: var(--war-color);
+}
+
+.gradient-disaster {
+  background-image: var(--disaster-gradient);
+}
+.news-feed-item.border-disaster {
+  border-color: var(--disaster-color);
+}
+
+.gradient-default {
+  background-image: var(--default-gradient);
+}
+.news-feed-item.border-default {
+  border-color: var(--default-color);
 }

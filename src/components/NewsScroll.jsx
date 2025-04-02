@@ -1,4 +1,4 @@
-// NewsScroll.jsx
+// Alternative NewsScroll.jsx implementation with CSS classes for gradients
 import React, { useState, useEffect, useRef } from 'react';
 import Grid from '@mui/material/Grid';
 import Stack from "@mui/material/Stack";
@@ -17,23 +17,12 @@ const NewsScroll = ({ newsEvents, onNavigateToArticle }) => {
   
   // Helper function to get theme colors
   const getThemeColor = (theme) => {
-    if (!theme) return '#34495e';
+    if (!theme) return "var(--default-color)"; // Fallback CSS variable
     
-    const themeColors = {
-      environment: '#2ecc71', // Green
-      politics: '#3498db', // Blue
-      health: '#e74c3c', // Red
-      science: '#9b59b6', // Purple
-      technology: '#f39c12', // Orange
-      economy: '#1abc9c', // Teal
-      culture: '#d35400', // Dark Orange
-      sport: '#27ae60', // Dark Green
-      war: '#c0392b', // Dark Red
-      disaster: '#e67e22', // Light Orange
-      default: '#34495e' // Dark Blue
-    };
-    
-    return themeColors[theme.toLowerCase()] || themeColors.default;
+    const cssVariable = `--${theme}-color`;
+    const themeColor = getComputedStyle(document.documentElement).getPropertyValue(cssVariable);
+  
+    return themeColor.trim() || "var(--default-color)"; // Return CSS variable or fallback
   };
   
   // Initialize with first page of events
@@ -113,6 +102,17 @@ const NewsScroll = ({ newsEvents, onNavigateToArticle }) => {
     setIsOpen(!isOpen);
   };
 
+  // Helper to get the gradient class based on the theme
+  const getGradientClass = (theme) => {
+    if (!theme) return 'gradient-default';
+    return `gradient-${theme.toLowerCase()}`;
+  };
+
+    // Helper to get the feed item class based on the theme
+    const getFeedItemClass = (theme) => {
+      if (!theme) return 'border-default';
+      return `border-${theme.toLowerCase()}`;
+    };
 
   return (
     <div className={`custom-news-container ${isOpen ? 'open' : 'closed'}`}>
@@ -124,14 +124,22 @@ const NewsScroll = ({ newsEvents, onNavigateToArticle }) => {
       <div className="news-feed-wrapper">
         <div className="news-feed-content">
           {visibleEvents.map((event, index) => (
-            <div key={index} className={`news-feed-item theme-${index % 5}`}>
-              <div className="news-feed-item-image-container">
-                <img 
-                  src={event.image} 
-                  alt={event.title} 
-                  className="news-feed-item-image"
-                />
-              </div>
+            <div key={index} className={`news-feed-item ${getFeedItemClass(event.theme)}`}>
+              {event.image ? (
+                <div className="news-feed-item-image-container">
+                  <img 
+                    src={event.image} 
+                    alt={event.title} 
+                    className="news-feed-item-image"
+                  />
+                </div>
+              ) : (
+                <div className="news-feed-item-image-container">
+                  <div className={`gradient-fallback ${getGradientClass(event.theme)}`}>
+                    <div>{event.theme ? event.theme.toUpperCase() : 'NEWS'}</div>
+                  </div>
+                </div>
+              )}
               
               <div className="news-feed-item-content-wrapper">
                 <h3 className="news-feed-item-title">{event.title}</h3>
@@ -149,7 +157,6 @@ const NewsScroll = ({ newsEvents, onNavigateToArticle }) => {
                   )}
                   {event.theme_tags && event.theme_tags.map((theme_tag, i) => (
                     <span key={i} className="subtheme-chip">
-                     
                       {theme_tag}
                     </span>
                   ))}
@@ -188,18 +195,18 @@ const NewsScroll = ({ newsEvents, onNavigateToArticle }) => {
                     </div>
                     <div className="news-feed-item-info-row">
                       <Calendar size={10} className="news-feed-item-info-icon" /> 
-                         {/* WARNING REMOVE YEAR ON DATE - FOR SHORT TERMS ONLY ? GAIN PLACE */}
                       <span>{event.publication_date.slice(0, -9).replace("T", " ")}  </span>
                     </div>
 
                     <div className="news-feed-item-info-row">
-                    <img
-                      src={`https://flagcdn.com/${event.country_id.toLowerCase()}.svg`}
-                      alt={`Flag of ${event.country_id}`}
-                      style={{ width: "16px", height: "12px" }} // Mini flag size
-                    />
+                    {event.country_id && (
+                      <img
+                        src={`https://flagcdn.com/${event.country_id.toLowerCase()}.svg`}
+                        alt={`Flag of ${event.country_id}`}
+                        style={{ width: "16px", height: "12px" }}
+                      />
+                    )}
                       <MapPin size={10} className="news-feed-item-info-icon" /> 
-  
                       <span> {event.location}</span>
                     </div>
                     </Grid>

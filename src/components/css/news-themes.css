@@ -1,0 +1,43 @@
+:root {
+    --crime-color: #cc2e2e;
+    --crime-gradient: linear-gradient(135deg, #cc2e2e 0%, #400101 100%);
+  
+    --environment-color: #2ecc71;
+    --environment-gradient: linear-gradient(135deg, #2ecc71 0%, #1a5276 100%);
+  
+    --politic-color: #3498db;
+    --politic-gradient: linear-gradient(135deg, #3498db 0%, #1a5276 100%);
+  
+    --geopolitic-color: #7fc0ec;
+    --geopolitic-gradient: linear-gradient(135deg, #7fc0ec 0%, #143143 100%);
+  
+    --health-color: #72e73c;
+    --health-gradient: linear-gradient(135deg, #72e73c 0%, #0a381d 100%);
+  
+    --science-color: #9b59b6;
+    --science-gradient: linear-gradient(135deg, #9b59b6 0%, #4a235a 100%);
+  
+    --society-color: #d714a3;
+    --society-gradient: linear-gradient(135deg, #d714a3 0%, #2f021f 100%);
+  
+    --technology-color: #9512f3;
+    --technology-gradient: linear-gradient(135deg, #9512f3 0%, #4b1c4b 100%);
+  
+    --economy-color: #cbd907;
+    --economy-gradient: linear-gradient(135deg, #cbd907 0%, #766506 100%);
+  
+    --culture-color: #bf6aaf;
+    --culture-gradient: linear-gradient(135deg, #bf6aaf 0%, #8f008a 100%);
+  
+    --sport-color: #27ae60;
+    --sport-gradient: linear-gradient(135deg, #27ae60 0%, #145a32 100%);
+  
+    --war-color: #c0392b;
+    --war-gradient: linear-gradient(135deg, #c0392b 0%, #641e16 100%);
+  
+    --disaster-color: #e67e22;
+    --disaster-gradient: linear-gradient(135deg, #e67e22 0%, #784212 100%);
+  
+    --default-color: #34495e;
+    --default-gradient: linear-gradient(135deg, #34495e 0%, #1b2631 100%);
+  }
