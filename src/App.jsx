@@ -50,6 +50,9 @@ function App() {
     // Source filters
     sourceFilters: {}
   });
+
+  // Reference to store the current selected country
+  const [selectedCountry, setSelectedCountry] = useState(null);
   
   // Fetch news when component mounts or filters change
   useEffect(() => {
@@ -155,6 +158,40 @@ function App() {
     setIsFilterPanelOpen(isOpen);
   };
 
+  // Handle country click on the globe
+  const handleCountryClick = (countryData) => {
+    console.log("Country clicked in App.jsx:", countryData);
+    
+    // Store the selected country
+    setSelectedCountry(countryData);
+    
+    // Create a new filter with this country
+    const updatedFilters = {
+      ...newsFilters,
+      sourceFilters: {
+        ...newsFilters.sourceFilters,
+        [countryData.code]: !newsFilters.sourceFilters[countryData.code]
+      }
+    };
+    
+    // Display feedback to the user
+    if (!newsFilters.sourceFilters[countryData.code]) {
+      // Add country filter
+      setError(`Filtering news by sources from ${countryData.name}`);
+    } else {
+      // Remove country filter
+      setError(`Removed filter for news from ${countryData.name}`);
+    }
+    
+    // Update filters, which will trigger a news fetch
+    setNewsFilters(updatedFilters);
+    
+    // Also show the filter panel with the new selection
+    setTimeout(() => {
+      setIsFilterPanelOpen(true);
+    }, 1000);
+  };
+
   return (
     <div className={`app-container ${isSubmenuOpen || isFilterPanelOpen ? 'submenu-open' : ''}`}>
       {/* Logo */}
@@ -190,6 +227,7 @@ function App() {
           newsEvents={filteredNewsEvents}
           navigateToCoordinates={selectedCoordinates} 
           onLabelClick={handleGlobeLabelClick}
+          onCountryClick={handleCountryClick}
         />
       )}
       
@@ -200,6 +238,7 @@ function App() {
         countries={countries}
         isOpen={isFilterPanelOpen}
         onToggle={toggleFilterPanel}
+        selectedCountry={selectedCountry}
       />
       
       {/* Menus */}

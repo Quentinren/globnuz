@@ -1,4 +1,4 @@
-// SlideFilterPanel.jsx
+// SlideFilterPanel.jsx - Updated with country selection support
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   Filter, 
@@ -10,7 +10,8 @@ import {
   Globe, 
   MoreHorizontal,
   Newspaper,
-  MapPin
+  MapPin,
+  AlertCircle
 } from 'lucide-react';
 import './SlideFilterPanel.css';
 
@@ -19,7 +20,8 @@ const SlideFilterPanel = ({
   newsFilters = {}, 
   countries = [],
   isOpen, 
-  onToggle
+  onToggle,
+  selectedCountry = null
 }) => {
   // Initialize local state from props or with defaults
   const [localNewsFilters, setLocalNewsFilters] = useState({
@@ -40,6 +42,9 @@ const SlideFilterPanel = ({
     sourceFilters: newsFilters.sourceFilters || {}
   });
 
+  // State to track which region is expanded for country selection
+  const [expandedRegion, setExpandedRegion] = useState(null);
+  
   const panelRef = useRef(null);
   const triggerZoneRef = useRef(null);
   
@@ -53,6 +58,40 @@ const SlideFilterPanel = ({
       ...newsFilters
     }));
   }, [newsFilters]);
+
+  // React to selectedCountry changes
+  useEffect(() => {
+    if (selectedCountry) {
+      // Find which region this country belongs to and expand it
+      const countryRegion = findCountryRegion(selectedCountry.code);
+      if (countryRegion) {
+        setExpandedRegion(countryRegion);
+      }
+    }
+  }, [selectedCountry]);
+
+  // Function to determine which region a country belongs to
+  const findCountryRegion = (countryCode) => {
+    if (!countryCode) return null;
+    
+    // Define country codes by region for lookup
+    const regionCountryCodes = {
+      africa: ['DZ', 'AO', 'BJ', 'BW', 'BF', 'BI', 'CM', 'CV', 'CF', 'TD', 'KM', 'CG', 'CD', 'DJ', 'EG', 'GQ', 'ER', 'ET', 'GA', 'GM', 'GH', 'GN', 'GW', 'CI', 'KE', 'LS', 'LR', 'LY', 'MG', 'MW', 'ML', 'MR', 'MU', 'MA', 'MZ', 'NA', 'NE', 'NG', 'RW', 'ST', 'SN', 'SC', 'SL', 'SO', 'ZA', 'SS', 'SD', 'SZ', 'TZ', 'TG', 'TN', 'UG', 'ZM', 'ZW'],
+      americas: ['AI', 'AG', 'AR', 'AW', 'BS', 'BB', 'BZ', 'BM', 'BO', 'BR', 'CA', 'KY', 'CL', 'CO', 'CR', 'CU', 'DM', 'DO', 'EC', 'SV', 'FK', 'GF', 'GL', 'GD', 'GP', 'GT', 'GY', 'HT', 'HN', 'JM', 'MQ', 'MX', 'MS', 'NI', 'PA', 'PY', 'PE', 'PR', 'BL', 'KN', 'LC', 'MF', 'PM', 'VC', 'SR', 'TT', 'TC', 'US', 'UY', 'VE', 'VG', 'VI'],
+      asia: ['AF', 'AM', 'AZ', 'BH', 'BD', 'BT', 'BN', 'KH', 'CN', 'CY', 'GE', 'HK', 'IN', 'ID', 'IR', 'IQ', 'IL', 'JP', 'JO', 'KZ', 'KP', 'KR', 'KW', 'KG', 'LA', 'LB', 'MO', 'MY', 'MV', 'MN', 'MM', 'NP', 'OM', 'PK', 'PS', 'PH', 'QA', 'SA', 'SG', 'LK', 'SY', 'TW', 'TJ', 'TH', 'TL', 'TR', 'TM', 'AE', 'UZ', 'VN', 'YE'],
+      europe: ['AL', 'AD', 'AT', 'BY', 'BE', 'BA', 'BG', 'HR', 'CZ', 'DK', 'EE', 'FO', 'FI', 'FR', 'DE', 'GI', 'GR', 'GG', 'VA', 'HU', 'IS', 'IE', 'IM', 'IT', 'JE', 'LV', 'LI', 'LT', 'LU', 'MT', 'MD', 'MC', 'ME', 'NL', 'MK', 'NO', 'PL', 'PT', 'RO', 'RU', 'SM', 'RS', 'SK', 'SI', 'ES', 'SJ', 'SE', 'CH', 'UA', 'GB'],
+      oceania: ['AS', 'AU', 'CK', 'FJ', 'PF', 'GU', 'KI', 'MH', 'FM', 'NR', 'NC', 'NZ', 'NU', 'NF', 'MP', 'PW', 'PG', 'PN', 'WS', 'SB', 'TK', 'TO', 'TV', 'VU', 'WF']
+    };
+    
+    // Check which region contains this country code
+    for (const [region, codes] of Object.entries(regionCountryCodes)) {
+      if (codes.includes(countryCode)) {
+        return region;
+      }
+    }
+    
+    return null;
+  };
 
   // News categories
   const newsCategories = [
@@ -145,6 +184,11 @@ const SlideFilterPanel = ({
     if (onNewsFiltersChange) {
       onNewsFiltersChange(updatedFilters);
     }
+  };
+
+  // Toggle region expansion to show countries
+  const toggleRegionExpansion = (regionId) => {
+    setExpandedRegion(expandedRegion === regionId ? null : regionId);
   };
 
   // Check if any filter is active
@@ -264,6 +308,21 @@ const SlideFilterPanel = ({
     if (localNewsFilters.europe) regions.push("Europe");
     if (localNewsFilters.oceania) regions.push("Oceania");
     
+    // Check country filters
+    const countries = [];
+    if (localNewsFilters.sourceFilters) {
+      Object.entries(localNewsFilters.sourceFilters)
+        .filter(([_, active]) => active)
+        .forEach(([countryCode]) => {
+          const countryObj = countries.find(c => c.country_id === countryCode);
+          if (countryObj) {
+            countries.push(countryObj.name);
+          } else {
+            countries.push(countryCode);
+          }
+        });
+    }
+    
     const parts = [];
     if (categories.length > 0) {
       parts.push(`Topics: ${categories.join(', ')}`);
@@ -271,8 +330,16 @@ const SlideFilterPanel = ({
     if (regions.length > 0) {
       parts.push(`Regions: ${regions.join(', ')}`);
     }
+    if (countries.length > 0) {
+      parts.push(`Countries: ${countries.join(', ')}`);
+    }
     
     return parts.join(' • ');
+  };
+
+  // Check if there is a selected country to focus on
+  const shouldHighlightCountry = (countryCode) => {
+    return selectedCountry && selectedCountry.code === countryCode;
   };
 
   return (
@@ -350,43 +417,68 @@ const SlideFilterPanel = ({
             </h3>
             <div className="filter-options">
               {regionFilters.map(region => (
-                <div 
-                  key={region.id} 
-                  className={`filter-option ${localNewsFilters[region.id] ? 'active' : ''}`}
-                  onClick={() => toggleNewsFilter(region.id)}
-                >
-                  <div className="filter-option-icon">
-                    <img 
-                      src={region.flagSrc} 
-                      alt={`${region.label} flag`} 
-                      className="region-flag"
-                    />
+                <div key={region.id}>
+                  <div 
+                    className={`filter-option ${localNewsFilters[region.id] ? 'active' : ''}`}
+                  >
+                    <div className="filter-option-icon">
+                      <img 
+                        src={region.flagSrc} 
+                        alt={`${region.label} flag`} 
+                        className="region-flag"
+                      />
+                    </div>
+                    <div 
+                      className="filter-option-label"
+                      onClick={() => toggleNewsFilter(region.id)}
+                    >
+                      {region.label}
+                    </div>
+                    <div 
+                      className={`filter-toggle ${localNewsFilters[region.id] ? 'active' : ''}`}
+                      onClick={() => toggleNewsFilter(region.id)}
+                    ></div>
+                    <button
+                      className={`expand-button ${expandedRegion === region.id ? 'expanded' : ''}`}
+                      onClick={() => toggleRegionExpansion(region.id)}
+                      aria-label={`${expandedRegion === region.id ? 'Collapse' : 'Expand'} ${region.label} countries`}
+                    >
+                      {expandedRegion === region.id ? 
+                        <span className="chevron-up">▲</span> : 
+                        <span className="chevron-down">▼</span>}
+                    </button>
                   </div>
-                  <div className="filter-option-label">{region.label}</div>
-                  <div className={`filter-toggle ${localNewsFilters[region.id] ? 'active' : ''}`}></div>
+                  
+                  {/* Countries Accordion within each region */}
+                  {expandedRegion === region.id && (
+                    <div className="countries-accordion">
+                      <div className="countries-grid">
+                        {region.countries.map(country => (
+                          <div 
+                            key={country.country_id}
+                            className={`country-chip ${localNewsFilters.sourceFilters[country.country_id] ? 'active' : ''} ${shouldHighlightCountry(country.country_id) ? 'highlight-animation' : ''}`}
+                            onClick={() => toggleCountryFilter(country.country_id)}
+                          >
+                            <img 
+                              src={`https://flagcdn.com/${country.country_id.toLowerCase()}.svg`} 
+                              alt={`${country.name} flag`}
+                              className="country-flag"
+                            />
+                            <span>{country.name}</span>
+                          </div>
+                        ))}
+                        
+                        {region.countries.length === 0 && (
+                          <div className="no-countries-message">
+                            <AlertCircle size={16} />
+                            <span>No countries available</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))}
-            </div>
-            
-            {/* Countries Accordion - these are countries to filter by origin */}
-            <div className="countries-accordion">
-              <h4>Filter by Country</h4>
-              <div className="countries-grid">
-                {countries.slice(0, 20).map(country => (
-                  <div 
-                    key={country.country_id}
-                    className={`country-chip ${localNewsFilters.sourceFilters[country.country_id] ? 'active' : ''}`}
-                    onClick={() => toggleCountryFilter(country.country_id)}
-                  >
-                    <img 
-                      src={`https://flagcdn.com/${country.country_id.toLowerCase()}.svg`} 
-                      alt={`${country.name} flag`}
-                      className="country-flag"
-                    />
-                    <span>{country.name}</span>
-                  </div>
-                ))}
-              </div>
             </div>
           </div>
           
@@ -399,7 +491,7 @@ const SlideFilterPanel = ({
             <div className="filter-options">
               {/* Add news source filtering options here */}
               <div className="coming-soon">
-                Source filtering coming soon
+                Advanced source filtering coming soon
               </div>
             </div>
           </div>

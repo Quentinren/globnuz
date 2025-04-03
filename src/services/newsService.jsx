@@ -126,7 +126,7 @@ export const fetchNewsFromSupabase = async (filters = {}) => {
         .select('*, news_articles!inner(*, newspapers(*))')
         .eq('language_translated', 'FR')
         .order('publication_date', { foreignTable: 'news_articles', ascending: false })
-        .limit(50);
+        .limit(100);
         
       const fallbackResponse = await fallbackQuery;
       data = fallbackResponse.data;

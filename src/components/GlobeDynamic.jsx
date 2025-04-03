@@ -1,20 +1,30 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import Globe from 'react-globe.gl';
 import * as THREE from 'three';
 import './GlobeDynamic.css';
 import '../components/css/news-themes.css'; // Import the theme colors CSS
 
-const GlobeDynamic = ({ newsEvents, navigateToCoordinates, onLabelClick }) => {
+const GlobeDynamic = ({ newsEvents, navigateToCoordinates, onLabelClick, onCountryClick }) => {
   const globeEl = useRef();
   const [globeReady, setGlobeReady] = useState(false);
   const [cameraDistance, setCameraDistance] = useState(0);
-  const [zoomLevel, setZoomLevel] = useState(1);
-  const labelSize = 1;
-
   const [countries, setCountries] = useState({ features: []});
-
+  const [countryPolygons, setCountryPolygons] = useState([]);
+  
   // Define discrete zoom levels instead of continuous calculations
   const [zoomCategory, setZoomCategory] = useState('medium'); // 'far', 'medium', 'close'
+  
+  // Use useMemo to maintain stable references to callbacks and computed values
+  const globeMaterial = useMemo(() => {
+    const material = new THREE.MeshPhongMaterial();
+    material.color = new THREE.Color('#003366');
+    material.background = new THREE.Color('#003366');
+    material.emissiveIntensity = 10;
+    material.showGraticules = true;
+    material.showAtmosphere = true;
+    material.atmosphereColor="rgba(65, 116, 197, 1)"; // Light blue atmosphere
+    return material;
+  }, []);
   
   // Update zoom category based on camera distance - only when significant changes occur
   useEffect(() => {
@@ -61,8 +71,8 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates, onLabelClick }) => {
     }
   };
 
-  // Get CSS variable for a given theme
-  const getThemeColor = (theme) => {
+  // Get CSS variable for a given theme (memoized for performance)
+  const getThemeColor = useMemo(() => (theme) => {
     if (!theme) return '#e74c3c'; // Default to a red color if theme is missing
     
     // Normalize the theme name to match CSS variables
@@ -97,12 +107,12 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates, onLabelClick }) => {
     };
     
     return fallbackColors[normalizedTheme] || '#e74c3c'; // Default to red if no match
-  };
+  }, []);
 
   // Enhanced goToCoordinates function with smoother transition
   const goToCoordinates = (lat, lng) => {
     if (!globeEl.current) return;
-    console.log("latitude:", lat, "longitude:", lng);
+    console.log("Navigating to coordinates:", lat, lng);
     // First get current position
     const currentPov = globeEl.current.pointOfView();
     
@@ -130,15 +140,6 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates, onLabelClick }) => {
     }
   };
 
-  // Appearance of the Earth
-  const globeMaterial = new THREE.MeshPhongMaterial();
-  globeMaterial.color = new THREE.Color('#003366');
-  globeMaterial.background = new THREE.Color('#003366');
-  globeMaterial.emissiveIntensity = 10;
-  globeMaterial.showGraticules = true;
-  globeMaterial.showAtmosphere = true;
-  globeMaterial.atmosphereColor="rgba(65, 116, 197, 1)" ;// Light blue atmosphere
-
   // Handle navigation when navigateToCoordinates prop changes
   useEffect(() => {
     if (navigateToCoordinates && globeReady) {
@@ -146,6 +147,7 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates, onLabelClick }) => {
     }
   }, [navigateToCoordinates, globeReady]);
 
+  // Fetch country data once and memoize
   useEffect(() => {
     // load data
     fetch('https://raw.githubusercontent.com/vasturiano/react-globe.gl/master/example/datasets/ne_110m_admin_0_countries.geojson')
@@ -157,18 +159,32 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates, onLabelClick }) => {
       })
       .then(data => {
         setCountries(data);
+        
+        // Create stable country polygons data
+        if (data && data.features) {
+          // Process countries once
+          const processedPolygons = data.features.map(feature => ({
+            ...feature,
+            // Pre-calculate colors to keep them stable
+            capColor: (() => {
+              const intensity = Math.floor(140 + Math.random() * 115);
+              const hex = intensity.toString(16).padStart(2, '0');
+              return `#${hex}${hex}${hex}`;
+            })()
+          }));
+          setCountryPolygons(processedPolygons);
+        }
       })
       .catch(error => {
         console.error("Error loading GeoJSON:", error);
       });
   }, []);
 
-  // Create starfield background
+  // Create starfield background only once when globe is ready
   useEffect(() => {
     if (globeReady && globeEl.current) {
       const scene = globeEl.current.scene();
       
-      //
       // Create stars
       const starsGeometry = new THREE.BufferGeometry();
       const starsMaterial = new THREE.PointsMaterial({
@@ -182,7 +198,6 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates, onLabelClick }) => {
       const starCount = 2000;
       const positions = new Float32Array(starCount * 3);
       const colors = new Float32Array(starCount * 3);
-      const sizes = new Float32Array(starCount);
       
       for (let i = 0; i < starCount; i++) {
         // Generate random spherical coordinates
@@ -204,12 +219,10 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates, onLabelClick }) => {
         colors[i * 3] = 1; // Red always 1
         colors[i * 3 + 1] = 1; // Green always 1
         colors[i * 3 + 2] = whiteness * 0.5 + 0.5; // Blue varies from 0.5 to 1
-        
       }
       
       starsGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
       starsGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-
       
       const stars = new THREE.Points(starsGeometry, starsMaterial);
       scene.add(stars);
@@ -229,7 +242,8 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates, onLabelClick }) => {
     }
   }, [globeReady]);
 
-  const oceans = [
+  // Ocean data memoized to avoid recreating on every render
+  const oceans = useMemo(() => [
     // 🌊 Major Oceans
     { properties: { name: "Atlantic Ocean", latitude: 0, longitude: -30, isOcean: true } },
     { properties: { name: "Pacific Ocean", latitude: 0, longitude: -170, isOcean: true } },
@@ -243,85 +257,14 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates, onLabelClick }) => {
     { properties: { name: "North Pacific Ocean", latitude: 30, longitude: 180, isOcean: true } },
     { properties: { name: "South Pacific Ocean", latitude: -30, longitude: -150, isOcean: true } },
   
-    // 🌊 Major Seas
-    { properties: { name: "Caribbean Sea", latitude: 17, longitude: -73, isOcean: true, smallOcean: true } },
+    // 🌊 Major Seas - only showing a few to reduce clutter
     { properties: { name: "Mediterranean Sea", latitude: 35, longitude: 18, isOcean: true, smallOcean: true } },
-    { properties: { name: "Baltic Sea", latitude: 56, longitude: 20, isOcean: true, smallOcean: true } },
-    { properties: { name: "Black Sea", latitude: 44, longitude: 35, isOcean: true, smallOcean: true } },
-    { properties: { name: "Red Sea", latitude: 20, longitude: 38, isOcean: true, smallOcean: true } },
-    { properties: { name: "Arabian Sea", latitude: 15, longitude: 65, isOcean: true, smallOcean: true } },
+    { properties: { name: "Caribbean Sea", latitude: 17, longitude: -73, isOcean: true, smallOcean: true } },
     { properties: { name: "South China Sea", latitude: 10, longitude: 115, isOcean: true, smallOcean: true } },
-    { properties: { name: "Bering Sea", latitude: 58, longitude: -175, isOcean: true, smallOcean: true } },
-  
-    // 🌊 Small but Important Seas
-    { properties: { name: "Bay of Bengal", latitude: 12, longitude: 90, isOcean: true, smallOcean: true } },
-    { properties: { name: "Gulf of Mexico", latitude: 25, longitude: -90, isOcean: true, smallOcean: true } },
-    { properties: { name: "Andaman Sea", latitude: 10, longitude: 95, isOcean: true, smallOcean: true } },
-    { properties: { name: "East China Sea", latitude: 27, longitude: 125, isOcean: true, smallOcean: true } },
-    { properties: { name: "Yellow Sea", latitude: 37, longitude: 123, isOcean: true, smallOcean: true } },
-    { properties: { name: "Caspian Sea", latitude: 41, longitude: 51, isOcean: true, smallOcean: true } },
-    { properties: { name: "Aegean Sea", latitude: 38, longitude: 25, isOcean: true, smallOcean: true } },
-    { properties: { name: "Adriatic Sea", latitude: 42, longitude: 15, isOcean: true, smallOcean: true } },
-    { properties: { name: "Coral Sea", latitude: -18, longitude: 155, isOcean: true, smallOcean: true } },
-    { properties: { name: "Tasman Sea", latitude: -40, longitude: 160, isOcean: true, smallOcean: true } },
-    { properties: { name: "Labrador Sea", latitude: 55, longitude: -55, isOcean: true, smallOcean: true } },
-    { properties: { name: "Norwegian Sea", latitude: 68, longitude: 5, isOcean: true, smallOcean: true } },
-    { properties: { name: "Barents Sea", latitude: 75, longitude: 45, isOcean: true, smallOcean: true } }
-  ];
-  
+  ], []);
 
-  // Format ocean data for the globe
-  const formattedOceans = oceans.map(ocean => ({
-    lat: ocean.properties.latitude,
-    lng: ocean.properties.longitude,
-    name: ocean.properties.name,
-    size: getDynamicLabelSize(1.2, false, true, ocean.properties.smallOcean),
-    color: 'rgba(100, 200, 255, 0.8)',
-    isOcean: true,
-    smallOcean: ocean.properties.smallOcean
-  }));
-
-  // Format country data for labels
-  const countryLabels = countries.features
-    .filter(country => country.properties && country.properties.ADMIN)
-    .map(country => {
-      // Calculate centroid (simplified)
-      let lat = 0, lng = 0, count = 0;
-      
-      // For Polygon geometry
-      if (country.geometry.type === 'Polygon' && country.geometry.coordinates[0]) {
-        country.geometry.coordinates[0].forEach(coord => {
-          lng += coord[0];
-          lat += coord[1];
-          count++;
-        });
-      } 
-      // For MultiPolygon geometry
-      else if (country.geometry.type === 'MultiPolygon' && country.geometry.coordinates[0]) {
-        country.geometry.coordinates[0][0].forEach(coord => {
-          lng += coord[0];
-          lat += coord[1];
-          count++;
-        });
-      }
-      
-      if (count > 0) {
-        lat /= count;
-        lng /= count;
-      }
-      
-      return {
-        lat: lat,
-        lng: lng,
-        name: country.properties.ADMIN,
-        size: getDynamicLabelSize(0.8, true, false),
-        color: 'rgba(255, 255, 255, 0.8)',
-        isCountry: true
-      };
-    });
-
-  // Continent data with coordinates
-  const continents = [
+  // Continent data memoized to avoid recreating on every render
+  const continents = useMemo(() => [
     { properties: { name: "AFRICA", latitude: 0, longitude: 20, isContinent: true } },
     { properties: { name: "EUROPE", latitude: 50, longitude: 10, isContinent: true } },
     { properties: { name: "ASIA", latitude: 45, longitude: 90, isContinent: true } },
@@ -329,7 +272,7 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates, onLabelClick }) => {
     { properties: { name: "SOUTH AMERICA", latitude: -20, longitude: -60, isContinent: true } },
     { properties: { name: "AUSTRALIA", latitude: -25, longitude: 135, isContinent: true } },
     { properties: { name: "ANTARCTICA", latitude: -80, longitude: 0, isContinent: true } },
-  ];
+  ], []);
 
   // Configure event listeners for the camera during globe initialization
   useEffect(() => {
@@ -339,8 +282,7 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates, onLabelClick }) => {
       globeEl.current.controls().enableZoom = true;
       globeEl.current.controls().enableRotate = true;
       globeEl.current.controls().autoRotateSpeed = 0.002;
-      globeEl.current.controls().zoomSpeed = 0.8; // Slightly slower zoom for better performance
-      // Increase quality of rendered (not shaky)
+      globeEl.current.controls().zoomSpeed = 0.8;
 
       // Initial camera position
       globeEl.current.pointOfView({
@@ -369,34 +311,122 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates, onLabelClick }) => {
     }
   }, [globeReady]);
 
-  // Formatter to make news event data compatible with Globe format
-  const formattedNewsEvents = newsEvents
-    .filter(event => {
-      // Filter out items with invalid coordinates
-      return typeof event.latitude === 'number' && !isNaN(event.latitude) && 
-            typeof event.longitude === 'number' && !isNaN(event.longitude);
-    })
-    .map(event => ({
-      lat: event.latitude,
-      lng: event.longitude,
-      size: getDynamicLabelSize(0.8),
-      color: getThemeColor(event.theme),
-      title: event.title,
-      location: event.location,
-      isNews: true,
-      theme: event.theme
-    }));
+  // Format ocean data for the globe - memoized to avoid recreating on every render
+  const formattedOceans = useMemo(() => oceans.map(ocean => ({
+    lat: ocean.properties.latitude,
+    lng: ocean.properties.longitude,
+    name: ocean.properties.name,
+    size: getDynamicLabelSize(1.2, false, true, ocean.properties.smallOcean),
+    color: 'rgba(100, 200, 255, 0.8)',
+    isOcean: true,
+    smallOcean: ocean.properties.smallOcean
+  })), [oceans, zoomCategory]);
 
-  // This function handles the click on the label dot
-  const handleLabelClick = (label) => {
+  // Format country data for labels - memoized to stabilize
+  const countryLabels = useMemo(() => {
+    if (!countries.features || countries.features.length === 0) return [];
+    
+    return countries.features
+      .filter(country => country.properties && country.properties.ADMIN)
+      .map(country => {
+        // Calculate centroid (simplified)
+        let lat = 0, lng = 0, count = 0;
+        
+        // For Polygon geometry
+        if (country.geometry.type === 'Polygon' && country.geometry.coordinates[0]) {
+          country.geometry.coordinates[0].forEach(coord => {
+            lng += coord[0];
+            lat += coord[1];
+            count++;
+          });
+        } 
+        // For MultiPolygon geometry
+        else if (country.geometry.type === 'MultiPolygon' && country.geometry.coordinates[0]) {
+          country.geometry.coordinates[0][0].forEach(coord => {
+            lng += coord[0];
+            lat += coord[1];
+            count++;
+          });
+        }
+        
+        if (count > 0) {
+          lat /= count;
+          lng /= count;
+        }
+        
+        return {
+          lat: lat,
+          lng: lng,
+          name: country.properties.ADMIN,
+          size: getDynamicLabelSize(0.8, true, false),
+          color: 'rgba(255, 255, 255, 0.8)',
+          isCountry: true
+        };
+      });
+  }, [countries.features, zoomCategory]);
+
+  // Formatter to make news event data compatible with Globe format - this changes with newsEvents
+  const formattedNewsEvents = useMemo(() => {
+    return newsEvents
+      .filter(event => {
+        // Filter out items with invalid coordinates
+        return typeof event.latitude === 'number' && !isNaN(event.latitude) && 
+               typeof event.longitude === 'number' && !isNaN(event.longitude);
+      })
+      .map(event => ({
+        lat: event.latitude,
+        lng: event.longitude,
+        size: getDynamicLabelSize(0.8),
+        color: getThemeColor(event.theme),
+        title: event.title,
+        location: event.location,
+        isNews: true,
+        theme: event.theme
+      }));
+  }, [newsEvents, zoomCategory, getThemeColor]);
+
+  // This function handles click on news points
+  const handlePointClick = (point) => {
+    console.log("Point clicked:", point);
     // Call the parent component's callback with the title
-    if (onLabelClick && label.title) {
-      onLabelClick(label.title);
+    if (onLabelClick && point.title) {
+      onLabelClick(point.title);
     }
   };
 
-  // Combine all label data
-  const allLabels = [...formattedNewsEvents, ...formattedOceans, ...countryLabels, ...continents];
+  // This function handles click on country polygons
+  const handleCountryClick = (polygon, event, { lat, lng }) => {
+    if (!polygon.properties) return;
+    
+    const countryData = {
+      name: polygon.properties.ADMIN,
+      code: polygon.properties.ISO_A2,
+      lat,
+      lng
+    };
+    
+    console.log("Country clicked:", countryData);
+    
+    // Navigate to the country
+    goToCoordinates(lat, lng);
+    
+    // Call the parent component's callback with the country code
+    if (onCountryClick) {
+      onCountryClick(countryData);
+    }
+  };
+
+  // Combine all label data (excluding news events) - memoized to avoid recreating on every render
+  const allLabels = useMemo(() => [...formattedOceans, ...countryLabels], 
+    [formattedOceans, countryLabels]);
+
+  // Memoize country rendering properties
+  const polygonSideColor = useMemo(() => () => '#505050', []);
+  
+  // Pre-computed stable colors for country polygons
+  const polygonCapColorFn = useMemo(() => 
+    (feature) => feature.capColor || '#AAAAAA', 
+  []);
 
   return (
     <div className="globe-container">
@@ -404,64 +434,64 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates, onLabelClick }) => {
         ref={globeEl}
         globeMaterial={globeMaterial}
         
-        // Increase light intensity
+        // Lighting
         ambientLightColor="white"
-        ambientLightIntensity={20} // Increased from 10
-
-        // Increase directional light intensity
+        ambientLightIntensity={20}
         directionalLightColor="white"
-        directionalLightIntensity={100} // Increased from 2.5
-
-        // Add a second directional light from another angle for more even lighting
+        directionalLightIntensity={100}
         directionalLightPosition={{ x: 10, y: 10, z: 0 }}
-
-        // Add graticules (longitude and latitude lines)
-        showGraticules = {true}
+        showGraticules={true}
   
-        polygonsData={countries.features}
+        // Countries - using the stable, pre-processed data
+        polygonsData={countryPolygons}
         polygonResolution={3}
         polygonMargin={0.02}
         polygonUseDots={true}
-        polygonAltitude={0.014} //0.0063 good for distance middle
-        polygonSideColor={() => '#505050'}
-        polygonCapColor={() => {
-          // Generate a random number between 128 (50% white) and 255 (100% white)
-          const intensity = Math.floor(140 + Math.random() * 115);
-          // Convert to hexadecimal and create a color with the same value for R, G, B
-          const hex = intensity.toString(16).padStart(2, '0');
-          return `#${hex}${hex}${hex}`;
-        }}
-        polygonLabel={({ properties: d }) => <div>
-          <div><b>{d.ADMIN} ({d.ISO_A2})</b></div>
-          <div>Population: <i>{d.POP_EST}</i></div>
-        </div>}
+        polygonAltitude={0.014}
+        polygonSideColor={polygonSideColor}
+        polygonCapColor={polygonCapColorFn}
+        onPolygonClick={handleCountryClick} // Added country click handler
+        polygonLabel={({ properties: d }) => (
+          <div style={{ 
+            background: 'rgba(0, 0, 0, 0.7)', 
+            color: 'white', 
+            padding: '6px', 
+            borderRadius: '3px',
+            fontSize: '12px'
+          }}>
+            <div><b>{d.ADMIN}</b> ({d.ISO_A2})</div>
+            <div>Population: {d.POP_EST.toLocaleString()}</div>
+            <div style={{ 
+              fontSize: '10px', 
+              fontStyle: 'italic', 
+              marginTop: '4px',
+              color: '#4fc3f7' 
+            }}>Click to filter news</div>
+          </div>
+        )}
         
-        // Points for news events - now with dynamic theme colors
+        // Points for news events - these will update when newsEvents changes
         pointsData={formattedNewsEvents}
-        pointColor={point => point.color} // Use the theme color we set
+        pointColor={point => point.color}
         pointAltitude={0.02}
-        pointsMerge={true}
-        onPointClick={handleLabelClick} // Add this handler}
+        pointRadius={0.3}
+        pointResolution={12}
+        onPointClick={handlePointClick}
+        pointsMerge={false}
         
-
-      
-        
-        // Labels for locations (all combined)
+        // Labels for locations (only oceans and countries, not news)
         labelsData={allLabels}
         labelLat="lat"
         labelLng="lng"
         labelText={d => d.isCountry ? d.name : (d.isOcean ? d.name : "")}
         labelSize={d => d.isCountry ? getDynamicLabelSize(0.7, true, false) : 
-                       (d.isOcean ? getDynamicLabelSize(1.2, false, true, d.smallOcean) : 
-                                   getDynamicLabelSize(0.4))}
+                       (d.isOcean ? getDynamicLabelSize(1.2, false, true, d.smallOcean) : 0)}
         labelDotRadius={0}
-        onLabelClick={handleLabelClick} // Add this handler
         labelColor={d => d.isOcean ? 'rgba(100, 200, 255, 0.8)' : 
-                        (d.isCountry ? 'rgba(30, 30, 30, 0.9)' : 
-                        (d.isNews ? d.color : 'white'))}
+                        (d.isCountry ? 'rgba(30, 30, 30, 0.9)' : 'white')}
         labelResolution={2}
         labelAltitude={d => d.isOcean ? 0.03 : (d.isCountry ? 0.02 : 0.015)}
-        labelIncludeDot={d => !d.isOcean && !d.isCountry}
+        labelIncludeDot={false}
         
         onGlobeReady={() => setGlobeReady(true)}
       />
