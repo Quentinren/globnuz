@@ -1,9 +1,9 @@
-// NewsScroll.jsx - Fixed for proper infinite scrolling
+// NewsScroll.jsx - Fixed for proper infinite scrolling and outside click handling
 import React, { useState, useEffect, useRef } from 'react';
 import { Calendar, MapPin, Globe, ChevronLeft, Newspaper, User, Tag, Filter, AlertCircle } from 'lucide-react';
 import './NewsScroll.css';
 
-const NewsScroll = ({ newsEvents, onNavigateToArticle, activeTitle, hasMoreData, isLoadingMore, onLoadMore }) => {
+const NewsScroll = ({ newsEvents, onNavigateToArticle, activeTitle, hasMoreData, isLoadingMore, onLoadMore , language}) => {
   const [isOpen, setIsOpen] = useState(true);
   const observerRef = useRef(null);
   const loaderRef = useRef(null);
@@ -16,6 +16,70 @@ const NewsScroll = ({ newsEvents, onNavigateToArticle, activeTitle, hasMoreData,
     const themeColor = getComputedStyle(document.documentElement).getPropertyValue(cssVariable);
   
     return themeColor.trim() || "var(--default-color)"; // Return CSS variable or fallback
+  };
+
+  
+  // Function to format relative time based on language
+  const getRelativeTime = (dateString, lang = language) => {
+    if (!dateString) return '';
+    
+    const now = new Date();
+    const date = new Date(dateString);
+    const diffInMilliseconds = now - date;
+    
+    // Convert to units
+    const diffInSeconds = Math.floor(diffInMilliseconds / 1000);
+    const diffInMinutes = Math.floor(diffInSeconds / 60);
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    const diffInDays = Math.floor(diffInHours / 24);
+    const diffInMonths = Math.floor(diffInDays / 30);
+    const diffInYears = Math.floor(diffInDays / 365);
+    
+    // Translations for relative time phrases
+    const translations = {
+      'FR': {
+        'just_now': 'À l\'instant',
+        'minutes_ago': (n) => `Il y a ${n} minute${n > 1 ? 's' : ''}`,
+        'hours_ago': (n) => `Il y a ${n} heure${n > 1 ? 's' : ''}`,
+        'days_ago': (n) => `Il y a ${n} jour${n > 1 ? 's' : ''}`,
+        'months_ago': (n) => `Il y a ${n} mois`,
+        'years_ago': (n) => `Il y a ${n} an${n > 1 ? 's' : ''}`
+      },
+      'EN': {
+        'just_now': 'Just now',
+        'minutes_ago': (n) => `${n} minute${n > 1 ? 's' : ''} ago`,
+        'hours_ago': (n) => `${n} hour${n > 1 ? 's' : ''} ago`,
+        'days_ago': (n) => `${n} day${n > 1 ? 's' : ''} ago`,
+        'months_ago': (n) => `${n} month${n > 1 ? 's' : ''} ago`,
+        'years_ago': (n) => `${n} year${n > 1 ? 's' : ''} ago`
+      },
+      'ES': {
+        'just_now': 'Ahora mismo',
+        'minutes_ago': (n) => `Hace ${n} minuto${n > 1 ? 's' : ''}`,
+        'hours_ago': (n) => `Hace ${n} hora${n > 1 ? 's' : ''}`,
+        'days_ago': (n) => `Hace ${n} día${n > 1 ? 's' : ''}`,
+        'months_ago': (n) => `Hace ${n} mes${n > 1 ? 'es' : ''}`,
+        'years_ago': (n) => `Hace ${n} año${n > 1 ? 's' : ''}`
+      }
+    };
+    
+    // Default to French if language not supported
+    const trans = translations[lang] || translations['FR'];
+    
+    // Format the relative time
+    if (diffInSeconds < 60) {
+      return trans['just_now'];
+    } else if (diffInMinutes < 60) {
+      return trans['minutes_ago'](diffInMinutes);
+    } else if (diffInHours < 24) {
+      return trans['hours_ago'](diffInHours);
+    } else if (diffInDays < 30) {
+      return trans['days_ago'](diffInDays);
+    } else if (diffInMonths < 12) {
+      return trans['months_ago'](diffInMonths);
+    } else {
+      return trans['years_ago'](diffInYears);
+    }
   };
   
   // Handle infinite scroll with Intersection Observer
@@ -157,7 +221,7 @@ const NewsScroll = ({ newsEvents, onNavigateToArticle, activeTitle, hasMoreData,
                   {event.title}
                 </h3>
                 <h4 className="news-feed-item-subtitle">{event.subtitle}</h4>
-                {/* Theme and subtheme chips */}
+                {/* Theme and subtheme chips 
                 <div className="news-feed-item-chips">
                   {event.theme && (
                     <span 
@@ -173,7 +237,7 @@ const NewsScroll = ({ newsEvents, onNavigateToArticle, activeTitle, hasMoreData,
                       {theme_tag}
                     </span>
                   ))}
-                </div>
+                </div>*/}
                 
                 <p className="news-feed-item-description">{event.description}</p>
                 
@@ -195,7 +259,9 @@ const NewsScroll = ({ newsEvents, onNavigateToArticle, activeTitle, hasMoreData,
                     </div>
                     <div className="news-feed-item-info-row">
                       <Calendar size={10} className="news-feed-item-info-icon" /> 
-                      <span>{event.publication_date && event.publication_date.slice(0, -9).replace("T", " ")}  </span>
+                               <span className="metadata-text">
+                        {getRelativeTime(event.publication_date, language)}
+                      </span>
                     </div>
 
                     <div className="news-feed-item-info-row">

@@ -255,12 +255,13 @@ function App() {
       {/* Our NewsScroll component - only shown when data is loaded */}
       {!isLoading && filteredNewsEvents.length > 0 && (
         <NewsScroll 
-          newsEvents={filteredNewsEvents}
-          onNavigateToArticle={handleNavigateToArticle}
-          activeTitle={activeNewsTitle}
-          hasMoreData={hasMoreData}
-          isLoadingMore={isLoadingMore}
-          onLoadMore={loadMoreNews}
+            newsEvents={filteredNewsEvents}
+            onNavigateToArticle={handleNavigateToArticle}
+            activeTitle={activeNewsTitle}
+            hasMoreData={hasMoreData}
+            isLoadingMore={isLoadingMore}
+            onLoadMore={loadMoreNews}
+            language="FR" // Peut être "FR", "EN", ou "ES"
         />
       )}
       
