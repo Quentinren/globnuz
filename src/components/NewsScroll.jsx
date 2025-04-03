@@ -1,9 +1,9 @@
-// NewsScroll.jsx - Fixed for proper infinite scrolling and outside click handling
+// NewsScroll.jsx - Complete updated version
 import React, { useState, useEffect, useRef } from 'react';
-import { Calendar, MapPin, Globe, ChevronLeft, Newspaper, User, Tag, Filter, AlertCircle } from 'lucide-react';
+import { Calendar, MapPin, Globe, ChevronLeft, Newspaper, User, Tag, Filter, AlertCircle, ExternalLink } from 'lucide-react';
 import './NewsScroll.css';
 
-const NewsScroll = ({ newsEvents, onNavigateToArticle, activeTitle, hasMoreData, isLoadingMore, onLoadMore , language}) => {
+const NewsScroll = ({ newsEvents, onNavigateToArticle, activeTitle, hasMoreData, isLoadingMore, onLoadMore, language, onHoverArticle }) => {
   const [isOpen, setIsOpen] = useState(true);
   const observerRef = useRef(null);
   const loaderRef = useRef(null);
@@ -163,6 +163,14 @@ const NewsScroll = ({ newsEvents, onNavigateToArticle, activeTitle, hasMoreData,
     }
   }, [activeTitle]);
 
+  // Handle opening article in new tab
+  const handleOpenArticle = (url, e) => {
+    e.stopPropagation(); // Prevent triggering the parent card click
+    if (url) {
+      window.open(url, '_blank');
+    }
+  };
+
   return (
     <div className={`custom-news-container ${isOpen ? 'open' : 'closed'}`}>
       <button className="news-toggle-button" onClick={toggleFeed}>
@@ -192,6 +200,8 @@ const NewsScroll = ({ newsEvents, onNavigateToArticle, activeTitle, hasMoreData,
               className={`news-feed-item ${getFeedItemClass(event.theme)}`}
               data-title={event.title}
               onClick={() => handleNavigateToArticle(event.latitude, event.longitude)}
+              onMouseEnter={() => onHoverArticle && onHoverArticle(event.id)}
+              onMouseLeave={() => onHoverArticle && onHoverArticle(null)}
             >
               {event.image ? (
                 <div className="news-feed-item-image-container">
@@ -221,23 +231,6 @@ const NewsScroll = ({ newsEvents, onNavigateToArticle, activeTitle, hasMoreData,
                   {event.title}
                 </h3>
                 <h4 className="news-feed-item-subtitle">{event.subtitle}</h4>
-                {/* Theme and subtheme chips 
-                <div className="news-feed-item-chips">
-                  {event.theme && (
-                    <span 
-                      className="theme-chip" 
-                      style={{ backgroundColor: getThemeColor(event.theme) }}
-                    >
-                      <Tag size={10} className="chip-icon" />
-                      {event.theme}
-                    </span>
-                  )}
-                  {event.theme_tags && event.theme_tags.map((theme_tag, i) => (
-                    <span key={i} className="subtheme-chip">
-                      {theme_tag}
-                    </span>
-                  ))}
-                </div>*/}
                 
                 <p className="news-feed-item-description">{event.description}</p>
                 
@@ -245,14 +238,18 @@ const NewsScroll = ({ newsEvents, onNavigateToArticle, activeTitle, hasMoreData,
                 <div className="news-feed-item-footer">
                   <div className="news-feed-item-info">
                     <div className="news-feed-item-info-row">
-                      <div className="news-feed-item-newspaper" onClick={() => window.open(event.external_link, "_blank")}>
-                      <Newspaper size={10} className="news-feed-item-info-icon" /> 
+                      <div 
+                        className="news-feed-item-newspaper" 
+                        onClick={(e) => handleOpenArticle(event.external_link, e)}
+                      >
+                        <Newspaper size={10} className="news-feed-item-info-icon" /> 
                         {event.newspaper ? event.newspaper.name : event.newspaper_id}
+                        <ExternalLink size={10} style={{ marginLeft: '5px', opacity: 0.7 }} />
                       </div>
                     </div>
                     <div className="news-feed-item-info-row">
                       <Calendar size={10} className="news-feed-item-info-icon" /> 
-                               <span className="metadata-text">
+                      <span className="metadata-text">
                         {getRelativeTime(event.publication_date, language)}
                       </span>
                     </div>

@@ -121,22 +121,22 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates, onLabelClick, onCount
       // First zoom out slightly
       globeEl.current.pointOfView({
         ...currentPov,
-        altitude: 1.0
-      }, 500, () => {
+        altitude: 5
+      }, 1000, () => {
         // Then navigate to new position
         globeEl.current.pointOfView({
           lat: lat,
           lng: lng,
-          altitude: 0.5
-        }, 1000);
+          altitude: 1.5
+        }, 2000);
       });
     } else {
       // Navigate directly if we're not too zoomed in
       globeEl.current.pointOfView({
         lat: lat,
         lng: lng,
-        altitude: 0.5
-      }, 1000);
+        altitude: 1.5
+      }, 2000);
     }
   };
 
@@ -275,20 +275,21 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates, onLabelClick, onCount
   ], []);
 
   // Configure event listeners for the camera during globe initialization
+  // Configure event listeners for the camera during globe initialization
   useEffect(() => {
     if (globeReady && globeEl.current) {
-      // Automatic rotation
+      // Automatic rotation (slower for a more majestic feel)
       globeEl.current.controls().autoRotate = true;
       globeEl.current.controls().enableZoom = true;
       globeEl.current.controls().enableRotate = true;
-      globeEl.current.controls().autoRotateSpeed = 0.002;
-      globeEl.current.controls().zoomSpeed = 0.8;
+      globeEl.current.controls().autoRotateSpeed = 0.001; // Slower rotation
+      globeEl.current.controls().zoomSpeed = 0.06; // Smoother zoom
 
-      // Initial camera position
+      // Initial camera position - further away for a more distant view
       globeEl.current.pointOfView({
-        lat: 50, 
-        lng: 10,
-        altitude: 2.5
+        lat: 10, // More centered view
+        lng: 0,
+        altitude: 4.0 // Further away from Earth
       });
 
       // Initialize camera distance

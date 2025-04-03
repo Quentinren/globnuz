@@ -36,13 +36,13 @@ body {
   z-index: 20; /* Above the news scroll (z-index: 500) */
 }
 
+
 h1 {
-  margin-top: 70px; /* Increased to make room for logo */
+  margin-top: 90px; /* Increased to make room for the top menu and logo */
   margin-bottom: 20px;
   color: #4fc3f7;
   text-shadow: 0 0 10px rgba(79, 195, 247, 0.5);
 }
-
 .globe-container {
   border-radius: 10px;
   overflow: hidden;

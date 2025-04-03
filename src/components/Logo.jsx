@@ -1,4 +1,3 @@
-// Logo.jsx
 import React from 'react';
 
 const Logo = () => {
@@ -6,7 +5,7 @@ const Logo = () => {
     <div 
       style={{
         position: 'absolute',
-        top: 20,
+        top: 80, // Position below the top menu
         left: 40,
         width: '50px',
         zIndex: 1000
@@ -15,7 +14,11 @@ const Logo = () => {
       <img 
         src="globnuz.png" 
         alt="GlobNuz Logo" 
-        style={{ width: '100%', height: 'auto' }}
+        style={{ 
+          width: '100%', 
+          height: 'auto',
+          filter: 'drop-shadow(0 0 10px rgba(0,0,0,0.5))' // Add shadow for better visibility
+        }}
       />
     </div>
   );

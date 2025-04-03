@@ -2,11 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 import { fetchCountriesData, fetchPlacesData } from './services/globeDataService';
 import { fetchNewsFromSupabase, fetchCountriesFromSupabase } from './services/newsService';
-import Logo from './components/Logo'
 import BottomMenu from './components/BottomMenu'
 import GlobeDynamic from './components/GlobeDynamic';
 import NewsScroll from './components/NewsScroll';
 import SlideFilterPanel from './components/SlideFilterPanel'; // Import our new component
+import TopMenu from './components/TopMenu'; // Import our new TopMenu component
 
 function App() {
   // State to manage submenu opening
@@ -55,6 +55,9 @@ function App() {
     // Source filters
     sourceFilters: {}
   });
+  
+  // State to track hovered article for globe focus
+  const [hoveredArticleId, setHoveredArticleId] = useState(null);
 
   // Reference to store the current selected country
   const [selectedCountry, setSelectedCountry] = useState(null);
@@ -179,6 +182,22 @@ function App() {
   const handleNavigateToArticle = (lat, lng) => {
     setSelectedCoordinates({ lat, lng });
   };
+  
+  // Handler for article hover to focus the globe
+  const handleArticleHover = (articleId) => {
+    setHoveredArticleId(articleId);
+    
+    if (articleId) {
+      // Find the article and navigate to its coordinates
+      const article = filteredNewsEvents.find(event => event.id === articleId);
+      if (article && article.latitude && article.longitude) {
+        setSelectedCoordinates({ 
+          lat: article.latitude, 
+          lng: article.longitude 
+        });
+      }
+    }
+  };
 
   // Custom event handler for submenu state
   const handleSubmenuToggle = (isOpen) => {
@@ -234,8 +253,10 @@ function App() {
 
   return (
     <div className={`app-container ${isSubmenuOpen || isFilterPanelOpen ? 'submenu-open' : ''}`}>
-      {/* Logo */}
-      <Logo />
+      {/* Top Menu - New component */}
+      <TopMenu />
+      
+
       
       {/* Error message */}
       {error && !isLoading && (
@@ -262,6 +283,7 @@ function App() {
             isLoadingMore={isLoadingMore}
             onLoadMore={loadMoreNews}
             language="FR" // Peut être "FR", "EN", ou "ES"
+            onHoverArticle={handleArticleHover}
         />
       )}
       

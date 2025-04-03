@@ -1,0 +1,154 @@
+/* src/components/TopMenu.css */
+.top-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background-color: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  }
+  
+  .top-menu-content {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  /* Search bar */
+  .search-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  
+  .search-toggle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .search-toggle:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+  
+  .search-input {
+    width: 0;
+    height: 40px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 20px;
+    padding: 0 15px;
+    margin-right: 10px;
+    color: white;
+    font-size: 14px;
+    opacity: 0;
+    transition: all 0.3s ease;
+  }
+  
+  .search-container.active .search-input {
+    width: 250px;
+    opacity: 1;
+  }
+  
+  .search-clear {
+    position: absolute;
+    right: 60px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+  }
+  
+  .search-input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+  }
+  
+  .search-input:focus {
+    outline: none;
+    background-color: rgba(255, 255, 255, 0.15);
+  }
+  
+  /* Right-side buttons */
+  .top-menu-buttons {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .config-button, 
+  .premium-button {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 20px;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    padding: 8px 15px;
+    font-size: 14px;
+  }
+  
+  .config-button {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+  }
+  
+  .premium-button {
+    background-color: #4fc3f7;
+    gap: 8px;
+  }
+  
+  .config-button:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+  
+  .premium-button:hover {
+    background-color: #25a8e0;
+  }
+  
+  /* Make room for logo */
+  .logo-spacer {
+    width: 70px;
+    height: 40px;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .search-container.active .search-input {
+      width: 150px;
+    }
+    
+    .premium-button span {
+      display: none;
+    }
+    
+    .premium-button {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      padding: 0;
+    }
+  }
