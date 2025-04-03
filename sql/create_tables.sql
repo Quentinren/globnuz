@@ -31,6 +31,7 @@ REFERENCES countries(id);
 CREATE TABLE news_articles_raw (
     id SERIAL PRIMARY KEY,
     title TEXT NOT NULL,
+    author TEXT NOT NULL,
     description TEXT NOT NULL,
     newspaper_id INT NOT NULL,
     image TEXT,

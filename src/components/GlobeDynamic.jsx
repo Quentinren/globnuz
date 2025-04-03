@@ -338,7 +338,7 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates, onLabelClick }) => {
       globeEl.current.controls().autoRotate = true;
       globeEl.current.controls().enableZoom = true;
       globeEl.current.controls().enableRotate = true;
-      globeEl.current.controls().autoRotateSpeed = 0.08;
+      globeEl.current.controls().autoRotateSpeed = 0.002;
       globeEl.current.controls().zoomSpeed = 0.8; // Slightly slower zoom for better performance
       // Increase quality of rendered (not shaky)
 
@@ -439,65 +439,12 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates, onLabelClick }) => {
         // Points for news events - now with dynamic theme colors
         pointsData={formattedNewsEvents}
         pointColor={point => point.color} // Use the theme color we set
-        pointAltitude={0.015}
-        pointsMerge={false}
+        pointAltitude={0.02}
+        pointsMerge={true}
+        onPointClick={handleLabelClick} // Add this handler}
         
-        // Radial lines from center to news events - also themed
-        ringsData={formattedNewsEvents}
-        ringPropagationSpeed={0.2}
-        ringRepeatPeriod={1000}
-        ringColor={ring => {
-          // Get the theme color but make it semi-transparent
-          const color = ring.color || 'rgba(255, 0, 0, 0.7)';
-          // If it's a hex color, convert to rgba with opacity
-          if (color.startsWith('#')) {
-            const r = parseInt(color.slice(1, 3), 16);
-            const g = parseInt(color.slice(3, 5), 16);
-            const b = parseInt(color.slice(5, 7), 16);
-            return `rgba(${r}, ${g}, ${b}, 0.7)`;
-          }
-          return color;
-        }}
-        ringMaxRadius={0.7}
-        ringAltitude={0.015}
-        
-        // Custom three.js rendering for lines with theme colors
-        customLayerData={formattedNewsEvents}
-        customThreeObject={d => {
-          // Validate coordinates first
-          if (!d || typeof d.lat !== 'number' || isNaN(d.lat) || 
-              typeof d.lng !== 'number' || isNaN(d.lng)) {
-            // Return null or a tiny invisible object if coordinates are invalid
-            return null;
-          }
-          
-          // Create a line from the center to the surface of the globe (and slightly beyond)
-          const startVec = new THREE.Vector3(0, 0, 0); // Center of globe
-          
-          // Calculate the point on the surface of the globe
-          const lat = d.lat * Math.PI / 180;
-          const lng = d.lng * Math.PI / 180;
-          const r = 1.05; // Radius slightly greater than 1 to extend beyond
-          
-          const endVec = new THREE.Vector3(
-            r * Math.cos(lat) * Math.sin(lng),
-            r * Math.sin(lat),
-            r * Math.cos(lat) * Math.cos(lng)
-          );
-          
-          // Create the geometry for the line
-          const geometry = new THREE.BufferGeometry().setFromPoints([startVec, endVec]);
-          
-          // Create material with the theme color
-          let lineColor = d.color || 'red';
-          const material = new THREE.LineBasicMaterial({ color: lineColor, linewidth: 2 });
-          
-          // Create the line
-          return new THREE.Line(geometry, material);
-        }}
-        customThreeObjectUpdate={(obj, d) => {
-          // Update if necessary - typically not needed for static lines
-        }}
+
+      
         
         // Labels for locations (all combined)
         labelsData={allLabels}
@@ -507,7 +454,7 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates, onLabelClick }) => {
         labelSize={d => d.isCountry ? getDynamicLabelSize(0.7, true, false) : 
                        (d.isOcean ? getDynamicLabelSize(1.2, false, true, d.smallOcean) : 
                                    getDynamicLabelSize(0.4))}
-        labelDotRadius={0.3}
+        labelDotRadius={0}
         onLabelClick={handleLabelClick} // Add this handler
         labelColor={d => d.isOcean ? 'rgba(100, 200, 255, 0.8)' : 
                         (d.isCountry ? 'rgba(30, 30, 30, 0.9)' : 

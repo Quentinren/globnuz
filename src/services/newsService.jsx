@@ -35,7 +35,8 @@ export const fetchNewsFromSupabase = async (filters = {}) => {
     let query = supabase
       .from('news_articles_translated')
       .select('*, news_articles!inner(*, newspapers(*))')
-      .eq('language_translated', 'FR');
+      .eq('language_translated', 'FR')
+      .limit(10);
     
     // Extract filter categories
     const { 

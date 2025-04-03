@@ -25,6 +25,10 @@
   
     --society-color: #d714a3;
     --society-gradient: linear-gradient(135deg, #d714a3 0%, #2f021f 100%);
+
+    --education-color: #d714a3;
+    --education-gradient: linear-gradient(135deg, #d714a3 0%, #2f021f 100%);
+      
   
     --technology-color: #9512f3;
     --technology-gradient: linear-gradient(135deg, #9512f3 0%, #4b1c4b 100%);
@@ -42,9 +46,14 @@
   
     --war-color: #c0392b;
     --war-gradient: linear-gradient(135deg, #c0392b 0%, #641e16 100%);
-
+    --crime-color: #c0392b;
+    --crime-gradient: linear-gradient(135deg, #c0392b 0%, #641e16 100%);
     --conflict-color: #c0392b;
     --conflict-gradient: linear-gradient(135deg, #c0392b 0%, #641e16 100%);
+    --military-color: #c0392b;
+    --military-gradient: linear-gradient(135deg, #c0392b 0%, #641e16 100%);    
+    --security-color: #c0392b;
+    --security-gradient: linear-gradient(135deg, #c0392b 0%, #641e16 100%);        
   
   
     --disaster-color: #e67e22;

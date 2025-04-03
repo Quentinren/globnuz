@@ -13,7 +13,7 @@ const NewsScroll = ({ newsEvents, onNavigateToArticle, activeTitle }) => {
   const observerRef = useRef(null);
   const loaderRef = useRef(null);
   
-  const ITEMS_PER_PAGE = 100;
+  const ITEMS_PER_PAGE = 20;
   
   // Helper function to get theme colors
   const getThemeColor = (theme) => {
