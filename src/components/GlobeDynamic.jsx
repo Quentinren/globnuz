@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Globe from 'react-globe.gl';
 import * as THREE from 'three';
 import './GlobeDynamic.css';
+import '../components/css/news-themes.css'; // Import the theme colors CSS
 
 const GlobeDynamic = ({ newsEvents, navigateToCoordinates, onLabelClick }) => {
   const globeEl = useRef();
@@ -60,37 +61,74 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates, onLabelClick }) => {
     }
   };
 
-  // Function to navigate to coordinates
-// Enhanced goToCoordinates function with smoother transition
-const goToCoordinates = (lat, lng) => {
-  if (!globeEl.current) return;
-  console.log("latitude:", lat, "longitude:", lng);
-  // First get current position
-  const currentPov = globeEl.current.pointOfView();
-  
-  // If we're already zoomed in very close, zoom out a bit first
-  if (currentPov.altitude < 0.3) {
-    // First zoom out slightly
-    globeEl.current.pointOfView({
-      ...currentPov,
-      altitude: 1.0
-    }, 500, () => {
-      // Then navigate to new position
+  // Get CSS variable for a given theme
+  const getThemeColor = (theme) => {
+    if (!theme) return '#e74c3c'; // Default to a red color if theme is missing
+    
+    // Normalize the theme name to match CSS variables
+    const normalizedTheme = theme.toLowerCase();
+    
+    // Get the CSS variable value
+    const cssVar = getComputedStyle(document.documentElement).getPropertyValue(`--${normalizedTheme}-color`);
+    
+    if (cssVar && cssVar.trim()) {
+      return cssVar.trim();
+    }
+    
+    // Fallback colors for common themes if CSS variable isn't set
+    const fallbackColors = {
+      environment: '#2ecc71',
+      politics: '#3498db',
+      politic: '#3498db',
+      geopolitics: '#7fc0ec',
+      geopolitic: '#7fc0ec',
+      health: '#72e73c',
+      science: '#9b59b6',
+      technology: '#9512f3',
+      economy: '#cbd907',
+      society: '#d714a3',
+      culture: '#bf6aaf',
+      sport: '#27ae60',
+      sports: '#27ae60',
+      war: '#c0392b',
+      conflict: '#c0392b',
+      crime: '#cc2e2e',
+      disaster: '#e67e22'
+    };
+    
+    return fallbackColors[normalizedTheme] || '#e74c3c'; // Default to red if no match
+  };
+
+  // Enhanced goToCoordinates function with smoother transition
+  const goToCoordinates = (lat, lng) => {
+    if (!globeEl.current) return;
+    console.log("latitude:", lat, "longitude:", lng);
+    // First get current position
+    const currentPov = globeEl.current.pointOfView();
+    
+    // If we're already zoomed in very close, zoom out a bit first
+    if (currentPov.altitude < 0.3) {
+      // First zoom out slightly
+      globeEl.current.pointOfView({
+        ...currentPov,
+        altitude: 1.0
+      }, 500, () => {
+        // Then navigate to new position
+        globeEl.current.pointOfView({
+          lat: lat,
+          lng: lng,
+          altitude: 0.5
+        }, 1000);
+      });
+    } else {
+      // Navigate directly if we're not too zoomed in
       globeEl.current.pointOfView({
         lat: lat,
         lng: lng,
         altitude: 0.5
       }, 1000);
-    });
-  } else {
-    // Navigate directly if we're not too zoomed in
-    globeEl.current.pointOfView({
-      lat: lat,
-      lng: lng,
-      altitude: 0.5
-    }, 1000);
-  }
-};
+    }
+  };
 
   // Appearance of the Earth
   const globeMaterial = new THREE.MeshPhongMaterial();
@@ -331,7 +369,7 @@ const goToCoordinates = (lat, lng) => {
     }
   }, [globeReady]);
 
-  // Formatter pour rendre les données d'actualités compatibles avec le format attendu par Globe
+  // Formatter to make news event data compatible with Globe format
   const formattedNewsEvents = newsEvents
     .filter(event => {
       // Filter out items with invalid coordinates
@@ -339,23 +377,23 @@ const goToCoordinates = (lat, lng) => {
             typeof event.longitude === 'number' && !isNaN(event.longitude);
     })
     .map(event => ({
-    lat: event.latitude,
-    lng: event.longitude,
-    size: getDynamicLabelSize(0.8),
-    color: 'red',
-    isNews: true,
-    title: event.title,
-    location: event.location,
-    isNews: true
-  }));
+      lat: event.latitude,
+      lng: event.longitude,
+      size: getDynamicLabelSize(0.8),
+      color: getThemeColor(event.theme),
+      title: event.title,
+      location: event.location,
+      isNews: true,
+      theme: event.theme
+    }));
 
-    // This function handles the click on the label dot
-    const handleLabelClick = (label) => {
-      // Call the parent component's callback with the title
-      if (onLabelClick && label.title) {
-        onLabelClick(label.title);
-      }
-    };
+  // This function handles the click on the label dot
+  const handleLabelClick = (label) => {
+    // Call the parent component's callback with the title
+    if (onLabelClick && label.title) {
+      onLabelClick(label.title);
+    }
+  };
 
   // Combine all label data
   const allLabels = [...formattedNewsEvents, ...formattedOceans, ...countryLabels, ...continents];
@@ -366,12 +404,9 @@ const goToCoordinates = (lat, lng) => {
         ref={globeEl}
         globeMaterial={globeMaterial}
         
-    
         // Increase light intensity
         ambientLightColor="white"
         ambientLightIntensity={20} // Increased from 10
-
-
 
         // Increase directional light intensity
         directionalLightColor="white"
@@ -383,7 +418,6 @@ const goToCoordinates = (lat, lng) => {
         // Add graticules (longitude and latitude lines)
         showGraticules = {true}
   
-
         polygonsData={countries.features}
         polygonResolution={3}
         polygonMargin={0.02}
@@ -391,9 +425,9 @@ const goToCoordinates = (lat, lng) => {
         polygonAltitude={0.014} //0.0063 good for distance middle
         polygonSideColor={() => '#505050'}
         polygonCapColor={() => {
-          // Générer un nombre aléatoire entre 128 (50% de blanc) et 255 (100% de blanc)
+          // Generate a random number between 128 (50% white) and 255 (100% white)
           const intensity = Math.floor(140 + Math.random() * 115);
-          // Convertir en hexadécimal et créer une couleur avec la même valeur pour R, G et B
+          // Convert to hexadecimal and create a color with the same value for R, G, B
           const hex = intensity.toString(16).padStart(2, '0');
           return `#${hex}${hex}${hex}`;
         }}
@@ -402,36 +436,48 @@ const goToCoordinates = (lat, lng) => {
           <div>Population: <i>{d.POP_EST}</i></div>
         </div>}
         
-        // Points for news events
+        // Points for news events - now with dynamic theme colors
         pointsData={formattedNewsEvents}
-        pointColor="point => 'rgba(230, 30, 10, 1)'"
+        pointColor={point => point.color} // Use the theme color we set
         pointAltitude={0.015}
         pointsMerge={false}
         
-        // Radial lines from center to news events
+        // Radial lines from center to news events - also themed
         ringsData={formattedNewsEvents}
         ringPropagationSpeed={0.2}
         ringRepeatPeriod={1000}
-        ringColor={() => 'rgba(255, 0, 0, 0.7)'}
+        ringColor={ring => {
+          // Get the theme color but make it semi-transparent
+          const color = ring.color || 'rgba(255, 0, 0, 0.7)';
+          // If it's a hex color, convert to rgba with opacity
+          if (color.startsWith('#')) {
+            const r = parseInt(color.slice(1, 3), 16);
+            const g = parseInt(color.slice(3, 5), 16);
+            const b = parseInt(color.slice(5, 7), 16);
+            return `rgba(${r}, ${g}, ${b}, 0.7)`;
+          }
+          return color;
+        }}
         ringMaxRadius={0.7}
         ringAltitude={0.015}
         
-        // Custom three.js rendering for lines
+        // Custom three.js rendering for lines with theme colors
         customLayerData={formattedNewsEvents}
         customThreeObject={d => {
-            // Validate coordinates first
+          // Validate coordinates first
           if (!d || typeof d.lat !== 'number' || isNaN(d.lat) || 
-          typeof d.lng !== 'number' || isNaN(d.lng)) {
-        // Return null or a tiny invisible object if coordinates are invalid
-        return null;
-        }
-          // Créer une ligne qui va du centre à la surface du globe (et légèrement au-delà)
-          const startVec = new THREE.Vector3(0, 0, 0); // Centre du globe
+              typeof d.lng !== 'number' || isNaN(d.lng)) {
+            // Return null or a tiny invisible object if coordinates are invalid
+            return null;
+          }
           
-          // Calculer le point sur la surface du globe
+          // Create a line from the center to the surface of the globe (and slightly beyond)
+          const startVec = new THREE.Vector3(0, 0, 0); // Center of globe
+          
+          // Calculate the point on the surface of the globe
           const lat = d.lat * Math.PI / 180;
           const lng = d.lng * Math.PI / 180;
-          const r = 1.05; // Rayon légèrement supérieur à 1 pour dépasser
+          const r = 1.05; // Radius slightly greater than 1 to extend beyond
           
           const endVec = new THREE.Vector3(
             r * Math.cos(lat) * Math.sin(lng),
@@ -439,17 +485,18 @@ const goToCoordinates = (lat, lng) => {
             r * Math.cos(lat) * Math.cos(lng)
           );
           
-          // Créer la géométrie pour la ligne
+          // Create the geometry for the line
           const geometry = new THREE.BufferGeometry().setFromPoints([startVec, endVec]);
           
-          // Matériau rouge pour la ligne
-          const material = new THREE.LineBasicMaterial({ color: 'red', linewidth: 2 });
+          // Create material with the theme color
+          let lineColor = d.color || 'red';
+          const material = new THREE.LineBasicMaterial({ color: lineColor, linewidth: 2 });
           
-          // Créer la ligne
+          // Create the line
           return new THREE.Line(geometry, material);
         }}
         customThreeObjectUpdate={(obj, d) => {
-          // Mettre à jour si nécessaire
+          // Update if necessary - typically not needed for static lines
         }}
         
         // Labels for locations (all combined)
@@ -464,7 +511,7 @@ const goToCoordinates = (lat, lng) => {
         onLabelClick={handleLabelClick} // Add this handler
         labelColor={d => d.isOcean ? 'rgba(100, 200, 255, 0.8)' : 
                         (d.isCountry ? 'rgba(30, 30, 30, 0.9)' : 
-                        (d.isNews ? 'rgba(240, 30, 30, 0.9)' : 'white'))}
+                        (d.isNews ? d.color : 'white'))}
         labelResolution={2}
         labelAltitude={d => d.isOcean ? 0.03 : (d.isCountry ? 0.02 : 0.015)}
         labelIncludeDot={d => !d.isOcean && !d.isCountry}

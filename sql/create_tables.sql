@@ -18,6 +18,8 @@ CREATE TABLE news_articles (
     longitude DOUBLE PRECISION
 );
 
+
+
 ALTER TABLE news_articles
 ADD CONSTRAINT fk_newspaper_id FOREIGN KEY (newspaper_id)
 REFERENCES newspapers(id);
@@ -36,6 +38,17 @@ CREATE TABLE news_articles_raw (
     publication_date TIMESTAMP WITH TIME ZONE NOT NULL,
     ai_processed BOOLEAN DEFAULT FALSE,
     ai_processed_date TIMESTAMP WITH TIME ZONE
+);
+
+CREATE TABLE news_articles_translated (
+    id SERIAL PRIMARY KEY,
+    original_article_id INT NOT NULL REFERENCES news_articles(id) ON DELETE CASCADE,
+    title TEXT NOT NULL,
+    subtitle TEXT,
+    description TEXT NOT NULL,
+    location TEXT,
+    language_translated CHAR(2) NOT NULL,
+    UNIQUE (original_article_id, language_translated)
 );
 
 CREATE TABLE theme_tags (

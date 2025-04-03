@@ -489,3 +489,72 @@
 .news-feed-item.border-default {
   border-color: var(--default-color);
 }
+
+/* Add these styles to the end of your NewsScroll.css file */
+
+/* Highlighted news item */
+.news-feed-item.highlighted {
+  transform: scale(1.02);
+  box-shadow: 0 6px 20px rgba(79, 195, 247, 0.4);
+  transition: all 0.3s ease;
+}
+
+/* No results message */
+.no-results-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 300px;
+  padding: 40px 20px;
+  color: #666;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 12px;
+  margin: 20px 0;
+}
+
+.no-results-message h3 {
+  margin: 10px 0;
+  font-size: 24px;
+  color: #333;
+}
+
+.no-results-message p {
+  margin-bottom: 20px;
+  color: #666;
+}
+
+.filter-tip {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+  font-size: 14px;
+  color: #555;
+  max-width: 400px;
+}
+
+/* Active filter indicators */
+.filter-active {
+  background-color: rgba(200, 237, 255, 0.8) !important;
+  color: #cfefff !important;
+}
+
+/* Clear filters button */
+.clear-filters-button {
+  background-color: rgba(0, 0, 0, 0.1);
+  color: #666;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  margin-top: 10px;
+  transition: all 0.2s ease;
+}
+
+.clear-filters-button:hover {
+  background-color: rgba(0, 0, 0, 0.2);
+}

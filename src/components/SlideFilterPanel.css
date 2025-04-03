@@ -355,7 +355,7 @@
     }
     
     .slide-filter-button.active {
-      left: calc(var(--panel-width) - 21px);
+      left: calc(var(--panel-width) );
     }
     
     .filter-option {
