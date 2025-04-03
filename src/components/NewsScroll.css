@@ -227,7 +227,7 @@
 .subtheme-chip {
   display: inline-flex;
   align-items: center;
-  height: 22px;
+  height: 10px;
   border-radius: 11px;
   background-color: rgba(3, 3, 3, 0.082);
   padding: 0 8px;

@@ -163,6 +163,7 @@ const NewsScroll = ({ newsEvents, onNavigateToArticle, activeTitle }) => {
               key={index} 
               className={`news-feed-item ${getFeedItemClass(event.theme)}`}
               data-title={event.title}
+              onClick={() => handleNavigateToArticle(event.latitude, event.longitude)}
             >
               {event.image ? (
                 <div className="news-feed-item-image-container">
@@ -214,28 +215,13 @@ const NewsScroll = ({ newsEvents, onNavigateToArticle, activeTitle }) => {
                 
                 {/* Footer with buttons and info */}
                 <div className="news-feed-item-footer">
-                  <div className="news-feed-item-buttons">
-                    <button 
-                      className="news-feed-item-button"
-                      onClick={() => handleNavigateToArticle(event.latitude, event.longitude)}
-                      aria-label="Show on globe"
-                    >
-                      <Globe size={14} />
-                    </button>
-                    <button 
-                      className="news-feed-item-button"
-                      onClick={() => window.open(event.external_link, "_blank")}
-                      aria-label="Open article"
-                    >
-                      <Newspaper size={14} />
-                    </button>
-                  </div>
-                  
+
                   <div className="news-feed-item-info">
-                    <Grid container>
+
                     <div className="news-feed-item-info-row">
+    
+                      <div className="news-feed-item-newspaper" onClick={() => window.open(event.external_link, "_blank")}>
                       <Newspaper size={10} className="news-feed-item-info-icon" /> 
-                      <span className="news-feed-item-newspaper">
                         {event.newspaper && event.newspaper.country_id && (
                           <img
                             src={`https://flagcdn.com/${event.newspaper.country_id.toLowerCase()}.svg`}
@@ -244,11 +230,7 @@ const NewsScroll = ({ newsEvents, onNavigateToArticle, activeTitle }) => {
                           />
                         )}
                         {event.newspaper ? event.newspaper.name : event.newspaper_id}
-                      </span>
-                    </div>
-                    <div className="news-feed-item-info-row">
-                      <User size={10} className="news-feed-item-info-icon" /> 
-                      <span className="news-feed-item-author">{event.author}</span>
+                      </div>
                     </div>
                     <div className="news-feed-item-info-row">
                       <Calendar size={10} className="news-feed-item-info-icon" /> 
@@ -259,7 +241,7 @@ const NewsScroll = ({ newsEvents, onNavigateToArticle, activeTitle }) => {
                       <MapPin size={10} className="news-feed-item-info-icon" /> 
                       <span> {event.location}</span>
                     </div>
-                    </Grid>
+                  
                   </div>
                 </div>
               </div>

@@ -2,6 +2,7 @@ import argparse
 import json
 import re
 import os
+import sys
 import logging
 import urllib.request
 import urllib.parse
@@ -11,16 +12,16 @@ from typing import Dict, List, Any
 
 # Configure logging
 logging.basicConfig(
-    level=logging.DEBUG,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    level=logging.DEBUG,  # Capture all logs (DEBUG, INFO, WARNING, ERROR)
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    handlers=[logging.StreamHandler(sys.stdout)]  # Ensure logs appear in AWS Lambda console
 )
+
 logger = logging.getLogger("get-rss-news-raw")
 
 def extract_image_from_description(description: str) -> str:
     match = re.search(r'<img[^>]+src="([^">]+)"', description)
     return match.group(1) if match else None
-
-  
 
 class RSSProcessor:
     def __init__(self, newspaper_id: int, supabase_url: str, supabase_key: str, supabase_table: str):
@@ -30,7 +31,6 @@ class RSSProcessor:
         self.supabase_table = supabase_table
 
     def get_rss_feed_url(self):
-
         headers = {
             "apikey": self.supabase_key,
             "Authorization": f"Bearer {self.supabase_key}",
@@ -52,13 +52,13 @@ class RSSProcessor:
         except urllib.error.URLError as e:
             logger.error(f"URL Error: {e.reason}")
         except Exception as e:
-            logger.warning(f"Failed to fetch RSS feed URL for newspaper ID: {newspaper_id}, Error: {e}")
+            logger.warning(f"Failed to fetch RSS feed URL for newspaper ID: {self.newspaper_id}, Error: {e}")
         return None
 
     def fetch_rss_data(self, rss_feed_url) -> List[Dict[str, Any]]:
         """Fetch and parse the RSS feed"""
         logger.info(f"Fetching RSS feed from {rss_feed_url}")
-
+        print(f"Fetching RSS feed from {rss_feed_url}")
 
         try:
             with urllib.request.urlopen(rss_feed_url) as response:
@@ -90,17 +90,13 @@ class RSSProcessor:
                     "image": image_url,
                     "newspaper_id": self.newspaper_id,  
                 }
-                logger.info(entry)
                 entries.append(entry)
             
-            logger.debug(f"Successfully fetched {len(entries)} entries")
-            logger.debug(f"Entries : {entries}")
+            logger.info(f"Successfully fetched {len(entries)} entries")
             return entries
         except Exception as e:
             logger.error(f"Error fetching RSS feed: {str(e)}")
             raise
-
-   
 
     def upload_to_supabase(self, data: List[Dict[str, Any]]) -> None:
         """Upload processed data to Supabase, skipping duplicates"""
@@ -109,6 +105,7 @@ class RSSProcessor:
             return
 
         logger.info(f"Uploading {len(data)} entries to Supabase")
+        
         supabase_endpoint = f"{self.supabase_url}/rest/v1/{self.supabase_table}"
         headers = {
             "apikey": self.supabase_key,
@@ -117,15 +114,18 @@ class RSSProcessor:
             "Prefer": "return=minimal"
         }
 
-        for entry in data:
-            # Check if the external_link already exists
+
+        for entry in data[:5]:
+            logger.info(f"Entry {entry}")
             external_link = entry.get('external_link')
+            logger.info(f"Check external link {external_link}")
             query_url = f"{self.supabase_url}/rest/v1/{self.supabase_table}?external_link=eq.{urllib.parse.quote(external_link)}"
             req = urllib.request.Request(query_url, headers=headers, method="GET")
 
             try:
                 with urllib.request.urlopen(req) as response:
                     response_data = response.read().decode()
+                    logger.info(f"Response is external_link present {response_data}")
                     if response_data:
                         logger.info(f"Skipping entry with existing external_link: {external_link}")
                         continue  # Skip if the entry already exists
@@ -137,15 +137,15 @@ class RSSProcessor:
                 logger.warning(f"Error checking for duplicate external_link {external_link}: {e}")
             
             # Proceed to insert if not duplicate
-            req = urllib.request.Request(supabase_endpoint, data=json.dumps([entry]).encode(), headers=headers, method="POST")
+            req = urllib.request.Request(supabase_endpoint, data=json.dumps(entry).encode(), headers=headers, method="POST")
             try:
                 with urllib.request.urlopen(req) as response:
-                    logger.debug("Successfully uploaded data to Supabase")
+                    logger.info(f"Saved item {response}")
+                    logger.info("Successfully uploaded data to Supabase")
             except urllib.error.HTTPError as e:
                 error_response = e.read().decode()
-                print("Supabase Error:", error_response)  
+                logger.error(f"Supabase Error: {error_response}")
                 raise Exception(f"Supabase API Error {e.code}: {error_response}")  
-
 
     def process(self) -> None:
         """Main processing method to fetch RSS and upload to Supabase"""
@@ -162,7 +162,6 @@ class RSSProcessor:
             logger.error(f"Error in main processing flow: {str(e)}")
             raise
 
-
 def lambda_handler(event, context):
     """AWS Lambda handler function"""
     try:
@@ -171,7 +170,6 @@ def lambda_handler(event, context):
         supabase_key = os.environ.get('SUPABASE_KEY')
         supabase_table = os.environ.get('SUPABASE_TABLE_EVENTS_RAW')
 
-        
         if not all([newspaper_id, supabase_url, supabase_key, supabase_table]):
             missing = [k for k, v in {
                 'newspaper_id': newspaper_id,
@@ -181,7 +179,6 @@ def lambda_handler(event, context):
             }.items() if not v]
             return {'statusCode': 400, 'body': json.dumps({'status': 'error', 'message': f'Missing required parameters: {", ".join(missing)}'})}
         
-
         processor = RSSProcessor(newspaper_id, supabase_url, supabase_key, supabase_table)
         processor.process()
         
@@ -189,4 +186,3 @@ def lambda_handler(event, context):
     except Exception as e:
         logger.error(f"Lambda execution error: {str(e)}")
         return {'statusCode': 500, 'body': json.dumps({'status': 'error', 'message': str(e)})}
-
