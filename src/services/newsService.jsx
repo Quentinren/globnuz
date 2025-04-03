@@ -1,4 +1,4 @@
-// src/services/newsService.jsx - Enhanced with comprehensive filter support
+// src/services/newsService.jsx - Enhanced with pagination support
 import { createClient } from '@supabase/supabase-js';
 
 // Initialize Supabase client - replace with your Supabase URL and anon key
@@ -18,25 +18,31 @@ if (!supabaseUrl || !supabaseAnonKey) {
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 /**
- * Fetches news events from Supabase with comprehensive filter support
+ * Fetches news events from Supabase with comprehensive filter support and pagination
  * @param {Object} filters - Optional filters for news content
+ * @param {Number} page - Page number to fetch (1-based)
+ * @param {Number} pageSize - Number of items per page
  * @returns {Promise<Array>} - Array of news events in the required format
  */
-export const fetchNewsFromSupabase = async (filters = {}) => {
+export const fetchNewsFromSupabase = async (filters = {}, page = 1, pageSize = 20) => {
   try {
-    console.log("Fetching news with filters:", filters);
+    console.log("Fetching news with filters:", filters, "page:", page, "pageSize:", pageSize);
     
     // Check if Supabase is properly configured
     if (!supabaseUrl || !supabaseAnonKey) {
       throw new Error('Supabase not configured. Check your environment variables.');
     }
     
+    // Calculate range for pagination
+    const fromIndex = (page - 1) * pageSize;
+    const toIndex = fromIndex + pageSize - 1;
+    
     // Start building the query
     let query = supabase
       .from('news_articles_translated')
       .select('*, news_articles!inner(*, newspapers(*))')
       .eq('language_translated', 'FR')
-      .limit(10);
+      .range(fromIndex, toIndex);  // Apply pagination
     
     // Extract filter categories
     const { 
@@ -126,7 +132,7 @@ export const fetchNewsFromSupabase = async (filters = {}) => {
         .select('*, news_articles!inner(*, newspapers(*))')
         .eq('language_translated', 'FR')
         .order('publication_date', { foreignTable: 'news_articles', ascending: false })
-        .limit(100);
+        .range(fromIndex, toIndex);  // Apply pagination to fallback query
         
       const fallbackResponse = await fallbackQuery;
       data = fallbackResponse.data;
@@ -138,7 +144,7 @@ export const fetchNewsFromSupabase = async (filters = {}) => {
       throw new Error(error.message);
     }
     
-    console.log(`Fetched ${data?.length || 0} news items`);
+    console.log(`Fetched ${data?.length || 0} news items for page ${page}`);
     
     if (!data || data.length === 0) {
       console.warn('No news data retrieved from Supabase');
@@ -175,6 +181,38 @@ export const fetchNewsFromSupabase = async (filters = {}) => {
   } catch (error) {
     console.error('Error fetching news from Supabase:', error);
     throw error;
+  }
+};
+
+// Function to fetch total count of news articles matching filters (for pagination)
+export const fetchNewsCount = async (filters = {}) => {
+  try {
+    // Build a query to count records with the same filters
+    let query = supabase
+      .from('news_articles_translated')
+      .select('id', { count: 'exact' })
+      .eq('language_translated', 'FR');
+    
+    // Extract filter categories
+    const { 
+      environment, politics, health, science, technology, other,
+      africa, americas, asia, europe, oceania,
+      sourceFilters = {}
+    } = filters;
+    
+    // Apply the same filters as in fetchNewsFromSupabase
+    // (Duplicate the filter logic from above, keeping it in sync)
+    
+    const { count, error } = await query;
+    
+    if (error) {
+      throw new Error(error.message);
+    }
+    
+    return count || 0;
+  } catch (error) {
+    console.error('Error fetching news count:', error);
+    return 0;
   }
 };
 

@@ -32,6 +32,11 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasMoreData, setHasMoreData] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  
   // State to store selected news filters
   const [newsFilters, setNewsFilters] = useState({
     // Categories
@@ -54,19 +59,22 @@ function App() {
   // Reference to store the current selected country
   const [selectedCountry, setSelectedCountry] = useState(null);
   
-  // Fetch news when component mounts or filters change
+  // Initial data fetch when component mounts or filters change
   useEffect(() => {
     let isMounted = true;
-    const fetchNews = async () => {
+    const fetchInitialNews = async () => {
       if (!isMounted) return;
       
       setIsLoading(true);
       setError(null);
+      // Reset pagination when filters change
+      setCurrentPage(1);
+      setHasMoreData(true);
       
       try {
-        console.log("Fetching news with filters:", newsFilters);
-        // Pass filters to the fetchNewsFromSupabase function
-        const newsData = await fetchNewsFromSupabase(newsFilters);
+        console.log("Fetching initial news with filters:", newsFilters);
+        // Pass filters and page 1 to the fetchNewsFromSupabase function
+        const newsData = await fetchNewsFromSupabase(newsFilters, 1);
         
         if (!isMounted) return;
         
@@ -76,9 +84,12 @@ function App() {
           setFilteredNewsEvents(prev => 
             prev.map(item => ({ ...item, filtered: true }))
           );
+          setHasMoreData(false);
         } else {
           setNewsEvents(newsData);
           setFilteredNewsEvents(newsData);
+          // Check if we might have more data
+          setHasMoreData(newsData.length >= 20); // Assuming 20 is your page size
           // Clear any previous error
           setError(null);
         }
@@ -96,13 +107,42 @@ function App() {
       }
     };
     
-    fetchNews();
+    fetchInitialNews();
     
     // Cleanup function to prevent state updates if component unmounts
     return () => {
       isMounted = false;
     };
   }, [newsFilters]); // Re-fetch when filters change
+  
+  // Function to load more data when scrolling
+  const loadMoreNews = async () => {
+    if (isLoadingMore || !hasMoreData) return;
+    
+    setIsLoadingMore(true);
+    try {
+      const nextPage = currentPage + 1;
+      console.log("Loading more news for page:", nextPage);
+      
+      const additionalNews = await fetchNewsFromSupabase(newsFilters, nextPage);
+      
+      if (additionalNews.length > 0) {
+        // Append new data to existing data
+        setNewsEvents(prevNews => [...prevNews, ...additionalNews]);
+        setFilteredNewsEvents(prevFiltered => [...prevFiltered, ...additionalNews]);
+        setCurrentPage(nextPage);
+        setHasMoreData(additionalNews.length >= 20); // Check if we might have more data
+      } else {
+        // No more data to load
+        setHasMoreData(false);
+      }
+    } catch (error) {
+      console.error("Error loading more news:", error);
+      setError(`Failed to load more news: ${error.message}`);
+    } finally {
+      setIsLoadingMore(false);
+    }
+  };
   
   // Fetch countries from Supabase on component mount
   useEffect(() => {
@@ -218,6 +258,9 @@ function App() {
           newsEvents={filteredNewsEvents}
           onNavigateToArticle={handleNavigateToArticle}
           activeTitle={activeNewsTitle}
+          hasMoreData={hasMoreData}
+          isLoadingMore={isLoadingMore}
+          onLoadMore={loadMoreNews}
         />
       )}
       

@@ -1,273 +1,273 @@
-// NewsScroll.jsx - Updated with filter support
-import React, { useState, useEffect, useRef } from 'react';
-import Grid from '@mui/material/Grid';
-import Stack from "@mui/material/Stack";
-import { Calendar, MapPin, Globe, ChevronLeft, Newspaper, User, Tag, Filter, AlertCircle } from 'lucide-react';
-import './NewsScroll.css';
+  // NewsScroll.jsx - Updated with filter support
+  import React, { useState, useEffect, useRef } from 'react';
+  import Grid from '@mui/material/Grid';
+  import Stack from "@mui/material/Stack";
+  import { Calendar, MapPin, Globe, ChevronLeft, Newspaper, User, Tag, Filter, AlertCircle } from 'lucide-react';
+  import './NewsScroll.css';
 
-const NewsScroll = ({ newsEvents, onNavigateToArticle, activeTitle }) => {
-  const [visibleEvents, setVisibleEvents] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [page, setPage] = useState(1);
-  const [isOpen, setIsOpen] = useState(true);
-  const observerRef = useRef(null);
-  const loaderRef = useRef(null);
-  
-  const ITEMS_PER_PAGE = 20;
-  
-  // Helper function to get theme colors
-  const getThemeColor = (theme) => {
-    if (!theme) return "var(--default-color)"; // Fallback CSS variable
+  const NewsScroll = ({ newsEvents, onNavigateToArticle, activeTitle }) => {
+    const [visibleEvents, setVisibleEvents] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [page, setPage] = useState(1);
+    const [isOpen, setIsOpen] = useState(true);
+    const observerRef = useRef(null);
+    const loaderRef = useRef(null);
     
-    const cssVariable = `--${theme}-color`;
-    const themeColor = getComputedStyle(document.documentElement).getPropertyValue(cssVariable);
-  
-    return themeColor.trim() || "var(--default-color)"; // Return CSS variable or fallback
-  };
-  
-  // Initialize with first page of events
-  useEffect(() => {
-    if (newsEvents.length > 0) {
-      setVisibleEvents(newsEvents.slice(0, ITEMS_PER_PAGE));
-    } else {
-      // Clear visible events if no events are passed
-      setVisibleEvents([]);
-    }
-    // Reset page when newsEvents change
-    setPage(1);
-  }, [newsEvents]);
-  
-  // Handle infinite scroll with Intersection Observer
-  useEffect(() => {
-    const options = {
-      root: null,
-      rootMargin: '20px',
-      threshold: 0.1
+    const ITEMS_PER_PAGE = 100;
+    
+    // Helper function to get theme colors
+    const getThemeColor = (theme) => {
+      if (!theme) return "var(--default-color)"; // Fallback CSS variable
+      
+      const cssVariable = `--${theme}-color`;
+      const themeColor = getComputedStyle(document.documentElement).getPropertyValue(cssVariable);
+    
+      return themeColor.trim() || "var(--default-color)"; // Return CSS variable or fallback
     };
     
-    const handleObserver = (entries) => {
-      const [entry] = entries;
-      if (entry.isIntersecting && !loading) {
-        loadMoreEvents();
+    // Initialize with first page of events
+    useEffect(() => {
+      if (newsEvents.length > 0) {
+        setVisibleEvents(newsEvents.slice(0, ITEMS_PER_PAGE));
+      } else {
+        // Clear visible events if no events are passed
+        setVisibleEvents([]);
+      }
+      // Reset page when newsEvents change
+      setPage(1);
+    }, [newsEvents]);
+    
+    // Handle infinite scroll with Intersection Observer
+    useEffect(() => {
+      const options = {
+        root: null,
+        rootMargin: '20px',
+        threshold: 0.1
+      };
+      
+      const handleObserver = (entries) => {
+        const [entry] = entries;
+        if (entry.isIntersecting && !loading) {
+          loadMoreEvents();
+        }
+      };
+      
+      observerRef.current = new IntersectionObserver(handleObserver, options);
+      
+      if (loaderRef.current) {
+        observerRef.current.observe(loaderRef.current);
+      }
+      
+      return () => {
+        if (observerRef.current) {
+          observerRef.current.disconnect();
+        }
+      };
+    }, [loading, visibleEvents]);
+    
+    // Load more events function
+    const loadMoreEvents = () => {
+      setLoading(true);
+      
+      // Simulate API fetch delay
+      setTimeout(() => {
+        const nextPage = page + 1;
+        const startIndex = (nextPage - 1) * ITEMS_PER_PAGE;
+        const endIndex = startIndex + ITEMS_PER_PAGE;
+        
+        // Don't exceed array length
+        if (startIndex < newsEvents.length) {
+          const newEvents = newsEvents.slice(0, endIndex);
+          setVisibleEvents(newEvents);
+          setPage(nextPage);
+        }
+        
+        setLoading(false);
+      }, 500);
+    };
+    
+    const handleNavigateToArticle = (lat, lng) => {
+      // Log the coordinates for debugging
+      console.log('Navigation coordinates:', { lat, lng });
+      
+      // Check if coordinates are valid
+      if (lat === undefined || lng === undefined || isNaN(lat) || isNaN(lng)) {
+        console.error('Invalid coordinates for navigation:', { lat, lng });
+        return; // Don't proceed with invalid coordinates
+      }
+      
+      // Call the parent component's navigation function
+      if (onNavigateToArticle) {
+        onNavigateToArticle(lat, lng);
       }
     };
     
-    observerRef.current = new IntersectionObserver(handleObserver, options);
-    
-    if (loaderRef.current) {
-      observerRef.current.observe(loaderRef.current);
-    }
-    
-    return () => {
-      if (observerRef.current) {
-        observerRef.current.disconnect();
-      }
+    // Toggle the feed open/closed
+    const toggleFeed = () => {
+      setIsOpen(!isOpen);
     };
-  }, [loading, visibleEvents]);
-  
-  // Load more events function
-  const loadMoreEvents = () => {
-    setLoading(true);
-    
-    // Simulate API fetch delay
-    setTimeout(() => {
-      const nextPage = page + 1;
-      const startIndex = (nextPage - 1) * ITEMS_PER_PAGE;
-      const endIndex = startIndex + ITEMS_PER_PAGE;
-      
-      // Don't exceed array length
-      if (startIndex < newsEvents.length) {
-        const newEvents = newsEvents.slice(0, endIndex);
-        setVisibleEvents(newEvents);
-        setPage(nextPage);
+
+    // Helper to get the gradient class based on the theme
+    const getGradientClass = (theme) => {
+      if (!theme) return 'gradient-default';
+      return `gradient-${theme.toLowerCase()}`;
+    };
+
+    // Helper to get the feed item class based on the theme
+    const getFeedItemClass = (theme) => {
+      if (!theme) return 'border-default';
+      return `border-${theme.toLowerCase()}`;
+    };
+
+    // Highlight the active title if provided
+    useEffect(() => {
+      if (activeTitle) {
+        // Find the element with the active title and scroll to it
+        const activeElement = document.querySelector(`[data-title="${activeTitle}"]`);
+        if (activeElement) {
+          activeElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          // Add a highlight class
+          activeElement.classList.add('highlighted');
+          // Remove highlight after a delay
+          setTimeout(() => {
+            activeElement.classList.remove('highlighted');
+          }, 2000);
+        }
       }
-      
-      setLoading(false);
-    }, 500);
-  };
-  
-  const handleNavigateToArticle = (lat, lng) => {
-    // Log the coordinates for debugging
-    console.log('Navigation coordinates:', { lat, lng });
-    
-    // Check if coordinates are valid
-    if (lat === undefined || lng === undefined || isNaN(lat) || isNaN(lng)) {
-      console.error('Invalid coordinates for navigation:', { lat, lng });
-      return; // Don't proceed with invalid coordinates
-    }
-    
-    // Call the parent component's navigation function
-    if (onNavigateToArticle) {
-      onNavigateToArticle(lat, lng);
-    }
-  };
-  
-  // Toggle the feed open/closed
-  const toggleFeed = () => {
-    setIsOpen(!isOpen);
-  };
+    }, [activeTitle]);
 
-  // Helper to get the gradient class based on the theme
-  const getGradientClass = (theme) => {
-    if (!theme) return 'gradient-default';
-    return `gradient-${theme.toLowerCase()}`;
-  };
-
-  // Helper to get the feed item class based on the theme
-  const getFeedItemClass = (theme) => {
-    if (!theme) return 'border-default';
-    return `border-${theme.toLowerCase()}`;
-  };
-
-  // Highlight the active title if provided
-  useEffect(() => {
-    if (activeTitle) {
-      // Find the element with the active title and scroll to it
-      const activeElement = document.querySelector(`[data-title="${activeTitle}"]`);
-      if (activeElement) {
-        activeElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        // Add a highlight class
-        activeElement.classList.add('highlighted');
-        // Remove highlight after a delay
-        setTimeout(() => {
-          activeElement.classList.remove('highlighted');
-        }, 2000);
-      }
-    }
-  }, [activeTitle]);
-
-  return (
-    <div className={`custom-news-container ${isOpen ? 'open' : 'closed'}`}>
-      <button className="news-toggle-button" onClick={toggleFeed}>
-        {isOpen ? <ChevronLeft size={20} /> : <ChevronLeft size={20} className="flipped" />}
-        {!isOpen && <span>Latest News</span>}
-      </button>
-      
-      <div className="news-feed-wrapper">
-        <div className="news-feed-content">
-          {/* No results message */}
-          {visibleEvents.length === 0 && !loading && (
-            <div className="no-results-message">
-              <AlertCircle size={48} style={{ marginBottom: '16px', opacity: 0.6 }} />
-              <h3>No matching news</h3>
-              <p>Try adjusting your filters or check back later for more news.</p>
-              <div className="filter-tip">
-                <Filter size={16} style={{ marginRight: '8px' }} />
-                <span>Use the filter button at the bottom right to change your search criteria.</span>
+    return (
+      <div className={`custom-news-container ${isOpen ? 'open' : 'closed'}`}>
+        <button className="news-toggle-button" onClick={toggleFeed}>
+          {isOpen ? <ChevronLeft size={20} /> : <ChevronLeft size={20} className="flipped" />}
+          {!isOpen && <span>Latest News</span>}
+        </button>
+        
+        <div className="news-feed-wrapper">
+          <div className="news-feed-content">
+            {/* No results message */}
+            {visibleEvents.length === 0 && !loading && (
+              <div className="no-results-message">
+                <AlertCircle size={48} style={{ marginBottom: '16px', opacity: 0.6 }} />
+                <h3>No matching news</h3>
+                <p>Try adjusting your filters or check back later for more news.</p>
+                <div className="filter-tip">
+                  <Filter size={16} style={{ marginRight: '8px' }} />
+                  <span>Use the filter button at the bottom right to change your search criteria.</span>
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {visibleEvents.map((event, index) => (
-            <div 
-              key={index} 
-              className={`news-feed-item ${getFeedItemClass(event.theme)}`}
-              data-title={event.title}
-              onClick={() => handleNavigateToArticle(event.latitude, event.longitude)}
-            >
-              {event.image ? (
-                <div className="news-feed-item-image-container">
-                  <img 
-                    src={event.image} 
-                    alt={event.title} 
-                    className="news-feed-item-image"
-                  />
-                </div>
-              ) : (
-                <div className="news-feed-item-image-container">
-                  <div className={`gradient-fallback ${getGradientClass(event.theme)}`}>
-                    <div>{event.theme ? event.theme.toUpperCase() : 'NEWS'}</div>
-                  </div>
-                </div>
-              )}
-              
-              <div className="news-feed-item-content-wrapper">
-                <h3 className="news-feed-item-title">
-                  {event.country_id && (
-                    <img
-                      src={`https://flagcdn.com/${event.country_id.toLowerCase()}.svg`}
-                      alt={`Flag of ${event.country_id}`}
-                      style={{ width: "22px", height: "16px", marginRight:"6px" }}
+            {visibleEvents.map((event, index) => (
+              <div 
+                key={index} 
+                className={`news-feed-item ${getFeedItemClass(event.theme)}`}
+                data-title={event.title}
+                onClick={() => handleNavigateToArticle(event.latitude, event.longitude)}
+              >
+                {event.image ? (
+                  <div className="news-feed-item-image-container">
+                    <img 
+                      src={event.image} 
+                      alt={event.title} 
+                      className="news-feed-item-image"
                     />
-                  )}
-                  {event.title}
-                </h3>
-                <h4 className="news-feed-item-subtitle">{event.subtitle}</h4>
-                {/* Theme and subtheme chips */}
-                <div className="news-feed-item-chips">
-                  {event.theme && (
-                    <span 
-                      className="theme-chip" 
-                      style={{ backgroundColor: getThemeColor(event.theme) }}
-                    >
-                      <Tag size={10} className="chip-icon" />
-                      {event.theme}
-                    </span>
-                  )}
-                  {event.theme_tags && event.theme_tags.map((theme_tag, i) => (
-                    <span key={i} className="subtheme-chip">
-                      {theme_tag}
-                    </span>
-                  ))}
-                </div>
+                  </div>
+                ) : (
+                  <div className="news-feed-item-image-container">
+                    <div className={`gradient-fallback ${getGradientClass(event.theme)}`}>
+                      <div>{event.theme ? event.theme.toUpperCase() : 'NEWS'}</div>
+                    </div>
+                  </div>
+                )}
                 
-                <p className="news-feed-item-description">{event.description}</p>
-                
-                {/* Footer with buttons and info */}
-                <div className="news-feed-item-footer">
-
-                  <div className="news-feed-item-info">
-
-                    <div className="news-feed-item-info-row">
-    
-                      <div className="news-feed-item-newspaper" onClick={() => window.open(event.external_link, "_blank")}>
-                      <Newspaper size={10} className="news-feed-item-info-icon" /> 
-                        {event.newspaper && event.newspaper.country_id && (
-                          <img
-                            src={`https://flagcdn.com/${event.newspaper.country_id.toLowerCase()}.svg`}
-                            alt={`Flag of ${event.newspaper.country_id}`}
-                            style={{ width: "16px", height: "12px", opacity: 0.5 }}
-                          />
-                        )}
-                        {event.newspaper ? event.newspaper.name : event.newspaper_id}
-                      </div>
-                    </div>
-                    <div className="news-feed-item-info-row">
-                      <Calendar size={10} className="news-feed-item-info-icon" /> 
-                      <span>{event.publication_date && event.publication_date.slice(0, -9).replace("T", " ")}  </span>
-                    </div>
-
-                    <div className="news-feed-item-info-row">
-                      <MapPin size={10} className="news-feed-item-info-icon" /> 
-                      <span> {event.location}</span>
-                    </div>
+                <div className="news-feed-item-content-wrapper">
+                  <h3 className="news-feed-item-title">
+                    {event.country_id && (
+                      <img
+                        src={`https://flagcdn.com/${event.country_id.toLowerCase()}.svg`}
+                        alt={`Flag of ${event.country_id}`}
+                        style={{ width: "22px", height: "16px", marginRight:"6px" }}
+                      />
+                    )}
+                    {event.title}
+                  </h3>
+                  <h4 className="news-feed-item-subtitle">{event.subtitle}</h4>
+                  {/* Theme and subtheme chips */}
+                  <div className="news-feed-item-chips">
+                    {event.theme && (
+                      <span 
+                        className="theme-chip" 
+                        style={{ backgroundColor: getThemeColor(event.theme) }}
+                      >
+                        <Tag size={10} className="chip-icon" />
+                        {event.theme}
+                      </span>
+                    )}
+                    {event.theme_tags && event.theme_tags.map((theme_tag, i) => (
+                      <span key={i} className="subtheme-chip">
+                        {theme_tag}
+                      </span>
+                    ))}
+                  </div>
                   
+                  <p className="news-feed-item-description">{event.description}</p>
+                  
+                  {/* Footer with buttons and info */}
+                  <div className="news-feed-item-footer">
+
+                    <div className="news-feed-item-info">
+
+                      <div className="news-feed-item-info-row">
+      
+                        <div className="news-feed-item-newspaper" onClick={() => window.open(event.external_link, "_blank")}>
+                        <Newspaper size={10} className="news-feed-item-info-icon" /> 
+                          {event.newspaper && event.newspaper.country_id && (
+                            <img
+                              src={`https://flagcdn.com/${event.newspaper.country_id.toLowerCase()}.svg`}
+                              alt={`Flag of ${event.newspaper.country_id}`}
+                              style={{ width: "16px", height: "12px", opacity: 0.5 }}
+                            />
+                          )}
+                          {event.newspaper ? event.newspaper.name : event.newspaper_id}
+                        </div>
+                      </div>
+                      <div className="news-feed-item-info-row">
+                        <Calendar size={10} className="news-feed-item-info-icon" /> 
+                        <span>{event.publication_date && event.publication_date.slice(0, -9).replace("T", " ")}  </span>
+                      </div>
+
+                      <div className="news-feed-item-info-row">
+                        <MapPin size={10} className="news-feed-item-info-icon" /> 
+                        <span> {event.location}</span>
+                      </div>
+                    
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
-          
-          {/* Loading indicator and observer target */}
-          {visibleEvents.length < newsEvents.length && (
-            <div className="loader-container" ref={loaderRef}>
-              {loading ? (
-                <div className="news-feed-loader">
-                  <div className="news-feed-loader-dot"></div>
-                  <div className="news-feed-loader-dot"></div>
-                  <div className="news-feed-loader-dot"></div>
-                </div>
-              ) : (
-                <button className="load-more-button" onClick={loadMoreEvents}>
-                  Load More
-                </button>
-              )}
-            </div>
-          )}
+            ))}
+            
+            {/* Loading indicator and observer target */}
+            {visibleEvents.length < newsEvents.length && (
+              <div className="loader-container" ref={loaderRef}>
+                {loading ? (
+                  <div className="news-feed-loader">
+                    <div className="news-feed-loader-dot"></div>
+                    <div className="news-feed-loader-dot"></div>
+                    <div className="news-feed-loader-dot"></div>
+                  </div>
+                ) : (
+                  <button className="load-more-button" onClick={loadMoreEvents}>
+                    Load More
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
-    </div>
-  );
-};
+    );
+  };
 
 export default NewsScroll;
