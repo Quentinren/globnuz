@@ -450,7 +450,7 @@ const SlideFilterPanel = ({
                 >
                   <div className="filter-option-icon">{category.icon}</div>
                   <div className="filter-option-label">{category.label}</div>
-                  <div className={`filter-toggle ${localNewsFilters[category.id] ? 'active' : ''}`}></div>
+
                 </div>
               ))}
             </div>
@@ -481,10 +481,7 @@ const SlideFilterPanel = ({
                     >
                       {region.label}
                     </div>
-                    <div 
-                      className={`filter-toggle ${localNewsFilters[region.id] ? 'active' : ''}`}
-                      onClick={() => toggleNewsFilter(region.id)}
-                    ></div>
+
                     <button
                       className={`expand-button ${expandedRegion === region.id ? 'expanded' : ''}`}
                       onClick={() => toggleRegionExpansion(region.id)}

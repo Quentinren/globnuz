@@ -89,7 +89,7 @@
 
 .news-feed-item {
   display: flex;
-  background-color: #bcd6ffe9;
+  background-color: #010d20e9;
   border-radius: 12px;
   color: white;
   overflow: hidden;
@@ -162,8 +162,8 @@
 /* Title styling */
 .news-feed-item-title {
   margin: 0 0 0 0;
-  color: #111;
-  font-size: 24px;
+  color: #ffffff;
+  font-size: 20px;
   line-height: 1.3;
   font-weight: 700;
   /* Limit to 2 lines with ellipsis */
@@ -178,8 +178,8 @@
 .news-feed-item-subtitle {
   margin: 0 0 0 0;
   margin-bottom:10px;
-  color: #333;
-  font-size: 20px;
+  color: #ebeaea;
+  font-size: 18px;
   line-height: 1.3;
   font-weight: 400;
   /* Limit to 2 lines with ellipsis */
@@ -221,19 +221,19 @@
   font-size: 11px;
   font-weight: 600;
   color: white;
-  background-color: #4fc3f7;
+  background-color: #023e59;
 }
 
 .subtheme-chip {
   display: inline-flex;
   align-items: center;
-  height: 10px;
+  height: 12px;
   border-radius: 11px;
-  background-color: rgba(3, 3, 3, 0.082);
+  background-color: rgb(44, 44, 44);
   padding: 0 8px;
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 600;
-  color: #3d3d3d;
+  color: #cfcfcf;
 }
 
 .chip-icon {
@@ -282,7 +282,7 @@
   flex-direction: row;
   align-items: flex-end;
   font-size: 12px;
-  color: #4343436f;
+  color: #b5b5b56f;
 }
 
 
