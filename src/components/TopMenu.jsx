@@ -27,6 +27,7 @@ const TopMenu = () => {
         {/* Logo is already in the app, we'll keep it positioned as is */}
       <Logo />
         {/* Search Bar */}
+        GLOBNUZ
         <div className={`search-container ${isSearchActive ? 'active' : ''}`}>
           <form onSubmit={handleSearchSubmit}>
             <input

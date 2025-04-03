@@ -5,7 +5,7 @@ const Logo = () => {
     <div 
       style={{
         position: 'absolute',
-        top: 80, // Position below the top menu
+        top: 10, // Position below the top menu
         left: 40,
         width: '50px',
         zIndex: 1000
