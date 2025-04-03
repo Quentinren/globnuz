@@ -247,13 +247,6 @@ const NewsScroll = ({ newsEvents, onNavigateToArticle, activeTitle, hasMoreData,
                     <div className="news-feed-item-info-row">
                       <div className="news-feed-item-newspaper" onClick={() => window.open(event.external_link, "_blank")}>
                       <Newspaper size={10} className="news-feed-item-info-icon" /> 
-                        {event.newspaper && event.newspaper.country_id && (
-                          <img
-                            src={`https://flagcdn.com/${event.newspaper.country_id.toLowerCase()}.svg`}
-                            alt={`Flag of ${event.newspaper.country_id}`}
-                            style={{ width: "16px", height: "12px", opacity: 0.5 }}
-                          />
-                        )}
                         {event.newspaper ? event.newspaper.name : event.newspaper_id}
                       </div>
                     </div>
