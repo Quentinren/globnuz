@@ -24,7 +24,7 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey);
  * @param {Number} pageSize - Number of items per page
  * @returns {Promise<Array>} - Array of news events in the required format
  */
-export const fetchNewsFromSupabase = async (filters = {}, page = 1, pageSize = 20) => {
+export const fetchNewsFromSupabase = async (filters = {}, page = 1, pageSize = 100) => {
   try {
     console.log("Fetching news with filters:", filters, "page:", page, "pageSize:", pageSize);
     

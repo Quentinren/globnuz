@@ -1,4 +1,4 @@
-// SlideFilterPanel.jsx - Updated with country selection support
+// SlideFilterPanel.jsx - Updated with click outside support
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   Filter, 
@@ -14,6 +14,16 @@ import {
   AlertCircle
 } from 'lucide-react';
 import './SlideFilterPanel.css';
+
+// Toggle filter panel
+const toggleFilterPanel = (isOpen) => {
+  // If isOpen is provided as a parameter, use it; otherwise toggle the current state
+  if (typeof isOpen === 'boolean') {
+    setIsFilterPanelOpen(isOpen);
+  } else {
+    setIsFilterPanelOpen(prev => !prev);
+  }
+};
 
 const SlideFilterPanel = ({ 
   onNewsFiltersChange, 
@@ -46,6 +56,7 @@ const SlideFilterPanel = ({
   const [expandedRegion, setExpandedRegion] = useState(null);
   
   const panelRef = useRef(null);
+  const filterButtonRef = useRef(null);
   const triggerZoneRef = useRef(null);
   
   // Hover open timer
@@ -69,6 +80,41 @@ const SlideFilterPanel = ({
       }
     }
   }, [selectedCountry]);
+
+  // Add click outside handler to close the panel
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      // Don't close if clicking on the panel itself
+      if (panelRef.current && panelRef.current.contains(event.target)) {
+        return;
+      }
+      
+      // Don't close if clicking on the filter button that toggles the panel
+      if (filterButtonRef.current && filterButtonRef.current.contains(event.target)) {
+        return;
+      }
+      
+      // Don't close if clicking on the trigger zone
+      if (triggerZoneRef.current && triggerZoneRef.current.contains(event.target)) {
+        return;
+      }
+      
+      // If the panel is open and the click was outside, close it
+      if (isOpen) {
+        onToggle(false);
+      }
+    };
+    
+    // Add event listener when the panel is open
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    
+    // Clean up the event listener
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen, onToggle]);
 
   // Function to determine which region a country belongs to
   const findCountryRegion = (countryCode) => {
@@ -364,6 +410,7 @@ const SlideFilterPanel = ({
         className={`slide-filter-button ${isOpen ? 'active' : ''} ${isAnyFilterActive() ? 'filter-active' : ''}`}
         onClick={() => onToggle(!isOpen)}
         aria-label="Toggle filters"
+        ref={filterButtonRef}
       >
         <Filter size={24} />
         {getActiveFilterCount() > 0 && (

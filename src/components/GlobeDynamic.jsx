@@ -473,9 +473,9 @@ const GlobeDynamic = ({ newsEvents, navigateToCoordinates, onLabelClick, onCount
         // Points for news events - these will update when newsEvents changes
         pointsData={formattedNewsEvents}
         pointColor={point => point.color}
-        pointAltitude={0.02}
-        pointRadius={0.3}
-        pointResolution={12}
+        pointAltitude={0.03}
+        pointRadius={0.7}
+        pointResolution={20}
         onPointClick={handlePointClick}
         pointsMerge={false}
         
