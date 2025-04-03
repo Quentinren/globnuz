@@ -1,6 +1,6 @@
 // NewsScroll.jsx - Complete updated version
 import React, { useState, useEffect, useRef } from 'react';
-import { Calendar, MapPin, Globe, ChevronLeft, Newspaper, User, Tag, Filter, AlertCircle, ExternalLink } from 'lucide-react';
+import { Calendar, MapPin, Globe, ChevronLeft, Newspaper, User, Tag, Filter, AlertCircle, ExternalLink, Underline } from 'lucide-react';
 import './NewsScroll.css';
 
 const NewsScroll = ({ newsEvents, onNavigateToArticle, activeTitle, hasMoreData, isLoadingMore, onLoadMore, language, onHoverArticle }) => {
@@ -228,7 +228,7 @@ const NewsScroll = ({ newsEvents, onNavigateToArticle, activeTitle, hasMoreData,
                       style={{ width: "22px", height: "16px", marginRight:"6px" }}
                     />
                   )}
-                  {event.title}
+                {event.title}
                 </h3>
                 <h4 className="news-feed-item-subtitle">{event.subtitle}</h4>
                 

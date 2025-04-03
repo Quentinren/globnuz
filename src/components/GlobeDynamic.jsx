@@ -4,7 +4,7 @@ import * as THREE from 'three';
 import './GlobeDynamic.css';
 import '../components/css/news-themes.css'; // Import the theme colors CSS
 
-const GlobeDynamic = ({ newsEvents, navigateToCoordinates, onLabelClick, onCountryClick }) => {
+const GlobeDynamic = ({ newsEvents, navigateToCoordinates, onLabelClick, onCountryClick, onHoverArticle }) => {
   const globeEl = useRef();
   const [globeReady, setGlobeReady] = useState(false);
   const [cameraDistance, setCameraDistance] = useState(0);

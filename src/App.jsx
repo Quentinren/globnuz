@@ -294,6 +294,7 @@ function App() {
           navigateToCoordinates={selectedCoordinates} 
           onLabelClick={handleGlobeLabelClick}
           onCountryClick={handleCountryClick}
+          onHoverArticle={handleArticleHover}
         />
       )}
       
